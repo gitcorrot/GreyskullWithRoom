@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".AddNewActivity">
+
+    <LinearLayout
+        android:id="@+id/new_workout_top_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/new_workout_date_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:hint="New workout"
+            android:textSize="24sp"
+            android:layout_margin="8dp"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/new_workout_top_view"
+        android:layout_above="@id/new_workout_save_button"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/new_workout_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="8dp">
+
+
+            <Button
+                android:id="@+id/new_workout_new_exercise_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ADD NEW EXERCISE"
+                android:layout_margin="8dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/new_workout_save_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SAVE"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="8dp"/>
+
+</RelativeLayout>

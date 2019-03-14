@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_bar_home"
+        android:title="Home"
+        android:icon="@drawable/ic_home_black_24dp"/>
+
+    <item
+        android:id="@+id/navigation_bar_history"
+        android:title="History"
+        android:icon="@drawable/ic_history_black_24dp"/>
+
+    <item
+        android:id="@+id/navigation_bar_stats"
+        android:title="Stats"
+        android:icon="@drawable/ic_show_chart_black_24dp"/>
+
+</menu>
