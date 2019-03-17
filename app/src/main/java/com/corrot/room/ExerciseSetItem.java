@@ -2,12 +2,10 @@ package com.corrot.room;
 
 public class ExerciseSetItem {
 
-    public int no;
-    public float weight;
     public int reps;
+    public float weight;
 
-    ExerciseSetItem(int no, float weight, int reps) {
-        this.no = no;
+    ExerciseSetItem(float weight, int reps) {
         this.weight = weight;
         this.reps = reps;
     }

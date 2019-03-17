@@ -11,45 +11,43 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class ExerciseSetsAdapter extends RecyclerView.Adapter<ExerciseSetsAdapter.WorkoutViewHolder>  {
+public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.exerciseSetViewHolder>  {
 
-    class WorkoutViewHolder extends RecyclerView.ViewHolder {
+    class exerciseSetViewHolder extends RecyclerView.ViewHolder {
         private final TextView setTextView;
         private final EditText weightEditText;
         private final EditText repsEditText;
 
-        private WorkoutViewHolder(View itemView) {
+        private exerciseSetViewHolder(View itemView) {
             super(itemView);
             setTextView = itemView.findViewById(R.id.new_set_text_view);
             weightEditText = itemView.findViewById(R.id.new_set_weight_edit_text);
             repsEditText = itemView.findViewById(R.id.new_set_reps_edit_text);
         }
-
-        // spinner adapter
     }
 
     private final LayoutInflater mInflater;
     private List<ExerciseSetItem> mSets;
 
-    ExerciseSetsAdapter(Context context) {
+    SetsListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
-    public WorkoutViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View itemView = mInflater.inflate(R.layout.new_exercise_item, viewGroup, false);
-        return new ExerciseSetsAdapter.WorkoutViewHolder(itemView);
+    public exerciseSetViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View itemView = mInflater.inflate(R.layout.recyclerview_set_item, viewGroup, false);
+        return new exerciseSetViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WorkoutViewHolder workoutViewHolder, int i) {
-        if(mSets != null) {
-            ExerciseSetItem set = mSets.get(i);
-            set.no = workoutViewHolder.getAdapterPosition();
-            workoutViewHolder.setTextView.setText(String.valueOf(set.no));
-            workoutViewHolder.weightEditText.setText(String.valueOf(set.weight));
-            workoutViewHolder.repsEditText.setText(String.valueOf(set.reps));
+    public void onBindViewHolder(@NonNull exerciseSetViewHolder workoutViewHolder, int i) {
+
+        if(mSets!= null) {
+            ExerciseSetItem item = mSets.get(i);
+            workoutViewHolder.setTextView.setText(String.valueOf(i));
+            workoutViewHolder.weightEditText.setText(String.valueOf(item.weight));
+            workoutViewHolder.repsEditText.setText(String.valueOf(item.reps));
         }
     }
 
@@ -57,7 +55,9 @@ public class ExerciseSetsAdapter extends RecyclerView.Adapter<ExerciseSetsAdapte
     public int getItemCount() {
         if(mSets != null)
             return mSets.size();
-        else return 0;
+        else {
+            return 0;
+        }
     }
 
     public void setSets(List<ExerciseSetItem> sets) {

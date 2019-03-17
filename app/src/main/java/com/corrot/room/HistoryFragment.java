@@ -41,7 +41,7 @@ public class HistoryFragment extends Fragment {
         mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
 
         final RecyclerView recyclerView = view.findViewById(R.id.workoutsRecyclerView);
-        final WorkoutListAdapter workoutListAdapter = new WorkoutListAdapter(view.getContext());//not sure if it;s ok
+        final WorkoutsListAdapter workoutListAdapter = new WorkoutsListAdapter(view.getContext());//not sure if it;s ok
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));//not sure if it;s ok
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class WorkoutListAdapter extends RecyclerView.Adapter<WorkoutListAdapter.WorkoutViewHolder> {
+public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapter.WorkoutViewHolder> {
 
     class WorkoutViewHolder extends RecyclerView.ViewHolder {
         private final TextView workoutIdTextView;
@@ -26,19 +26,19 @@ public class WorkoutListAdapter extends RecyclerView.Adapter<WorkoutListAdapter.
     private final LayoutInflater mInflater;
     private List<Workout> mWorkouts;
 
-    WorkoutListAdapter(Context context) {
+    WorkoutsListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
     }
 
     @NonNull
     @Override
-    public WorkoutListAdapter.WorkoutViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public WorkoutsListAdapter.WorkoutViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View itemView = mInflater.inflate(R.layout.recyclerview_workout_item, viewGroup, false);
         return new WorkoutViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WorkoutListAdapter.WorkoutViewHolder workoutViewHolder, int i) {
+    public void onBindViewHolder(@NonNull WorkoutsListAdapter.WorkoutViewHolder workoutViewHolder, int i) {
         if(mWorkouts != null) {
             Workout w = mWorkouts.get(i);
             workoutViewHolder.workoutIdTextView.setText("Workout ID: " + w.id);
