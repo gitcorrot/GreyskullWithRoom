@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.db.dao;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
@@ -7,10 +7,12 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.corrot.room.db.entity.Exercise;
+
 import java.util.List;
 
 @Dao
-interface ExerciseDAO {
+public interface ExerciseDAO {
     @Insert
     void insertSingleExercise(Exercise exercise);
 

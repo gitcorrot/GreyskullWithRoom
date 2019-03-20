@@ -5,7 +5,7 @@ public class ExerciseSetItem {
     public int reps;
     public float weight;
 
-    ExerciseSetItem(float weight, int reps) {
+    public ExerciseSetItem(float weight, int reps) {
         this.weight = weight;
         this.reps = reps;
     }

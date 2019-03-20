@@ -1,8 +1,12 @@
-package com.corrot.room;
+package com.corrot.room.repository;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+
+import com.corrot.room.db.WorkoutsDatabase;
+import com.corrot.room.db.dao.WorkoutDAO;
+import com.corrot.room.db.entity.Workout;
 
 import java.util.List;
 
@@ -17,7 +21,7 @@ public class WorkoutsRepository {
         mAllWorkouts = mWorkoutDAO.getAllWorkouts();
     }
 
-    LiveData<List<Workout>> getAllWorkouts() {
+    public LiveData<List<Workout>> getAllWorkouts() {
         return mAllWorkouts;
     }
 

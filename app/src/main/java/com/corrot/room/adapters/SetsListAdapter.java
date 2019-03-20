@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.corrot.room.ExerciseSetItem;
+import com.corrot.room.R;
 
 import java.util.List;
 
@@ -29,7 +32,7 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.exerci
     private final LayoutInflater mInflater;
     private List<ExerciseSetItem> mSets;
 
-    SetsListAdapter(Context context) {
+    public SetsListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
     }
 

@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.db.converters;
 
 import android.arch.persistence.room.TypeConverter;
 

@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,16 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class HomeFragment extends Fragment {
+import com.corrot.room.R;
+
+public class StatsFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        View view= inflater.inflate(R.layout.fragment_home, container, false);
-
-
-
-        return view;
+        return inflater.inflate(R.layout.fragment_stats, container, false);
     }
 }

@@ -1,15 +1,19 @@
-package com.corrot.room;
+package com.corrot.room.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.corrot.room.ExerciseItem;
+import com.corrot.room.ExerciseSetItem;
+import com.corrot.room.R;
+import com.corrot.room.db.entity.Exercise;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +35,8 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
 
     private final LayoutInflater mInflater;
     private List<ExerciseItem> mExercises;
-    //private List<SetsListAdapter> adapters = new ArrayList<>();
 
-    ExercisesListAdapter(Context context) {
+    public ExercisesListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
     }
 
@@ -64,8 +67,10 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
         exerciseViewHolder.addSetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mExercises.get(exerciseViewHolder.getAdapterPosition()).sets.add(new ExerciseSetItem(0,0));
-                exerciseSetsAdapter.setSets(mExercises.get(exerciseViewHolder.getAdapterPosition()).sets);
+                mExercises.get(exerciseViewHolder.getAdapterPosition()).sets.
+                        add(new ExerciseSetItem(0,0));
+                exerciseSetsAdapter.setSets(mExercises.
+                        get(exerciseViewHolder.getAdapterPosition()).sets);
             }
         });
     }
@@ -85,14 +90,29 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
     public void addExercise(ExerciseItem exercise) {
         mExercises.add(exercise);
         this.notifyDataSetChanged();
-
-        /*for(SetsListAdapter a : adapters) {
-            a.notifyDataSetChanged();
-            Log.d("asdasd", "ADAPTER NOTYFING");
-        }*/
     }
 
-    public void setSets(List<ExerciseSetItem> sets) {
-        //mSets = sets;
+    public List<Exercise> getExercises() {
+
+        List<Exercise> exercises = new ArrayList<>();
+
+        for(int i = 0; i < mExercises.size(); i++) {
+            ExerciseItem e = mExercises.get(i);
+
+            List<Float> weights = new ArrayList<>();
+            List<Integer> reps = new ArrayList<>();
+
+
+            /*List<ExerciseSetItem> sets = exerciseSetsAdapter.getSets();
+
+            for(ExerciseSetItem i : sets) {
+                weights.add(i.weight);
+                reps.add(i.reps);
+            }*/
+
+            Exercise exercise = new Exercise(i, e.name, weights, reps);
+            exercises.add(exercise);
+        }
+        return  exercises;
     }
 }

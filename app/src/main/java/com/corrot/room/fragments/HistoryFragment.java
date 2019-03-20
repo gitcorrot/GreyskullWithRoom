@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.fragments;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -14,6 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.corrot.room.db.entity.Workout;
+import com.corrot.room.viewmodel.ExerciseViewModel;
+import com.corrot.room.R;
+import com.corrot.room.viewmodel.WorkoutViewModel;
+import com.corrot.room.adapters.WorkoutsListAdapter;
 
 import java.util.Calendar;
 import java.util.List;

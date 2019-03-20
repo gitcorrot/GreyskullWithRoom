@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.corrot.room.R;
+import com.corrot.room.db.entity.Workout;
 
 import java.util.List;
 
@@ -26,7 +29,7 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
     private final LayoutInflater mInflater;
     private List<Workout> mWorkouts;
 
-    WorkoutsListAdapter(Context context) {
+    public WorkoutsListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
     }
 

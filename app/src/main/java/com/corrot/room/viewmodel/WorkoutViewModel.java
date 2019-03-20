@@ -1,8 +1,11 @@
-package com.corrot.room;
+package com.corrot.room.viewmodel;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+
+import com.corrot.room.repository.WorkoutsRepository;
+import com.corrot.room.db.entity.Workout;
 
 import java.util.List;
 
@@ -17,7 +20,7 @@ public class WorkoutViewModel extends AndroidViewModel {
         mAllWorkouts = mWorkoutsRepository.getAllWorkouts();
     }
 
-    LiveData<List<Workout>> getAllWorkouts() {
+    public LiveData<List<Workout>> getAllWorkouts() {
         return mAllWorkouts;
     }
 

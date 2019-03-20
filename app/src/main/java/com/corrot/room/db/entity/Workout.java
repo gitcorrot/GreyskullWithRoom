@@ -1,9 +1,11 @@
-package com.corrot.room;
+package com.corrot.room.db.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+
+import com.corrot.room.db.converters.DateConverter;
 
 import java.util.Calendar;
 import java.util.Date;

@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,13 +8,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.corrot.room.ExerciseItem;
+import com.corrot.room.ExerciseSetItem;
+import com.corrot.room.adapters.ExercisesListAdapter;
+import com.corrot.room.R;
+import com.corrot.room.db.entity.Exercise;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class AddNewActivity extends AppCompatActivity {
+public class NewWorkoutActivity extends AppCompatActivity {
 
     TextView dateTextView;
     RecyclerView exercisesRecyclerView;
@@ -51,6 +57,15 @@ public class AddNewActivity extends AppCompatActivity {
             public void onClick(View v) {
                 List<ExerciseSetItem> esi = new ArrayList<>();
                 exercisesListAdapter.addExercise(new ExerciseItem("New Exercise", esi));
+            }
+        });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<Exercise> exercises = exercisesListAdapter.getExercises();
+
+                // add to DB.
             }
         });
     }
