@@ -1,7 +1,12 @@
 package com.corrot.room.adapters;
 
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +18,7 @@ import android.widget.TextView;
 import com.corrot.room.ExerciseItem;
 import com.corrot.room.ExerciseSetItem;
 import com.corrot.room.R;
-import com.corrot.room.db.entity.Exercise;
+import com.corrot.room.viewmodel.NewWorkoutViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +40,17 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
 
     private final LayoutInflater mInflater;
     private List<ExerciseItem> mExercises;
+    private NewWorkoutViewModel newWorkoutViewModel;
+    private LifecycleOwner mLifecycleOwner;
 
-    public ExercisesListAdapter(Context context) {
+
+    public ExercisesListAdapter(Context context, LifecycleOwner lifecycleOwner) {
         mInflater = LayoutInflater.from(context);
+        mLifecycleOwner = lifecycleOwner;
+        mExercises = new ArrayList<>(); // necessary?
+        newWorkoutViewModel = ViewModelProviders.of((AppCompatActivity)context). // ???
+                get(NewWorkoutViewModel.class);
+        newWorkoutViewModel.init();
     }
 
     @NonNull
@@ -52,25 +65,35 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
 
         // Attach sets to recycler view
         final SetsListAdapter exerciseSetsAdapter =
-                new SetsListAdapter(exerciseViewHolder.addSetButton.getContext()); // wrong context??
+                new SetsListAdapter(exerciseViewHolder.setsRecyclerView.getContext()); // wrong context??
 
         exerciseViewHolder.setsRecyclerView.setAdapter(exerciseSetsAdapter);
         exerciseViewHolder.setsRecyclerView.setLayoutManager(
-                new LinearLayoutManager(exerciseViewHolder.addSetButton.getContext()));
-        //adapters.add(exerciseSetsAdapter);
+                new LinearLayoutManager(exerciseViewHolder.setsRecyclerView.getContext()));
+
+
+        newWorkoutViewModel.getAllSetItems().observe(mLifecycleOwner, new Observer<List<ExerciseSetItem>>() {
+            @Override
+            public void onChanged(@Nullable List<ExerciseSetItem> exerciseSetItems) {
+                int position = exerciseViewHolder.getAdapterPosition();
+                if(mExercises.size() > position) {
+                    int exerciseId = mExercises.get(position).id;
+                    List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExerciseId(exerciseId);
+                    exerciseSetsAdapter.setSets(items);
+                }
+            }
+        });
 
         if(mExercises != null) {
             ExerciseItem exercise = mExercises.get(i);
-            exerciseViewHolder.exerciseTextView.setText(exercise.name);
+            exerciseViewHolder.exerciseTextView.setText(exercise.name + " ID: "+ exercise.id);
         }
 
         exerciseViewHolder.addSetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mExercises.get(exerciseViewHolder.getAdapterPosition()).sets.
-                        add(new ExerciseSetItem(0,0));
-                exerciseSetsAdapter.setSets(mExercises.
-                        get(exerciseViewHolder.getAdapterPosition()).sets);
+                int id = exerciseViewHolder.getAdapterPosition();
+                newWorkoutViewModel.addSet(new ExerciseSetItem(id, 0, 0));
             }
         });
     }
@@ -85,34 +108,5 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
     public void setExercises(List<ExerciseItem> exercises) {
         mExercises = exercises;
         this.notifyDataSetChanged();
-    }
-
-    public void addExercise(ExerciseItem exercise) {
-        mExercises.add(exercise);
-        this.notifyDataSetChanged();
-    }
-
-    public List<Exercise> getExercises() {
-
-        List<Exercise> exercises = new ArrayList<>();
-
-        for(int i = 0; i < mExercises.size(); i++) {
-            ExerciseItem e = mExercises.get(i);
-
-            List<Float> weights = new ArrayList<>();
-            List<Integer> reps = new ArrayList<>();
-
-
-            /*List<ExerciseSetItem> sets = exerciseSetsAdapter.getSets();
-
-            for(ExerciseSetItem i : sets) {
-                weights.add(i.weight);
-                reps.add(i.reps);
-            }*/
-
-            Exercise exercise = new Exercise(i, e.name, weights, reps);
-            exercises.add(exercise);
-        }
-        return  exercises;
     }
 }
