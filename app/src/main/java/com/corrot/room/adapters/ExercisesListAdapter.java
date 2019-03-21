@@ -76,7 +76,7 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
             @Override
             public void onChanged(@Nullable List<ExerciseSetItem> exerciseSetItems) {
                 int position = exerciseViewHolder.getAdapterPosition();
-                if(mExercises.size() > position) {
+                if(position != RecyclerView.NO_POSITION) {
                     int exerciseId = mExercises.get(position).id;
                     List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExerciseId(exerciseId);
                     exerciseSetsAdapter.setSets(items);

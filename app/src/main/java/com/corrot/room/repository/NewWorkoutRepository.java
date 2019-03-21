@@ -2,6 +2,7 @@ package com.corrot.room.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import com.corrot.room.ExerciseItem;
 import com.corrot.room.ExerciseSetItem;
@@ -36,12 +37,15 @@ public class NewWorkoutRepository {
         List<ExerciseItem> items = getAllExercises().getValue();
         if(items != null) {
             exerciseItem.id = items.size();
+            Log.d("asdasd", "Exercise (ID: " + exerciseItem.id
+                    + " added successfully! " + "List.size() == " + items.size());
             items.add(exerciseItem);
             mNewExercises.postValue(items);
         }
         else {
             items = new ArrayList<>();
             exerciseItem.id = items.size();
+            Log.d("asdasd", "ExercisesList == null. Creating exercises list!");
             items.add(exerciseItem);
             mNewExercises.postValue(items);
         }
@@ -68,16 +72,41 @@ public class NewWorkoutRepository {
     }
 
     public void addSet(ExerciseSetItem setItem) {
-        // TODO: add set to proper exercise
         List<ExerciseSetItem> items = getAllSets().getValue();
         if(items != null) {
             items.add(setItem);
+            Log.d("asdasd", "GetAllSets != null, ID: " + setItem.exerciseId + " List.size() == " + items.size());
             mNewSets.postValue(items);
         }
         else {
+            Log.d("asdasd", "GetAllSets == null, creating new ArrayList");
             items = new ArrayList<>();
             items.add(setItem);
             mNewSets.postValue(items);
         }
+    }
+
+    public void updateSet(ExerciseSetItem setItem, int position) {
+        List<ExerciseSetItem> items = getAllSets().getValue();
+        List<ExerciseSetItem> exerciseSetItems = getSetsByExerciseId(setItem.exerciseId);
+
+        // update set on position
+        if(exerciseSetItems != null) {
+            exerciseSetItems.set(position, setItem);
+        }
+        else {
+            Log.d("asdasd", "Error when updating set. List of set is null!");
+        }
+
+        // delete all sets with setItem.exerciseId
+        // add updated list of sets to sets
+        if(items != null && exerciseSetItems != null) {
+            for (ExerciseSetItem e : items) {
+                if(e.exerciseId == setItem.exerciseId) items.remove(e);
+            }
+            items.addAll(exerciseSetItems);
+        }
+        Log.d("asdasd", "Set on position " + position + "updated successfully!");
+        mNewSets.postValue(items);
     }
 }
