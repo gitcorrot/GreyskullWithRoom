@@ -72,7 +72,9 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
                 new LinearLayoutManager(exerciseViewHolder.setsRecyclerView.getContext()));
 
 
+        // on changed update set sets of the exercise
         newWorkoutViewModel.getAllSetItems().observe(mLifecycleOwner, new Observer<List<ExerciseSetItem>>() {
+            // TODO: use DiffUtils
             @Override
             public void onChanged(@Nullable List<ExerciseSetItem> exerciseSetItems) {
                 int position = exerciseViewHolder.getAdapterPosition();
@@ -100,9 +102,7 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
 
     @Override
     public int getItemCount() {
-        if(mExercises != null)
-            return mExercises.size();
-        else return 0;
+        return mExercises != null ? mExercises.size() : 0;
     }
 
     public void setExercises(List<ExerciseItem> exercises) {

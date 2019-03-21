@@ -75,11 +75,7 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
 
     @Override
     public int getItemCount() {
-        if(mSets != null)
-            return mSets.size();
-        else {
-            return 0;
-        }
+        return mSets != null ? mSets.size() : 0;
     }
 
     public void setSets(List<ExerciseSetItem> sets) {
@@ -102,7 +98,9 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            // TODO: update in repository
+
+            // TODO: update in repository. (diffutils?)
+
             if(!TextUtils.isEmpty(charSequence)) {
                 if(type == SetsListAdapter.REPS_EDIT_TEXT) {
                     mSets.get(position).reps = Integer.parseInt(charSequence.toString());
@@ -119,7 +117,6 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
                     mSets.get(position).weight = 0;
                 }
             }
-
         }
 
         // no usage

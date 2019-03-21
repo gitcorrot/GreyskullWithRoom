@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.corrot.room.ExerciseItem;
@@ -27,7 +28,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
     TextView dateTextView;
     RecyclerView exercisesRecyclerView;
     Button addExerciseButton;
-    Button saveButton;
+    ImageButton saveButton;
     private NewWorkoutViewModel newWorkoutViewModel;
 
     @Override
@@ -55,6 +56,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         newWorkoutViewModel.getAllExerciseItems().observe(this, new Observer<List<ExerciseItem>>() {
             @Override
             public void onChanged(@Nullable List<ExerciseItem> exerciseItems) {
+                // TODO: use DiffUtils
                 exercisesListAdapter.setExercises(exerciseItems);
             }
         });
@@ -72,7 +74,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 // add to DB.
 
                 //debugging:
-                newWorkoutViewModel.updateSet(new ExerciseSetItem(2,2,2), 1);
+                newWorkoutViewModel.updateSet(new ExerciseSetItem(0,102.5f,5), 1);
             }
         });
     }

@@ -95,7 +95,7 @@ public class NewWorkoutRepository {
             exerciseSetItems.set(position, setItem);
         }
         else {
-            Log.d("asdasd", "Error when updating set. List of set is null!");
+            Log.e("asdasd", "Error when updating set. List of set is null!");
         }
 
         // delete all sets with setItem.exerciseId
