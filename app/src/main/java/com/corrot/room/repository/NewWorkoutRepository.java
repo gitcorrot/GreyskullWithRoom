@@ -101,12 +101,17 @@ public class NewWorkoutRepository {
         // delete all sets with setItem.exerciseId
         // add updated list of sets to sets
         if(items != null && exerciseSetItems != null) {
+            List<ExerciseSetItem> toRemove = new ArrayList<>();
+
+
             for (ExerciseSetItem e : items) {
-                if(e.exerciseId == setItem.exerciseId) items.remove(e);
+                if(e.exerciseId == setItem.exerciseId) toRemove.add(e);
             }
+
+            items.removeAll(toRemove);
             items.addAll(exerciseSetItems);
         }
-        Log.d("asdasd", "Set on position " + position + "updated successfully!");
+        Log.d("asdasd", "Set on position " + position + " updated successfully!");
         mNewSets.postValue(items);
     }
 }

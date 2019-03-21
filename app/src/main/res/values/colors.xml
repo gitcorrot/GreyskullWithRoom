@@ -6,5 +6,5 @@
     <color name="colorFragmentHome">#80C7FFA5</color>
     <color name="colorFragmentHistory">#80A1FFBC</color>
     <color name="colorFragmentStats">#807BFFD1</color>
-    <color name="colorTransparentButton">#1AE2E2E2</color>
+    <color name="colorTransparentButton">#0DE2E2E2</color>
 </resources>

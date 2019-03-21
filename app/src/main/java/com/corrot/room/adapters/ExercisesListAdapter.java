@@ -55,13 +55,13 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
 
     @NonNull
     @Override
-    public exerciseViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public exerciseViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View itemView = mInflater.inflate(R.layout.recyclerview_exercise_item, viewGroup, false);
         return new exerciseViewHolder(itemView);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull final exerciseViewHolder exerciseViewHolder, int i) {
+    @Override                                                                          //??
+    public void onBindViewHolder(@NonNull final exerciseViewHolder exerciseViewHolder, final int i) {
 
         // Attach sets to recycler view
         final SetsListAdapter exerciseSetsAdapter =

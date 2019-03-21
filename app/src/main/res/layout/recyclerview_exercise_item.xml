@@ -19,19 +19,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Exercise name"
-            android:textAlignment="center" />
+            android:textAlignment="center"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/sets_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="100dp"
-            android:layout_below="@id/exercise_name_text_view" />
+            android:layout_below="@id/exercise_name_text_view"/>
 
         <Button
             android:id="@+id/add_set_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:text="Add set"
             android:background="@color/colorTransparentButton"
             android:layout_below="@id/sets_recycler_view"

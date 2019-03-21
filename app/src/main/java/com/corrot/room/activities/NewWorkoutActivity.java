@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.corrot.room.ExerciseItem;
+import com.corrot.room.ExerciseSetItem;
 import com.corrot.room.adapters.ExercisesListAdapter;
 import com.corrot.room.R;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
@@ -69,6 +70,9 @@ public class NewWorkoutActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // add to DB.
+
+                //debugging:
+                newWorkoutViewModel.updateSet(new ExerciseSetItem(2,2,2), 1);
             }
         });
     }
