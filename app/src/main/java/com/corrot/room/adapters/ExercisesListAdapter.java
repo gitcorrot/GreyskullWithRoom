@@ -95,7 +95,7 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
             @Override
             public void onClick(View v) {
                 int id = exerciseViewHolder.getAdapterPosition();
-                newWorkoutViewModel.addSet(new ExerciseSetItem(id, 0, 0));
+                newWorkoutViewModel.addSet(new ExerciseSetItem(id));
             }
         });
     }

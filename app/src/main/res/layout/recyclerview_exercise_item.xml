@@ -5,11 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorFragmentStats"
-    android:layout_margin="4dp">
+    android:layout_margin="4dp"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:clickable="true" >
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:clickable="true">
 
         <TextView
             android:id="@+id/exercise_name_text_view"
@@ -19,14 +25,20 @@
             android:layout_marginBottom="8dp"
             android:textSize="18sp"
             android:text="Exercise name"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            android:clickable="true" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/sets_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="100dp"
-            android:layout_below="@id/exercise_name_text_view"/>
+            android:layout_below="@id/exercise_name_text_view"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            android:clickable="true" />
 
         <Button
             android:id="@+id/add_set_button"

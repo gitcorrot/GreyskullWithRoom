@@ -1,11 +1,14 @@
 package com.corrot.room.adapters;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,21 +17,25 @@ import android.widget.TextView;
 
 import com.corrot.room.ExerciseSetItem;
 import com.corrot.room.R;
+import com.corrot.room.viewmodel.NewWorkoutViewModel;
 
 import java.util.List;
 
 public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.ExerciseSetViewHolder>  {
 
-    public static int REPS_EDIT_TEXT  = 0;
-    public static int WEIGHT_EDIT_TEXT  = 1;
+    private static int REPS_EDIT_TEXT  = 0;
+    private static int WEIGHT_EDIT_TEXT  = 1;
 
     class ExerciseSetViewHolder extends RecyclerView.ViewHolder {
         private final TextView setTextView;
         private final EditText repsEditText;
         private final EditText weightEditText;
 
-        private MyCustomEditTextListener repsEditTextListener;
-        private MyCustomEditTextListener weightEditTextListener;
+        //private MyCustomEditTextListener repsEditTextListener;
+        //private MyCustomEditTextListener weightEditTextListener;
+
+        private MyEditTextOnFocusChangeListener repsFocusListener;
+        private MyEditTextOnFocusChangeListener weightsFocusListener;
 
         private ExerciseSetViewHolder(View itemView) {
             super(itemView);
@@ -37,19 +44,35 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
             repsEditText = itemView.findViewById(R.id.new_set_reps_edit_text);
             weightEditText = itemView.findViewById(R.id.new_set_weight_edit_text);
 
-            repsEditTextListener = new MyCustomEditTextListener(SetsListAdapter.REPS_EDIT_TEXT);
+            repsEditText.setFocusable(true);
+            repsEditText.setFocusableInTouchMode(true);
+            weightEditText.setFocusable(true);
+            weightEditText.setFocusableInTouchMode(true);
+
+            repsFocusListener = new MyEditTextOnFocusChangeListener(REPS_EDIT_TEXT);
+            weightsFocusListener = new MyEditTextOnFocusChangeListener(WEIGHT_EDIT_TEXT);
+
+            repsEditText.setOnFocusChangeListener(repsFocusListener);
+            weightEditText.setOnFocusChangeListener(weightsFocusListener);
+
+            /*repsEditTextListener = new MyCustomEditTextListener(SetsListAdapter.REPS_EDIT_TEXT);
             weightEditTextListener = new MyCustomEditTextListener(SetsListAdapter.WEIGHT_EDIT_TEXT);
 
             repsEditText.addTextChangedListener(repsEditTextListener);
-            weightEditText.addTextChangedListener(weightEditTextListener);
+            weightEditText.addTextChangedListener(weightEditTextListener);*/
         }
     }
 
     private final LayoutInflater mInflater;
     private List<ExerciseSetItem> mSets;
+    private NewWorkoutViewModel newWorkoutViewModel;
 
     public SetsListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
+
+        newWorkoutViewModel = ViewModelProviders.of((AppCompatActivity)context) // ???
+                .get(NewWorkoutViewModel.class);
+        newWorkoutViewModel.init();
     }
 
     @NonNull
@@ -60,16 +83,22 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ExerciseSetViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull final ExerciseSetViewHolder viewHolder, int position) {
 
-        viewHolder.repsEditTextListener.updatePosition(viewHolder.getAdapterPosition());
-        viewHolder.weightEditTextListener.updatePosition(viewHolder.getAdapterPosition());
+        //String reps = viewHolder.repsEditText.getText().toString();
+        //String weight = viewHolder.weightEditText.getText().toString();
+
+        //viewHolder.repsFocusListener.updateReps(reps);
+        viewHolder.repsFocusListener.updatePosition(viewHolder.getAdapterPosition());
+
+        //viewHolder.weightsFocusListener.updateWeight(weight);
+        viewHolder.weightsFocusListener.updatePosition(viewHolder.getAdapterPosition());
 
         if(mSets!= null) {
-            ExerciseSetItem item = mSets.get(i);
-            viewHolder.setTextView.setText(String.valueOf(i));
-            viewHolder.weightEditText.setText(String.valueOf(item.weight));
-            viewHolder.repsEditText.setText(String.valueOf(item.reps));
+            ExerciseSetItem item = mSets.get(position);
+            viewHolder.setTextView.setText(String.valueOf(position));
+            if(item.weight != 0) viewHolder.weightEditText.setText(String.valueOf(item.weight));
+            if(item.reps != 0)viewHolder.repsEditText.setText(String.valueOf(item.reps));
         }
     }
 
@@ -83,40 +112,96 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
         notifyDataSetChanged();
     }
 
+    private class MyEditTextOnFocusChangeListener implements View.OnFocusChangeListener {
+
+        private final int type;
+        private int position;
+        private int reps;
+        private float weight;
+
+        private MyEditTextOnFocusChangeListener(int type) {
+            this.type = type;
+        }
+
+        private void updatePosition(int position) {
+            this.position = position;
+        }
+
+        /*private void updateReps(String reps) {
+            if(TextUtils.isEmpty(reps))
+                this.reps = 0;
+            else
+                this.reps = Integer.parseInt(reps);
+        }
+
+        private void updateWeight(String weight) {
+            if(TextUtils.isEmpty(weight))
+                this.weight = 0;
+            else
+                this.weight = Float.parseFloat(weight);
+        }*/
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if(!hasFocus) {
+
+                String repsString = ((EditText)v).getText().toString();
+
+                if(TextUtils.isEmpty(repsString))
+                    this.reps = 0;
+                else
+                    this.reps = Integer.parseInt(repsString);
+
+                String weightString = ((EditText)v).getText().toString();
+
+                if(TextUtils.isEmpty(weightString))
+                    this.weight = 0;
+                else
+                    this.weight = Float.parseFloat(weightString);
+
+
+
+                Log.d("asdasd", "Loosing focus on " + position + "!");
+
+                ExerciseSetItem item = mSets.get(position);
+
+                if ((type == SetsListAdapter.REPS_EDIT_TEXT)) {
+                    Log.d("asdasd", "item.reps = " + item.reps + ", reps = " + reps);
+                    if (item.reps != reps) {
+                        item.reps = reps;
+                        newWorkoutViewModel.updateSet(item, position);
+                        Log.d("asdasd", "Updating ID: "+item.exerciseId+ " on position: " + position + "!");
+                    }
+                }
+                else if (type == SetsListAdapter.WEIGHT_EDIT_TEXT) {
+                    Log.d("asdasd", "item.reps = " + item.reps + ", reps = " + reps);
+                    if (item.weight != weight) {
+                        item.weight = weight;
+                        newWorkoutViewModel.updateSet(item, position);
+                        Log.d("asdasd", "Updating ID: "+item.exerciseId+ " on position: " + position + "!");
+                    }
+                }
+            }
+        }
+    }
+/*
     private class MyCustomEditTextListener implements TextWatcher {
 
         private int position;
         private int type;
 
-        public MyCustomEditTextListener(int type) {
+        private MyCustomEditTextListener(int type) {
             this.type = type;
         }
 
-        public void updatePosition(int position) {
+        private void updatePosition(int position) {
             this.position = position;
         }
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+            // TODO: (DiffUtils?)
 
-            // TODO: update in repository. (diffutils?)
-
-            if(!TextUtils.isEmpty(charSequence)) {
-                if(type == SetsListAdapter.REPS_EDIT_TEXT) {
-                    mSets.get(position).reps = Integer.parseInt(charSequence.toString());
-                }
-                else if (type == SetsListAdapter.WEIGHT_EDIT_TEXT) {
-                    mSets.get(position).weight = Float.parseFloat(charSequence.toString());
-                }
-            }
-            else {
-                if(type == SetsListAdapter.REPS_EDIT_TEXT) {
-                    mSets.get(position).reps = 0;
-                }
-                else if (type == SetsListAdapter.WEIGHT_EDIT_TEXT) {
-                    mSets.get(position).weight = 0;
-                }
-            }
         }
 
         // no usage
@@ -124,8 +209,42 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) { }
 
         @Override
-        public void afterTextChanged(Editable editable) { }
-    }
+        public void afterTextChanged(Editable editable) {
+
+            Log.d("asdasd", "Sets changed!");
+
+            ExerciseSetItem item = mSets.get(position);
+
+            if(!TextUtils.isEmpty(editable)) {
+                if(type == SetsListAdapter.REPS_EDIT_TEXT) {
+                    if(item.reps != Integer.parseInt(editable.toString())) {
+                        item.reps = Integer.parseInt(editable.toString());
+                        newWorkoutViewModel.updateSet(item, position);
+                    }
+                }
+                else if (type == SetsListAdapter.WEIGHT_EDIT_TEXT) {
+                    if(item.weight != Float.parseFloat(editable.toString())) {
+                        item.weight = Float.parseFloat(editable.toString());
+                        newWorkoutViewModel.updateSet(item, position);
+                    }
+                }
+            }
+            else {
+                if(type == SetsListAdapter.REPS_EDIT_TEXT) {
+                    //if(item.reps != Integer.parseInt(editable.toString())) {
+                    item.reps = 0;
+                    newWorkoutViewModel.updateSet(item, position);
+                    //}
+                }
+                else if (type == SetsListAdapter.WEIGHT_EDIT_TEXT) {
+                    //if(item.weight != Float.parseFloat(editable.toString())) {
+                    item.weight = 0;
+                    newWorkoutViewModel.updateSet(item, position);
+                    //}
+                }
+            }
+        }
+    }*/
 }
 
 

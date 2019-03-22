@@ -74,7 +74,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 // add to DB.
 
                 //debugging:
-                newWorkoutViewModel.updateSet(new ExerciseSetItem(0,102.5f,5), 1);
+                //newWorkoutViewModel.updateSet(new ExerciseSetItem(0,102.5f,5), 1);
             }
         });
     }
