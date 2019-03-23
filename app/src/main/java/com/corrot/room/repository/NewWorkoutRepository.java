@@ -114,4 +114,13 @@ public class NewWorkoutRepository {
         Log.d("asdasd", "Set on position " + position + " updated successfully!");
         mNewSets.postValue(items);
     }
+
+    public void removeSet(ExerciseSetItem setItem) {
+        List<ExerciseSetItem> items = getAllSets().getValue();
+        if(items != null) {
+            items.remove(setItem);
+            mNewSets.postValue(items);
+            Log.d("asdasd", "Set with ID: " + setItem.exerciseId + " removed successfully!");
+        }
+    }
 }

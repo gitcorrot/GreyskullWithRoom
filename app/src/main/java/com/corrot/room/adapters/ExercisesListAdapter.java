@@ -6,11 +6,13 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.corrot.room.ExerciseItem;
 import com.corrot.room.ExerciseSetItem;
@@ -66,13 +68,32 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
         viewHolder.setsRecyclerView.setLayoutManager(
                 new LinearLayoutManager(viewHolder.setsRecyclerView.getContext()));
 
-
-        int position = viewHolder.getAdapterPosition();
+        final int position = viewHolder.getAdapterPosition();
         if(position != RecyclerView.NO_POSITION) {
             int exerciseId = mExercises.get(position).id;
             List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExerciseId(exerciseId);
             exerciseSetsAdapter.setSets(items);
         }
+
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder viewHolder1) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder vh, int i) {
+                ExerciseSetItem item = newWorkoutViewModel.getSetsByExerciseId(position).get(vh.getAdapterPosition());
+                newWorkoutViewModel.removeSet(item);
+                List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExerciseId(position);
+                viewHolder.setsRecyclerView.setAdapter(exerciseSetsAdapter);
+                exerciseSetsAdapter.setSets(items);
+                Toast.makeText(viewHolder.itemView.getContext(), "Set deleted!", Toast.LENGTH_SHORT).show();
+            }
+        }).attachToRecyclerView(viewHolder.setsRecyclerView);
 
         if(mExercises != null) {
             ExerciseItem exercise = mExercises.get(viewHolder.getAdapterPosition());

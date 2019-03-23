@@ -44,4 +44,8 @@ public class NewWorkoutViewModel extends ViewModel {
     public void updateSet(ExerciseSetItem setItem, int position) {
         mNewWorkoutRepository.updateSet(setItem, position);
     }
+
+    public void removeSet(ExerciseSetItem setItem) {
+        mNewWorkoutRepository.removeSet(setItem);
+    }
 }
