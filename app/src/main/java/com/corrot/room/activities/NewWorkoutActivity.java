@@ -2,7 +2,10 @@ package com.corrot.room.activities;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -45,11 +48,11 @@ public class NewWorkoutActivity extends AppCompatActivity {
         newWorkoutViewModel.init();
 
         // TODO: Do it right way
-        Date date = Calendar.getInstance().getTime();
+        final Date date = Calendar.getInstance().getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d");
         dateTextView.setText(sdf.format(date));
 
-        final ExercisesListAdapter exercisesListAdapter = new ExercisesListAdapter(this,this);
+        final ExercisesListAdapter exercisesListAdapter = new ExercisesListAdapter(this);
         exercisesRecyclerView.setAdapter(exercisesListAdapter);
         exercisesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -64,7 +67,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         addExerciseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newWorkoutViewModel.addExercise(new ExerciseItem("New exercise"));
+                showExercisesDialog(v.getContext()).show();
             }
         });
 
@@ -77,5 +80,21 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 //newWorkoutViewModel.updateSet(new ExerciseSetItem(0,102.5f,5), 1);
             }
         });
+    }
+
+    private AlertDialog showExercisesDialog(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Which exercise you want to add?");
+
+        // TODO: get it from shared preferences
+        final String[] exercises = {"Squat", "Dead lift", "Bench press"};
+
+        builder.setItems(exercises, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                newWorkoutViewModel.addExercise(new ExerciseItem(exercises[which]));
+            }
+        });
+        return builder.create();
     }
 }

@@ -1,11 +1,8 @@
 package com.corrot.room.adapters;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -41,12 +38,10 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
     private final LayoutInflater mInflater;
     private List<ExerciseItem> mExercises;
     private NewWorkoutViewModel newWorkoutViewModel;
-    private LifecycleOwner mLifecycleOwner;
 
 
-    public ExercisesListAdapter(Context context, LifecycleOwner lifecycleOwner) {
+    public ExercisesListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
-        mLifecycleOwner = lifecycleOwner;
         mExercises = new ArrayList<>(); // necessary?
         newWorkoutViewModel = ViewModelProviders.of((AppCompatActivity)context). // ???
                 get(NewWorkoutViewModel.class);
@@ -60,42 +55,38 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
         return new exerciseViewHolder(itemView);
     }
 
-    @Override                                                                          //??
-    public void onBindViewHolder(@NonNull final exerciseViewHolder exerciseViewHolder, final int i) {
+    @Override
+    public void onBindViewHolder(@NonNull final exerciseViewHolder viewHolder, int i) {
 
         // Attach sets to recycler view
         final SetsListAdapter exerciseSetsAdapter =
-                new SetsListAdapter(exerciseViewHolder.setsRecyclerView.getContext()); // wrong context??
+                new SetsListAdapter(viewHolder.setsRecyclerView.getContext()); // wrong context??
 
-        exerciseViewHolder.setsRecyclerView.setAdapter(exerciseSetsAdapter);
-        exerciseViewHolder.setsRecyclerView.setLayoutManager(
-                new LinearLayoutManager(exerciseViewHolder.setsRecyclerView.getContext()));
+        viewHolder.setsRecyclerView.setAdapter(exerciseSetsAdapter);
+        viewHolder.setsRecyclerView.setLayoutManager(
+                new LinearLayoutManager(viewHolder.setsRecyclerView.getContext()));
 
 
-        // on changed update set sets of the exercise
-        newWorkoutViewModel.getAllSetItems().observe(mLifecycleOwner, new Observer<List<ExerciseSetItem>>() {
-            // TODO: use DiffUtils
-            @Override
-            public void onChanged(@Nullable List<ExerciseSetItem> exerciseSetItems) {
-                int position = exerciseViewHolder.getAdapterPosition();
-                if(position != RecyclerView.NO_POSITION) {
-                    int exerciseId = mExercises.get(position).id;
-                    List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExerciseId(exerciseId);
-                    exerciseSetsAdapter.setSets(items);
-                }
-            }
-        });
-
-        if(mExercises != null) {
-            ExerciseItem exercise = mExercises.get(i);
-            exerciseViewHolder.exerciseTextView.setText(exercise.name + " ID: "+ exercise.id);
+        int position = viewHolder.getAdapterPosition();
+        if(position != RecyclerView.NO_POSITION) {
+            int exerciseId = mExercises.get(position).id;
+            List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExerciseId(exerciseId);
+            exerciseSetsAdapter.setSets(items);
         }
 
-        exerciseViewHolder.addSetButton.setOnClickListener(new View.OnClickListener() {
+        if(mExercises != null) {
+            ExerciseItem exercise = mExercises.get(viewHolder.getAdapterPosition());
+            viewHolder.exerciseTextView.setText(exercise.name + " ID: "+ exercise.id);
+        }
+
+        viewHolder.addSetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int id = exerciseViewHolder.getAdapterPosition();
+                int id = viewHolder.getAdapterPosition();
                 newWorkoutViewModel.addSet(new ExerciseSetItem(id));
+                List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExerciseId(id);
+                viewHolder.setsRecyclerView.setAdapter(exerciseSetsAdapter);
+                exerciseSetsAdapter.setSets(items);
             }
         });
     }
