@@ -3,6 +3,7 @@ package com.corrot.room.repository;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.entity.Exercise;
@@ -63,6 +64,7 @@ public class ExercisesRepository {
         @Override
         protected Void doInBackground(final Exercise... params) {
             exerciseDAO.insertSingleExercise(params[0]);
+            Log.d("asdasd", "Exercise inserted!");
             return null;
         }
     }

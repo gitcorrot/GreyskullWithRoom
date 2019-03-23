@@ -20,9 +20,14 @@ import com.corrot.room.ExerciseItem;
 import com.corrot.room.ExerciseSetItem;
 import com.corrot.room.adapters.ExercisesListAdapter;
 import com.corrot.room.R;
+import com.corrot.room.db.entity.Exercise;
+import com.corrot.room.db.entity.Workout;
+import com.corrot.room.viewmodel.ExerciseViewModel;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
+import com.corrot.room.viewmodel.WorkoutViewModel;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +38,9 @@ public class NewWorkoutActivity extends AppCompatActivity {
     RecyclerView exercisesRecyclerView;
     Button addExerciseButton;
     ImageButton saveButton;
-    private NewWorkoutViewModel newWorkoutViewModel;
+    private NewWorkoutViewModel mNewWorkoutViewModel;
+    private WorkoutViewModel mWorkoutViewModel;
+    private ExerciseViewModel mExerciseViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +52,11 @@ public class NewWorkoutActivity extends AppCompatActivity {
         addExerciseButton = findViewById(R.id.new_exercise_button);
         saveButton = findViewById(R.id.new_workout_save_button);
 
-        newWorkoutViewModel = ViewModelProviders.of(this).get(NewWorkoutViewModel.class);
-        newWorkoutViewModel.init();
+        mNewWorkoutViewModel = ViewModelProviders.of(this).get(NewWorkoutViewModel.class);
+        mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
+        mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
+
+        mNewWorkoutViewModel.init();
 
         // TODO: Do it right way
         final Date date = Calendar.getInstance().getTime();
@@ -57,7 +67,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         exercisesRecyclerView.setAdapter(exercisesListAdapter);
         exercisesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        newWorkoutViewModel.getAllExerciseItems().observe(this, new Observer<List<ExerciseItem>>() {
+        mNewWorkoutViewModel.getAllExerciseItems().observe(this, new Observer<List<ExerciseItem>>() {
             @Override
             public void onChanged(@Nullable List<ExerciseItem> exerciseItems) {
                 // TODO: use DiffUtils
@@ -76,10 +86,28 @@ public class NewWorkoutActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // add to DB.
+                List<ExerciseItem> exercises = mNewWorkoutViewModel.getAllExerciseItems().getValue();
+                if(exercises != null) {
 
-                //debugging:
-                //newWorkoutViewModel.updateSet(new ExerciseSetItem(0,102.5f,5), 1);
+                    Workout newWorkout = new Workout(date);
+                    mWorkoutViewModel.insertSingleWorkout(newWorkout);
+
+                    for(ExerciseItem e : exercises) {
+
+                        // Getting sets of exercise
+                        List<ExerciseSetItem> sets = mNewWorkoutViewModel.getSetsByExerciseId(e.id);
+                        List<Integer> reps = new ArrayList<>();
+                        List<Float> weights = new ArrayList<>();
+                        if(sets != null) {
+                            for(ExerciseSetItem esi : sets) {
+                                reps.add(esi.reps);
+                                weights.add(esi.weight);
+                            }
+                        }
+                        Exercise newExercise = new Exercise(newWorkout.id,e.name, weights, reps);
+                        mExerciseViewModel.insertSingleExercise(newExercise);
+                    }
+                }
             }
         });
     }
@@ -94,7 +122,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         builder.setItems(exercises, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                newWorkoutViewModel.addExercise(new ExerciseItem(exercises[which]));
+                mNewWorkoutViewModel.addExercise(new ExerciseItem(exercises[which]));
             }
         });
         return builder.create();

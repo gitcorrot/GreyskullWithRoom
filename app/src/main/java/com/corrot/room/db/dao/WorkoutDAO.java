@@ -14,7 +14,7 @@ import java.util.List;
 @Dao
 public interface WorkoutDAO {
     @Insert
-    void insertSingleWorkout(Workout workout);
+    long insertSingleWorkout(Workout workout);
 
     @Query("SELECT * FROM Workout")
     LiveData<List<Workout>> getAllWorkouts();

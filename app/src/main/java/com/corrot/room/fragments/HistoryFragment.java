@@ -26,7 +26,7 @@ import java.util.List;
 
 public class HistoryFragment extends Fragment {
 
-    private Button button;
+    private Button buttonInsert;
     private Button buttonDelete;
 
     private WorkoutViewModel mWorkoutViewModel;
@@ -40,7 +40,7 @@ public class HistoryFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_history, container, false);
 
         // TODO: change names to match convention
-        button = view.findViewById(R.id.button);
+        buttonInsert = view.findViewById(R.id.button);
         buttonDelete = view.findViewById(R.id.buttonDelete);
 
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
@@ -51,10 +51,10 @@ public class HistoryFragment extends Fragment {
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));//not sure if it;s ok
 
-        button.setOnClickListener(new View.OnClickListener() {
+        buttonInsert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Workout testWorkout = new Workout('A', Calendar.getInstance().getTime());
+                Workout testWorkout = new Workout(Calendar.getInstance().getTime());
                 mWorkoutViewModel.insertSingleWorkout(testWorkout);
             }
         });
