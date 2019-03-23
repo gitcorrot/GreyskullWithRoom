@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -70,6 +71,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 showExercisesDialog(v.getContext()).show();
             }
         });
+
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override

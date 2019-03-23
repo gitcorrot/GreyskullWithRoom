@@ -32,6 +32,19 @@ public class NewWorkoutRepository {
         return mNewExercises;
     }
 
+    public ExerciseItem getExerciseById(int id) {
+        List<ExerciseItem> exercises = getAllExercises().getValue();
+        if(exercises != null) {
+            for(ExerciseItem e : exercises) {
+                if(e.id == id)
+                    return e;
+            }
+        }
+
+        Log.d("asdasd", "No exercise of ID: " + id + "found");
+        return null;
+    }
+
     // add exercise and set its ID
     public void addExercise(ExerciseItem exerciseItem) {
         List<ExerciseItem> items = getAllExercises().getValue();
@@ -49,6 +62,40 @@ public class NewWorkoutRepository {
             items.add(exerciseItem);
             mNewExercises.postValue(items);
         }
+    }
+
+    public void removeExercise(ExerciseItem exerciseItem) {
+
+        // not only remove. Also change all next exercises and sets ids
+
+        List<ExerciseItem> items = getAllExercises().getValue();
+        if (items != null) {
+
+            // Remove sets of exercise
+            List<ExerciseSetItem> sets = getSetsByExerciseId(exerciseItem.id);
+            removeMultipleSets(sets);
+
+            // Remove exercise
+            items.remove(exerciseItem);
+
+            // Decrease id of exercises after removed exercise position
+            for (int i = exerciseItem.id; i < items.size(); i++) {
+                items.get(i).id -= 1;
+            }
+            mNewExercises.postValue(items);
+
+            // Decrease id of exercises' sets after removed exercise position
+            List<ExerciseSetItem> setItems = getAllSets().getValue();
+            if (setItems != null) {
+                for (ExerciseSetItem s : setItems) {
+                    if(s.exerciseId > exerciseItem.id)
+                        s.exerciseId -= 1;
+                }
+                mNewSets.postValue(setItems);
+            }
+        }
+
+        Log.d("asdasd", exerciseItem.name + " removed successfully!");
     }
 
     //--------------------------------SETS-----------------------------------//
@@ -121,6 +168,15 @@ public class NewWorkoutRepository {
             items.remove(setItem);
             mNewSets.postValue(items);
             Log.d("asdasd", "Set with ID: " + setItem.exerciseId + " removed successfully!");
+        }
+    }
+
+    public void removeMultipleSets(List<ExerciseSetItem> setItems) {
+        List<ExerciseSetItem> items = getAllSets().getValue();
+        if(items != null) {
+            items.removeAll(setItems);
+            mNewSets.postValue(items);
+            Log.d("asdasd", "Multiple sets removed successfully!");
         }
     }
 }

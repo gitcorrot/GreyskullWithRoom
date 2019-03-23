@@ -23,8 +23,16 @@ public class NewWorkoutViewModel extends ViewModel {
         return mNewWorkoutRepository.getAllExercises();
     }
 
+    public ExerciseItem getExerciseById(int id) {
+        return mNewWorkoutRepository.getExerciseById(id);
+    }
+
     public void addExercise(ExerciseItem exerciseItem) {
         mNewWorkoutRepository.addExercise(exerciseItem);
+    }
+
+    public void removeExercise(ExerciseItem exerciseItem) {
+        mNewWorkoutRepository.removeExercise(exerciseItem);
     }
 
     //--------------------------------SETS-----------------------------------//
