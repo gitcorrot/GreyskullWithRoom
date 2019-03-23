@@ -37,7 +37,7 @@
     <Button
         android:id="@+id/new_exercise_button"
         android:layout_width="280dp"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:text="ADD EXERCISE"
         android:layout_margin="8dp"
         android:background="@color/colorTransparentButton"
@@ -47,7 +47,7 @@
     <ImageButton
         android:id="@+id/new_workout_save_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:scaleX="1.5"
         android:scaleY="1.5"
         android:src="@drawable/ic_save_black_24dp"
@@ -56,6 +56,7 @@
         android:layout_toEndOf="@id/new_exercise_button"
         android:layout_margin="8dp"
         android:focusable="true"
-        android:focusableInTouchMode="true"/>
+        android:focusableInTouchMode="true"
+        android:background="@color/colorTransparentButton"/>
 
 </RelativeLayout>
