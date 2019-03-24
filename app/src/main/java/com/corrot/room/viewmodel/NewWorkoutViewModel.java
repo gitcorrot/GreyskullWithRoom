@@ -17,6 +17,10 @@ public class NewWorkoutViewModel extends ViewModel {
         mNewWorkoutRepository = NewWorkoutRepository.getInstance();
     }
 
+    public void destroyInstance() {
+        mNewWorkoutRepository.destroyInstance();
+    }
+
     //------------------------------EXERCISES---------------------------------//
 
     public LiveData<List<ExerciseItem>> getAllExerciseItems() {

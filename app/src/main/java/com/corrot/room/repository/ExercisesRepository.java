@@ -18,7 +18,7 @@ public class ExercisesRepository {
     private LiveData<List<Exercise>> mAllExercises;
 
     public ExercisesRepository(Application application) {
-        WorkoutsDatabase db = WorkoutsDatabase.getInstance(application);    // Not sure if it's ok
+        WorkoutsDatabase db = WorkoutsDatabase.getInstance(application);
         mExerciseDao = db.exerciseDAO();
         mAllExercises = mExerciseDao.getAllExercises();
     }
@@ -31,13 +31,13 @@ public class ExercisesRepository {
         new insertSingleExerciseAsync(mExerciseDao).execute(exercise);
     }
 
-   /* public void insertMultipleExercise(List<Exercise> exercises) {
+   /* public void insertMultipleExercises(List<Exercise> exercises) {
         new insertMultipleExerciseAsync(mExerciseDao).execute(exercises);
     }*/
 
-    public LiveData<List<Exercise>> getAllExercisesByWorkoutId(long id)
+    public List<Exercise> getExercisesByWorkoutId(String id)
             throws ExecutionException, InterruptedException {
-        return new getAllExercisesByWorkoutIdAsync(mExerciseDao).execute(id).get();
+        return new getExercisesByWorkoutIdAsync(mExerciseDao).execute(id).get();
     }
 
     public void updateSingleExercise(Exercise exercise) {
@@ -85,16 +85,17 @@ public class ExercisesRepository {
     }*/
 
 
-    private static class getAllExercisesByWorkoutIdAsync extends AsyncTask<Long, Void, LiveData<List<Exercise>>> {
+    private static class getExercisesByWorkoutIdAsync extends AsyncTask<String, Void, List<Exercise>> {
 
         private final ExerciseDAO exerciseDAO;
+        LiveData<List<Exercise>> liveData;
 
-        getAllExercisesByWorkoutIdAsync(ExerciseDAO dao) {
+        getExercisesByWorkoutIdAsync(ExerciseDAO dao) {
             this.exerciseDAO = dao;
         }
 
         @Override
-        protected LiveData<List<Exercise>> doInBackground(final Long... params) {
+        protected  List<Exercise> doInBackground(final String... params) {
             return exerciseDAO.getAllExercisesByWorkoutId(params[0]);
         }
     }

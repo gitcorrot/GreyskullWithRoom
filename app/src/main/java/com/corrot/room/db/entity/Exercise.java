@@ -20,13 +20,14 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
                                   onDelete = CASCADE))
 public class Exercise {
 
-    @NonNull
     @PrimaryKey(autoGenerate = true)
     public int id;
 
+    @NonNull
     @ColumnInfo(name = "workoutId", index = true) // not sure if it's OK.
     public String workoutId;
 
+    @NonNull
     @ColumnInfo(name = "Name")
     public String name;
 
@@ -38,7 +39,7 @@ public class Exercise {
     @ColumnInfo(name = "Reps")
     public List<Integer> reps;
 
-    public Exercise(String workoutId, String name, List<Float> weights, List<Integer> reps){
+    public Exercise(@NonNull String workoutId, @NonNull String name, List<Float> weights, List<Integer> reps){
         //this.id = id;
         this.workoutId = workoutId;
         this.name = name;

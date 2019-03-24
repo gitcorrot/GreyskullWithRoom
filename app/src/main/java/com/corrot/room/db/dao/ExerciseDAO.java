@@ -20,7 +20,7 @@ public interface ExerciseDAO {
     void insertMultipleExercises(List<Exercise> exercises);*/
 
     @Query("SELECT * FROM Exercise WHERE workoutId=:id")
-    LiveData<List<Exercise>> getAllExercisesByWorkoutId(long id);
+    List<Exercise> getAllExercisesByWorkoutId(String id);
 
     @Query("SELECT * FROM Exercise")
     LiveData<List<Exercise>> getAllExercises();    // For future diagrams :)

@@ -21,6 +21,7 @@ public class Workout {
     @PrimaryKey//(autoGenerate = true)
     public String id;
 
+    @NonNull
     @ColumnInfo(name = "Date")
     public Date workoutDate;
 

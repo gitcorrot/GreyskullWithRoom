@@ -10,11 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.corrot.room.ExerciseItem;
 import com.corrot.room.ExerciseSetItem;
@@ -22,6 +22,7 @@ import com.corrot.room.adapters.ExercisesListAdapter;
 import com.corrot.room.R;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
+import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.viewmodel.ExerciseViewModel;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
 import com.corrot.room.viewmodel.WorkoutViewModel;
@@ -37,31 +38,32 @@ public class NewWorkoutActivity extends AppCompatActivity {
     TextView dateTextView;
     RecyclerView exercisesRecyclerView;
     Button addExerciseButton;
-    ImageButton saveButton;
+    ImageButton saveWorkoutButton;
     private NewWorkoutViewModel mNewWorkoutViewModel;
     private WorkoutViewModel mWorkoutViewModel;
     private ExerciseViewModel mExerciseViewModel;
+    private AppCompatActivity mActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new);
 
+        mActivity = this;
+
         dateTextView = findViewById(R.id.new_workout_date_text_view);
         exercisesRecyclerView = findViewById(R.id.exercises_recycler_view);
         addExerciseButton = findViewById(R.id.new_exercise_button);
-        saveButton = findViewById(R.id.new_workout_save_button);
+        saveWorkoutButton = findViewById(R.id.new_workout_save_button);
 
-        mNewWorkoutViewModel = ViewModelProviders.of(this).get(NewWorkoutViewModel.class);
-        mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
-        mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
+        mNewWorkoutViewModel = ViewModelProviders.of(mActivity).get(NewWorkoutViewModel.class);
+        mWorkoutViewModel = ViewModelProviders.of(mActivity).get(WorkoutViewModel.class);
+        mExerciseViewModel = ViewModelProviders.of(mActivity).get(ExerciseViewModel.class);
 
         mNewWorkoutViewModel.init();
 
-        // TODO: Do it right way
         final Date date = Calendar.getInstance().getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, MMM d");
-        dateTextView.setText(sdf.format(date));
+        dateTextView.setText(MyTimeUtils.parseDate(date,"dd/MM/yyyy"));
 
         final ExercisesListAdapter exercisesListAdapter = new ExercisesListAdapter(this);
         exercisesRecyclerView.setAdapter(exercisesListAdapter);
@@ -70,7 +72,6 @@ public class NewWorkoutActivity extends AppCompatActivity {
         mNewWorkoutViewModel.getAllExerciseItems().observe(this, new Observer<List<ExerciseItem>>() {
             @Override
             public void onChanged(@Nullable List<ExerciseItem> exerciseItems) {
-                // TODO: use DiffUtils
                 exercisesListAdapter.setExercises(exerciseItems);
             }
         });
@@ -83,7 +84,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         });
 
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
+        saveWorkoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<ExerciseItem> exercises = mNewWorkoutViewModel.getAllExerciseItems().getValue();
@@ -108,8 +109,17 @@ public class NewWorkoutActivity extends AppCompatActivity {
                         mExerciseViewModel.insertSingleExercise(newExercise);
                     }
                 }
+                mActivity.finishAndRemoveTask();//.finish();
+                Toast.makeText(mActivity, "Workout added succesfully!",
+                        Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mNewWorkoutViewModel.destroyInstance();
     }
 
     private AlertDialog showExercisesDialog(Context context) {

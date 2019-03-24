@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.corrot.room.db.entity.Workout;
@@ -26,11 +27,9 @@ import java.util.List;
 
 public class HistoryFragment extends Fragment {
 
-    private Button buttonInsert;
-    private Button buttonDelete;
+    private Button deleteButton;
 
     private WorkoutViewModel mWorkoutViewModel;
-    private ExerciseViewModel mExerciseViewModel;
 
     @Nullable
     @Override
@@ -39,27 +38,16 @@ public class HistoryFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_history, container, false);
 
-        // TODO: change names to match convention
-        buttonInsert = view.findViewById(R.id.button);
-        buttonDelete = view.findViewById(R.id.buttonDelete);
+        deleteButton = view.findViewById(R.id.button_delete_all);
 
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
-        mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
 
         final RecyclerView recyclerView = view.findViewById(R.id.workoutsRecyclerView);
         final WorkoutsListAdapter workoutListAdapter = new WorkoutsListAdapter(view.getContext());//not sure if it;s ok
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));//not sure if it;s ok
 
-        buttonInsert.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Workout testWorkout = new Workout(Calendar.getInstance().getTime());
-                mWorkoutViewModel.insertSingleWorkout(testWorkout);
-            }
-        });
-
-        buttonDelete.setOnClickListener(new View.OnClickListener() {
+        deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mWorkoutViewModel.deleteAll();

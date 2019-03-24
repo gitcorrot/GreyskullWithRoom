@@ -1,36 +1,51 @@
 package com.corrot.room.adapters;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.corrot.room.R;
+import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
+import com.corrot.room.viewmodel.ExerciseViewModel;
 
+import java.util.ConcurrentModificationException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapter.WorkoutViewHolder> {
 
     class WorkoutViewHolder extends RecyclerView.ViewHolder {
         private final TextView workoutIdTextView;
         private final TextView workoutDateTextView;
+        private TextView setsTextView;
 
         private WorkoutViewHolder(View itemView) {
             super(itemView);
             workoutIdTextView = itemView.findViewById(R.id.recyclerview_workout_item_id);
             workoutDateTextView = itemView.findViewById(R.id.recyclerview_workout_item_date);
+            setsTextView = itemView.findViewById(R.id.recyclerview_workout_sets);
         }
     }
 
     private final LayoutInflater mInflater;
     private List<Workout> mWorkouts;
+    private ExerciseViewModel mExerciseViewModel;
 
     public WorkoutsListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
+
+
+        mExerciseViewModel = ViewModelProviders // ??
+                .of((AppCompatActivity)context).get(ExerciseViewModel .class);
+
     }
 
     @NonNull
@@ -46,6 +61,35 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
             Workout w = mWorkouts.get(i);
             workoutViewHolder.workoutIdTextView.setText("Workout ID: " + w.id);
             workoutViewHolder.workoutDateTextView.setText("Date: " + w.workoutDate.toString());
+
+            // exercises and sets
+            try {
+
+                List<Exercise> exercises = mExerciseViewModel.getExercisesByWorkoutId(w.id);
+
+                String exercisesText = "";
+
+                for(Exercise e : exercises) {
+
+                    String rxw = "";
+
+                    exercisesText += "\n" + e.name + "\n";
+
+                    if(e.weights.size() == e.reps.size()) {
+                        for (int j = 0; j < e.weights.size(); j++) {
+                            rxw += e.reps.get(j) + "x" + e.weights.get(j) + "kg, ";
+                        }
+                    }
+
+                    exercisesText += rxw;
+                }
+                workoutViewHolder.setsTextView.setText(exercisesText);
+
+            } catch (InterruptedException ie) {
+                Log.e("asdasd", ie.getMessage());
+            } catch (ExecutionException ee) {
+                Log.e("asdasd", ee.getMessage());
+            }
         }
         else {
             workoutViewHolder.workoutIdTextView.setText("Workout ID");

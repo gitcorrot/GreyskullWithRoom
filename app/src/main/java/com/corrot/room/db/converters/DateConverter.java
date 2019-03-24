@@ -12,6 +12,6 @@ public class DateConverter {
 
     @TypeConverter
     public static Long toLong(Date value) {
-        return value == null ? null : value.getTime();
+        return value == null ? null : value.getTime()/1000;
     }
 }

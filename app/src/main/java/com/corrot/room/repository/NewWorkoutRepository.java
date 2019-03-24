@@ -23,6 +23,13 @@ public class NewWorkoutRepository {
         return instance;
     }
 
+    //--------------------------------UTILS----------------------------------//
+
+    public void destroyInstance() {
+        instance = null;
+    }
+
+
     //------------------------------EXERCISES---------------------------------//
 
     public LiveData<List<ExerciseItem>> getAllExercises() {

@@ -29,9 +29,9 @@ public class ExerciseViewModel extends AndroidViewModel {
         mExercisesRepository.insertSingleExercise(exercise);
     }
 
-    public LiveData<List<Exercise>> getAllExercisesByWorkoutId(long id)
+    public List<Exercise> getExercisesByWorkoutId(String id)
             throws ExecutionException, InterruptedException {
-        return mExercisesRepository.getAllExercisesByWorkoutId(id);
+        return mExercisesRepository.getExercisesByWorkoutId(id);
     }
 
     public void updateSingleExercise(Exercise exercise) {

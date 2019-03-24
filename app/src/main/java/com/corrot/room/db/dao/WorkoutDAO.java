@@ -22,6 +22,12 @@ public interface WorkoutDAO {
     @Query("DELETE FROM Workout")
     void deleteAll();
 
+    //SELECT * FROM Workout ORDER BY Date <-- returns
+
+    //SELECT datetime(1553426734, 'unixepoch', 'localtime')
+
+    //SELECT * FROM Workout WHERE Date > strftime('%s','2004-01-01 02:34:56')
+
     @Update
     void updateWorkout(Workout workout);
 
