@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.corrot.room.ExerciseItem;
 import com.corrot.room.ExerciseSetItem;
+import com.corrot.room.db.entity.Exercise;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,6 @@ public class NewWorkoutRepository {
         instance = null;
     }
 
-
     //------------------------------EXERCISES---------------------------------//
 
     public LiveData<List<ExerciseItem>> getAllExercises() {
@@ -37,6 +37,11 @@ public class NewWorkoutRepository {
             mNewExercises = new MutableLiveData<>();
         }
         return mNewExercises;
+    }
+
+    public void setExercises(List<ExerciseItem> exercises) {
+        mNewExercises = new MutableLiveData<>();
+        mNewExercises.postValue(exercises);
     }
 
     public ExerciseItem getExerciseById(int id) {
@@ -112,6 +117,11 @@ public class NewWorkoutRepository {
             mNewSets = new MutableLiveData<>();
         }
         return mNewSets;
+    }
+
+    public void setSets(List<ExerciseSetItem> sets) {
+        mNewSets = new MutableLiveData<>();
+        mNewSets.postValue(sets);
     }
 
     public List<ExerciseSetItem> getSetsByExerciseId(int id) {

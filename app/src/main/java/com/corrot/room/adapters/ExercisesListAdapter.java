@@ -27,6 +27,7 @@ import java.util.List;
 public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdapter.exerciseViewHolder> {
 
     class exerciseViewHolder extends RecyclerView.ViewHolder {
+
         private final TextView exerciseTextView;
         private final RecyclerView setsRecyclerView;
         private final Button addSetButton;
@@ -34,6 +35,7 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
 
         private exerciseViewHolder(View view) {
             super(view);
+
             exerciseTextView = view.findViewById(R.id.exercise_name_text_view);
             setsRecyclerView = view.findViewById(R.id.sets_recycler_view);
             addSetButton = view.findViewById(R.id.add_set_button);
@@ -41,14 +43,15 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
         }
     }
 
-    private final LayoutInflater mInflater;
-    private List<ExerciseItem> mExercises;
     private NewWorkoutViewModel newWorkoutViewModel;
 
+    private final LayoutInflater mInflater;
+    private List<ExerciseItem> mExercises;
 
     public ExercisesListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
-        mExercises = new ArrayList<>(); // necessary?
+        //mExercises = new ArrayList<>(); // necessary?
+
         newWorkoutViewModel = ViewModelProviders.of((AppCompatActivity)context). // ???
                 get(NewWorkoutViewModel.class);
         newWorkoutViewModel.init();
@@ -73,12 +76,12 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
                 new LinearLayoutManager(viewHolder.setsRecyclerView.getContext()));
 
         final int exercisePosition = viewHolder.getAdapterPosition();
+
         if(exercisePosition != RecyclerView.NO_POSITION) {
             int exerciseId = mExercises.get(exercisePosition).id;
             List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExerciseId(exerciseId);
             exerciseSetsAdapter.setSets(items);
         }
-
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT) {
             @Override

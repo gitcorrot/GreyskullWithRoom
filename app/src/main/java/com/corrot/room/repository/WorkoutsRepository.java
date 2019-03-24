@@ -10,6 +10,7 @@ import com.corrot.room.db.dao.WorkoutDAO;
 import com.corrot.room.db.entity.Workout;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class WorkoutsRepository {
 
@@ -24,6 +25,10 @@ public class WorkoutsRepository {
 
     public LiveData<List<Workout>> getAllWorkouts() {
         return mAllWorkouts;
+    }
+
+    public Workout getWorkoutById(String id) throws ExecutionException, InterruptedException {
+            return new getWorkoutByIdAsync(mWorkoutDAO).execute(id).get();
     }
 
     public void deleteAll() {
@@ -58,6 +63,20 @@ public class WorkoutsRepository {
         protected Void doInBackground(Void... voids) {
             workoutDAO.deleteAll();
             return null;
+        }
+    }
+
+    private static class getWorkoutByIdAsync extends AsyncTask<String, Void, Workout> {
+
+        private final WorkoutDAO workoutDAO;
+
+        getWorkoutByIdAsync(WorkoutDAO dao) {
+            this.workoutDAO = dao;
+        }
+
+        @Override
+        protected Workout doInBackground(String... params) {
+            return workoutDAO.getWorkoutById(params[0]);
         }
     }
 

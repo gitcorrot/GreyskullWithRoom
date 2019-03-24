@@ -27,6 +27,10 @@ public class NewWorkoutViewModel extends ViewModel {
         return mNewWorkoutRepository.getAllExercises();
     }
 
+    public void setExercises(List<ExerciseItem> exercises) {
+        mNewWorkoutRepository.setExercises(exercises);
+    }
+
     public ExerciseItem getExerciseById(int id) {
         return mNewWorkoutRepository.getExerciseById(id);
     }
@@ -43,6 +47,10 @@ public class NewWorkoutViewModel extends ViewModel {
 
     public LiveData<List<ExerciseSetItem>> getAllSetItems() {
         return mNewWorkoutRepository.getAllSets();
+    }
+
+    public void setSets(List<ExerciseSetItem> sets) {
+        mNewWorkoutRepository.setSets(sets);
     }
 
     public List<ExerciseSetItem> getSetsByExerciseId(int exerciseId) {

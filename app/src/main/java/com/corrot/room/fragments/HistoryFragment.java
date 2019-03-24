@@ -37,21 +37,22 @@ public class HistoryFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_history, container, false);
-
         deleteButton = view.findViewById(R.id.button_delete_all);
-
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
 
         final RecyclerView recyclerView = view.findViewById(R.id.workoutsRecyclerView);
-        final WorkoutsListAdapter workoutListAdapter = new WorkoutsListAdapter(view.getContext());//not sure if it;s ok
+        final WorkoutsListAdapter workoutListAdapter =
+                new WorkoutsListAdapter(this.getContext(), this.getActivity());
+
         recyclerView.setAdapter(workoutListAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));//not sure if it;s ok
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mWorkoutViewModel.deleteAll();
-                Toast.makeText(view.getContext(), "All workouts deleted!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(),
+                        "All workouts deleted!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -74,7 +75,8 @@ public class HistoryFragment extends Fragment {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
                 Workout w = workoutListAdapter.getWorkoutAt(viewHolder.getAdapterPosition());
                 mWorkoutViewModel.deleteWorkout(w);
-                Toast.makeText(view.getContext(), "Workout deleted!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(),
+                        "Workout deleted!", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
 

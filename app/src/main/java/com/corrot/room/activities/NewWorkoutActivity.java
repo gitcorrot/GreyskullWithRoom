@@ -4,12 +4,14 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -22,6 +24,7 @@ import com.corrot.room.adapters.ExercisesListAdapter;
 import com.corrot.room.R;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
+import com.corrot.room.utils.EntityUtils;
 import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.viewmodel.ExerciseViewModel;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
@@ -32,17 +35,26 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class NewWorkoutActivity extends AppCompatActivity {
+
+    public final static int FLAG_ERROR = -1;
+    public final static int FLAG_ADD_WORKOUT = 0;
+    public final static int FLAG_UPDATE_WORKOUT = 1;
 
     TextView dateTextView;
     RecyclerView exercisesRecyclerView;
     Button addExerciseButton;
     ImageButton saveWorkoutButton;
+
     private NewWorkoutViewModel mNewWorkoutViewModel;
     private WorkoutViewModel mWorkoutViewModel;
     private ExerciseViewModel mExerciseViewModel;
+
     private AppCompatActivity mActivity;
+    private Date date;
+    private int currentFlag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +74,42 @@ public class NewWorkoutActivity extends AppCompatActivity {
 
         mNewWorkoutViewModel.init();
 
-        final Date date = Calendar.getInstance().getTime();
-        dateTextView.setText(MyTimeUtils.parseDate(date,"dd/MM/yyyy"));
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            currentFlag = extras.getInt("flags", FLAG_ERROR);
+            switch (currentFlag) {
+                case FLAG_ERROR:
+                    Log.d("asdasd", "Error flag!");
+                    break;
+                case FLAG_ADD_WORKOUT:
+                    date = Calendar.getInstance().getTime();
+                    dateTextView.setText(MyTimeUtils.parseDate(date,"dd/MM/yyyy"));
+                    break;
+                case FLAG_UPDATE_WORKOUT:
+                    String workoutId = extras.getString("workoutId", "no workout");
+                    try {
+                        Workout w = mWorkoutViewModel.getWorkoutById(workoutId);
+                        date = w.workoutDate;
+                        dateTextView.setText(MyTimeUtils.parseDate(date,"dd/MM/yyyy"));
+                    }
+                    catch (InterruptedException e) { Log.d("asdasd", e.getMessage()); }
+                    catch (ExecutionException e) { Log.d("asdasd", e.getMessage()); }
+
+                    if(!workoutId.equals("no workout")) {
+                        try {
+                            List<Exercise> exercises =
+                                    mExerciseViewModel.getExercisesByWorkoutId(workoutId);
+                            if(exercises != null) {
+                                mNewWorkoutViewModel.setExercises(EntityUtils.getExerciseItems(exercises));
+                                mNewWorkoutViewModel.setSets(EntityUtils.getExerciseSetItems(exercises));
+                            }
+                        }
+                        catch (InterruptedException e) { Log.d("asdasd", e.getMessage()); }
+                        catch (ExecutionException e) { Log.d("asdasd", e.getMessage()); }
+                    }
+                    break;
+            }
+        }
 
         final ExercisesListAdapter exercisesListAdapter = new ExercisesListAdapter(this);
         exercisesRecyclerView.setAdapter(exercisesListAdapter);
@@ -74,7 +120,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
             public void onChanged(@Nullable List<ExerciseItem> exerciseItems) {
                 exercisesListAdapter.setExercises(exerciseItems);
             }
-        });
+        }); // not sure if it's necessary
 
         addExerciseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,9 +152,17 @@ public class NewWorkoutActivity extends AppCompatActivity {
                             }
                         }
                         Exercise newExercise = new Exercise(newWorkout.id,e.name, weights, reps);
-                        mExerciseViewModel.insertSingleExercise(newExercise);
+                        switch (currentFlag) {
+                            case FLAG_ADD_WORKOUT:
+                                mExerciseViewModel.insertSingleExercise(newExercise);
+                                break;
+                            case FLAG_UPDATE_WORKOUT:
+                                mExerciseViewModel.updateSingleExercise(newExercise);
+                                break;
+                        }
                     }
                 }
+
                 mActivity.finishAndRemoveTask();//.finish();
                 Toast.makeText(mActivity, "Workout added succesfully!",
                         Toast.LENGTH_SHORT).show();

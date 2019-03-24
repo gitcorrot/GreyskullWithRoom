@@ -14,10 +14,13 @@ import java.util.List;
 @Dao
 public interface WorkoutDAO {
     @Insert
-    long insertSingleWorkout(Workout workout);
+    void insertSingleWorkout(Workout workout);
 
     @Query("SELECT * FROM Workout")
     LiveData<List<Workout>> getAllWorkouts();
+
+    @Query("SELECT * FROM Workout WHERE id=:id")
+    Workout getWorkoutById(String id);
 
     @Query("DELETE FROM Workout")
     void deleteAll();

@@ -88,7 +88,6 @@ public class ExercisesRepository {
     private static class getExercisesByWorkoutIdAsync extends AsyncTask<String, Void, List<Exercise>> {
 
         private final ExerciseDAO exerciseDAO;
-        LiveData<List<Exercise>> liveData;
 
         getExercisesByWorkoutIdAsync(ExerciseDAO dao) {
             this.exerciseDAO = dao;

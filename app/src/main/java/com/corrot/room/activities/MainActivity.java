@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent newWorkoutIntent =
                         new Intent(MainActivity.this, NewWorkoutActivity.class);
+                newWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_ADD_WORKOUT);
                 MainActivity.this.startActivity(newWorkoutIntent);
             }
         });

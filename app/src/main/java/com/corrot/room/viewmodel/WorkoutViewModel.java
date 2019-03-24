@@ -8,6 +8,7 @@ import com.corrot.room.repository.WorkoutsRepository;
 import com.corrot.room.db.entity.Workout;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class WorkoutViewModel extends AndroidViewModel {
 
@@ -22,6 +23,11 @@ public class WorkoutViewModel extends AndroidViewModel {
 
     public LiveData<List<Workout>> getAllWorkouts() {
         return mAllWorkouts;
+    }
+
+    public Workout getWorkoutById(String id)
+        throws ExecutionException, InterruptedException {
+        return mWorkoutsRepository.getWorkoutById(id);
     }
 
     public void insertSingleWorkout(Workout workout) {
