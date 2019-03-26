@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
-import com.corrot.room.db.converters.RepsInSets;
+import com.corrot.room.db.converters.RepsConverter;
 import com.corrot.room.db.converters.WeightsConverter;
 
 import java.util.List;
@@ -36,12 +36,11 @@ public class Exercise {
     @ColumnInfo(name = "Weights")
     public List<Float> weights;
 
-    @TypeConverters(RepsInSets.class)
+    @TypeConverters(RepsConverter.class)
     @ColumnInfo(name = "Reps")
     public List<Integer> reps;
 
     public Exercise(@NonNull String workoutId, @NonNull String name, List<Float> weights, List<Integer> reps){
-        //this.id = id;
         this.workoutId = workoutId;
         this.name = name;
         this.weights = weights;

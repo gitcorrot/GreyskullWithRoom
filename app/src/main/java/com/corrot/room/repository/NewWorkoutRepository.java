@@ -18,7 +18,7 @@ public class NewWorkoutRepository {
     private MutableLiveData<List<ExerciseSetItem>> mNewSets;
 
     public static NewWorkoutRepository getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new NewWorkoutRepository();
         }
         return instance;
@@ -33,7 +33,7 @@ public class NewWorkoutRepository {
     //------------------------------EXERCISES---------------------------------//
 
     public LiveData<List<ExerciseItem>> getAllExercises() {
-        if(mNewExercises == null) {
+        if (mNewExercises == null) {
             mNewExercises = new MutableLiveData<>();
         }
         return mNewExercises;
@@ -41,44 +41,30 @@ public class NewWorkoutRepository {
 
     public void setExercises(List<ExerciseItem> exercises) {
         mNewExercises = new MutableLiveData<>();
-
-        for(ExerciseItem e : exercises) {
-
-
-            Log.d("asdasd", "Setting exercises.  Exercise ID: " + e.position);
-
-        }
-
         mNewExercises.postValue(exercises);
     }
 
     public ExerciseItem getExerciseByPosition(int position) {
         List<ExerciseItem> exercises = getAllExercises().getValue();
-        if(exercises != null) {
-            for(ExerciseItem e : exercises) {
-                if(e.position == position)
+        if (exercises != null) {
+            for (ExerciseItem e : exercises) {
+                if (e.position == position)
                     return e;
             }
         }
-
-        Log.d("asdasd", "No exercise on position: " + position + "found");
         return null;
     }
 
     // add exercise and set its ID
     public void addExercise(ExerciseItem exerciseItem) {
         List<ExerciseItem> items = getAllExercises().getValue();
-        if(items != null) {
+        if (items != null) {
             exerciseItem.position = items.size();
-            Log.d("asdasd", "Exercise (Position: " + exerciseItem.position
-                    + " added successfully! " + "List.size() == " + items.size());
             items.add(exerciseItem);
             mNewExercises.postValue(items);
-        }
-        else {
+        } else {
             items = new ArrayList<>();
             exerciseItem.position = items.size();
-            Log.d("asdasd", "ExercisesList == null. Creating exercises list!");
             items.add(exerciseItem);
             mNewExercises.postValue(items);
         }
@@ -108,20 +94,18 @@ public class NewWorkoutRepository {
             List<ExerciseSetItem> setItems = getAllSets().getValue();
             if (setItems != null) {
                 for (ExerciseSetItem s : setItems) {
-                    if(s.exercisePosition > exerciseItem.position)
+                    if (s.exercisePosition > exerciseItem.position)
                         s.exercisePosition -= 1;
                 }
                 mNewSets.postValue(setItems);
             }
         }
-
-        Log.d("asdasd", exerciseItem.name + " removed successfully!");
     }
 
     //--------------------------------SETS-----------------------------------//
 
     public LiveData<List<ExerciseSetItem>> getAllSets() {
-        if(mNewSets == null) {
+        if (mNewSets == null) {
             mNewSets = new MutableLiveData<>();
         }
         return mNewSets;
@@ -135,9 +119,9 @@ public class NewWorkoutRepository {
     public List<ExerciseSetItem> getSetsByExercisePosition(int position) {
         List<ExerciseSetItem> setItems = getAllSets().getValue();
         List<ExerciseSetItem> exerciseSetItems = new ArrayList<>();
-        if(setItems != null) {
-            for(ExerciseSetItem e : setItems) {
-                if(e.exercisePosition == position) exerciseSetItems.add(e);
+        if (setItems != null) {
+            for (ExerciseSetItem e : setItems) {
+                if (e.exercisePosition == position) exerciseSetItems.add(e);
             }
         }
         return exerciseSetItems;
@@ -145,14 +129,10 @@ public class NewWorkoutRepository {
 
     public void addSet(ExerciseSetItem setItem) {
         List<ExerciseSetItem> items = getAllSets().getValue();
-        if(items != null) {
+        if (items != null) {
             items.add(setItem);
-            Log.d("asdasd", "GetAllSets != null, position: " +
-                    setItem.exercisePosition + " List.size() == " + items.size());
             mNewSets.postValue(items);
-        }
-        else {
-            Log.d("asdasd", "GetAllSets == null, creating new ArrayList");
+        } else {
             items = new ArrayList<>();
             items.add(setItem);
             mNewSets.postValue(items);
@@ -164,45 +144,41 @@ public class NewWorkoutRepository {
         List<ExerciseSetItem> exerciseSetItems = getSetsByExercisePosition(setItem.exercisePosition);
 
         // update set on position
-        if(exerciseSetItems != null) {
+        if (exerciseSetItems != null) {
             exerciseSetItems.set(position, setItem);
-        }
-        else {
-            Log.e("asdasd", "Error when updating set. List of set is null!");
+        } else {
+            Log.e("NewWorkoutRepository", "Error when updating set. List of set is null!");
         }
 
         // delete all sets with setItem.exerciseId
         // add updated list of sets to sets
-        if(items != null && exerciseSetItems != null) {
+        if (items != null && exerciseSetItems != null) {
             List<ExerciseSetItem> toRemove = new ArrayList<>();
 
 
             for (ExerciseSetItem e : items) {
-                if(e.exercisePosition == setItem.exercisePosition) toRemove.add(e);
+                if (e.exercisePosition == setItem.exercisePosition) toRemove.add(e);
             }
 
             items.removeAll(toRemove);
             items.addAll(exerciseSetItems);
         }
-        Log.d("asdasd", "Set on position " + position + " updated successfully!");
         mNewSets.postValue(items);
     }
 
     public void removeSet(ExerciseSetItem setItem) {
         List<ExerciseSetItem> items = getAllSets().getValue();
-        if(items != null) {
+        if (items != null) {
             items.remove(setItem);
             mNewSets.postValue(items);
-            Log.d("asdasd", "Set with position: " + setItem.exercisePosition + " removed successfully!");
         }
     }
 
-    public void removeMultipleSets(List<ExerciseSetItem> setItems) {
+    private void removeMultipleSets(List<ExerciseSetItem> setItems) {
         List<ExerciseSetItem> items = getAllSets().getValue();
-        if(items != null) {
+        if (items != null) {
             items.removeAll(setItems);
             mNewSets.postValue(items);
-            Log.d("asdasd", "Multiple sets removed successfully!");
         }
     }
 }

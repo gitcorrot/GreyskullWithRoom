@@ -1,18 +1,25 @@
 package com.corrot.room.db.converters;
 
 import android.arch.persistence.room.TypeConverter;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepsInSets {
+public class RepsConverter {
     @TypeConverter
     public List<Integer> fromString(String s) {
         List<Integer> list = new ArrayList<>();
         String[] strings = s.split(", ");
 
         for(String str : strings) {
-            list.add(Integer.parseInt(str));
+            if(!str.isEmpty()) {
+                try {
+                    list.add(Integer.parseInt(str));
+                } catch (NumberFormatException e) {
+                    Log.e("RepsConverter", e.getLocalizedMessage());
+                }
+            }
         }
         return list;
     }

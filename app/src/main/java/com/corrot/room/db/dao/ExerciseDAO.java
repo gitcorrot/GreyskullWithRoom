@@ -16,14 +16,17 @@ public interface ExerciseDAO {
     @Insert
     void insertSingleExercise(Exercise exercise);
 
-    /*@Insert
-    void insertMultipleExercises(List<Exercise> exercises);*/
+    @Insert
+    void insertMultipleExercises(List<Exercise> exercises);
 
-    @Query("SELECT * FROM Exercise WHERE workoutId=:id")
-    List<Exercise> getAllExercisesByWorkoutId(String id);
+    @Query("SELECT * FROM Exercise WHERE workoutId=:workoutId")
+    List<Exercise> getAllExercisesByWorkoutId(String workoutId);
 
     @Query("SELECT * FROM Exercise")
     LiveData<List<Exercise>> getAllExercises();    // For future diagrams :)
+
+    @Query("DELETE FROM Exercise WHERE workoutId=:workoutId")
+    void deleteAllExercisesByWorkoutId(String workoutId);
 
     @Update
     void updateExercise(Exercise exercise);

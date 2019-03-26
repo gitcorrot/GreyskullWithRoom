@@ -31,13 +31,17 @@ public class ExercisesRepository {
         new insertSingleExerciseAsync(mExerciseDao).execute(exercise);
     }
 
-   /* public void insertMultipleExercises(List<Exercise> exercises) {
-        new insertMultipleExerciseAsync(mExerciseDao).execute(exercises);
-    }*/
+    public void insertMultipleExercises(List<Exercise> exercises) {
+        new insertMultipleExercisesAsync(mExerciseDao).execute(exercises);
+    }
 
     public List<Exercise> getExercisesByWorkoutId(String id)
             throws ExecutionException, InterruptedException {
         return new getExercisesByWorkoutIdAsync(mExerciseDao).execute(id).get();
+    }
+
+    public void deleteAllExercisesByWorkoutId(String id) {
+        new deleteAllExercisesByWorkoutIdAsync(mExerciseDao).execute(id);
     }
 
     public void updateSingleExercise(Exercise exercise) {
@@ -69,20 +73,20 @@ public class ExercisesRepository {
         }
     }
 
-    /*private static class insertMultipleExerciseAsync extends AsyncTask<List<Exercise>, Void, Void> {
+    private static class insertMultipleExercisesAsync extends AsyncTask<List<Exercise>, Void, Void> {
 
         private final ExerciseDAO exerciseDAO;
 
-        insertMultipleExerciseAsync(ExerciseDAO dao) {
+        insertMultipleExercisesAsync(ExerciseDAO dao) {
             this.exerciseDAO = dao;
         }
 
         @Override
-        protected Void doInBackground(final Exercise... params) {
-            exerciseDAO.insertSingleExercise(params[0]);
+        protected Void doInBackground(List<Exercise>... params) {
+            exerciseDAO.insertMultipleExercises(params[0]);
             return null;
         }
-    }*/
+    }
 
 
     private static class getExercisesByWorkoutIdAsync extends AsyncTask<String, Void, List<Exercise>> {
@@ -98,6 +102,23 @@ public class ExercisesRepository {
             return exerciseDAO.getAllExercisesByWorkoutId(params[0]);
         }
     }
+
+
+    private static class deleteAllExercisesByWorkoutIdAsync extends AsyncTask<String, Void, Void> {
+
+        private final ExerciseDAO exerciseDAO;
+
+        deleteAllExercisesByWorkoutIdAsync(ExerciseDAO dao) {
+            this.exerciseDAO = dao;
+        }
+
+        @Override
+        protected  Void doInBackground(final String... params) {
+            exerciseDAO.deleteAllExercisesByWorkoutId(params[0]);
+            return null;
+        }
+    }
+
 
     private static class updateSingleExerciseAsync extends AsyncTask<Exercise, Void, Void> {
 

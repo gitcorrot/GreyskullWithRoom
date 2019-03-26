@@ -50,8 +50,6 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
 
     public ExercisesListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
-        //mExercises = new ArrayList<>(); // necessary?
-
         newWorkoutViewModel = ViewModelProviders.of((AppCompatActivity)context). // ???
                 get(NewWorkoutViewModel.class);
         newWorkoutViewModel.init();

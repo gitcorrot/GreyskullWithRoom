@@ -120,8 +120,13 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
                     String repsString = editText.getText().toString();
                     if(TextUtils.isEmpty(repsString))
                         this.reps = 0;
-                    else
-                        this.reps = Integer.parseInt(repsString);
+                    else {
+                        try {
+                            this.reps = Integer.parseInt(repsString);
+                        } catch (NumberFormatException e) {
+                            Log.e("SetsAdapter", e.getLocalizedMessage());
+                        }
+                    }
                     Log.d("asdasd", "item.reps = " + item.reps + ", reps = " + reps);
 
                     if (item.reps != reps) {
@@ -135,8 +140,13 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
                     String weightString = editText.getText().toString();
                     if(TextUtils.isEmpty(weightString))
                         this.weight = 0;
-                    else
-                        this.weight = Float.parseFloat(weightString);
+                    else {
+                        try {
+                            this.weight = Float.parseFloat(weightString);
+                        } catch (NumberFormatException e) {
+                            Log.e("SetsAdapter", e.getLocalizedMessage());
+                        }
+                    }
                     Log.d("asdasd", "item.weight = " + item.weight + ", weight = " + weight);
 
                     if (item.weight != weight) {

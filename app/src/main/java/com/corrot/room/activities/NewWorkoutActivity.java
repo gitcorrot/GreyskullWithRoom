@@ -76,11 +76,13 @@ public class NewWorkoutActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentFlag = extras.getInt("flags", FLAG_ERROR);
-            Log.d("asdasd", "Activity opened with flag: " + currentFlag + "!");
+
+            Log.d("NewWorkoutActivity", "Activity opened with flag: " + currentFlag + "!");
+
             switch (currentFlag) {
 
                 case FLAG_ERROR: {
-                    Log.d("asdasd", "Error flag!");
+                    Log.e("NewWorkoutActivity", "Error flag!");
                     break;
                 }
 
@@ -97,9 +99,9 @@ public class NewWorkoutActivity extends AppCompatActivity {
                         date = mWorkout.workoutDate;
                         dateTextView.setText(MyTimeUtils.parseDate(date, "dd/MM/yyyy"));
                     } catch (InterruptedException e) {
-                        Log.d("asdasd", e.getMessage());
+                        Log.d("NewWorkoutActivity", e.getMessage());
                     } catch (ExecutionException e) {
-                        Log.d("asdasd", e.getMessage());
+                        Log.d("NewWorkoutActivity", e.getMessage());
                     }
 
                     if (!workoutId.equals("no workout")) {
@@ -107,14 +109,15 @@ public class NewWorkoutActivity extends AppCompatActivity {
                             List<Exercise> exercises =
                                     mExerciseViewModel.getExercisesByWorkoutId(workoutId);
                             if (exercises != null) {
-                                mNewWorkoutViewModel.setExercises(EntityUtils.getExerciseItems(exercises));
-                                mNewWorkoutViewModel.setSets(EntityUtils.getExerciseSetItems(exercises));
-                                Log.d("asdasd", "MNEWWORKOUTVIEWMODEL UPDATING SETS AND EXERCISES");
+                                mNewWorkoutViewModel
+                                        .setExercises(EntityUtils.getExerciseItems(exercises));
+                                mNewWorkoutViewModel
+                                        .setSets(EntityUtils.getExerciseSetItems(exercises));
                             }
                         } catch (InterruptedException e) {
-                            Log.d("asdasd", e.getMessage());
+                            Log.d("NewWorkoutActivity", e.getMessage());
                         } catch (ExecutionException e) {
-                            Log.d("asdasd", e.getMessage());
+                            Log.d("NewWorkoutActivity", e.getMessage());
                         }
                     }
                     break;
@@ -131,7 +134,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
             public void onChanged(@Nullable List<ExerciseItem> exerciseItems) {
                 exercisesListAdapter.setExercises(exerciseItems);
             }
-        }); // not sure if it's necessary
+        });
 
         addExerciseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,60 +143,39 @@ public class NewWorkoutActivity extends AppCompatActivity {
             }
         });
 
-
         saveWorkoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<ExerciseItem> exercises = mNewWorkoutViewModel.getAllExerciseItems().getValue();
-                if(exercises != null) {
-
-                    switch (currentFlag) {
-
-                        case FLAG_ADD_WORKOUT:
-                            mWorkout = new Workout(date);
-                            mWorkoutViewModel.insertSingleWorkout(mWorkout);
-                            break;
-
-                        case FLAG_UPDATE_WORKOUT:
-                            // TODO: update only if workout has changed.
-                            // TODO: what if exercise is removed?
-                            mWorkoutViewModel.updateWorkout(mWorkout);
-                            break;
-                    }
-
-                    for(ExerciseItem e : exercises) {
-
-                        // Getting sets of exercise
-                        List<ExerciseSetItem> sets = mNewWorkoutViewModel.getSetsByExercisePosition(e.position);
-                        List<Integer> reps = new ArrayList<>();
-                        List<Float> weights = new ArrayList<>();
-                        if(sets != null) {
-                            for(ExerciseSetItem esi : sets) {
-                                reps.add(esi.reps);
-                                weights.add(esi.weight);
-                            }
-                        }
-
-                        Log.d("asdasd", "Gettign exercise of ID: " + e.position);
-                        Exercise newExercise = new Exercise(e.exerciseId, mWorkout.id,e.name, weights, reps);
-
-                        switch (currentFlag) {
-                            case FLAG_ADD_WORKOUT:
-                                mExerciseViewModel.insertSingleExercise(newExercise);
-                                Log.d("asdasd", "Exercise added successfully!");
-                                break;
-                            case FLAG_UPDATE_WORKOUT:
-                                mExerciseViewModel.updateSingleExercise(newExercise);
-                                Log.d("asdasd", "Exercise updated successfully!");
-                                break;
-                        }
-                    }
-                }
-                Toast.makeText(mActivity, "Exercise added successfully!",
-                        Toast.LENGTH_SHORT).show();
-                mActivity.finishAndRemoveTask(); //.finish();
+                saveWorkout();
+                mActivity.finishAndRemoveTask();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Do you want to save this workout?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saveWorkout();
+                mActivity.finishAndRemoveTask();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mActivity.finishAndRemoveTask();
+            }
+        });
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        builder.create().show();
     }
 
     @Override
@@ -207,7 +189,8 @@ public class NewWorkoutActivity extends AppCompatActivity {
         builder.setTitle("Which exercise you want to add?");
 
         // TODO: get it from shared preferences
-        final String[] exercises = {"Squat", "Dead lift", "Bench press"};
+        final String[] exercises = {"Squat", "Deadlift", "Bench Press", "Barbel Row",
+                                    "Pull-ups", "Head over press"};
 
         builder.setItems(exercises, new DialogInterface.OnClickListener() {
             @Override
@@ -216,5 +199,63 @@ public class NewWorkoutActivity extends AppCompatActivity {
             }
         });
         return builder.create();
+    }
+
+    private void saveWorkout() {
+        List<ExerciseItem> exercises = mNewWorkoutViewModel.getAllExerciseItems().getValue();
+        if (exercises != null) {
+
+            switch (currentFlag) {
+
+                case FLAG_ADD_WORKOUT:
+                    mWorkout = new Workout(date);
+                    mWorkoutViewModel.insertSingleWorkout(mWorkout);
+                    break;
+
+                case FLAG_UPDATE_WORKOUT:
+                    mWorkoutViewModel.updateWorkout(mWorkout);
+                    mExerciseViewModel.deleteAllExercisesByWorkoutId(mWorkout.id);
+                    break;
+            }
+
+            List<Exercise> updatedExercises = new ArrayList<>();
+
+            for (ExerciseItem e : exercises) {
+
+                // Getting sets of exercise
+                List<ExerciseSetItem> sets =
+                        mNewWorkoutViewModel.getSetsByExercisePosition(e.position);
+                List<Integer> reps = new ArrayList<>();
+                List<Float> weights = new ArrayList<>();
+
+                if (sets != null) {
+                    for (ExerciseSetItem esi : sets) {
+                        reps.add(esi.reps);
+                        weights.add(esi.weight);
+                    }
+                }
+
+                Exercise newExercise = new Exercise(mWorkout.id, e.name, weights, reps);
+
+                switch (currentFlag) {
+
+                    case FLAG_ADD_WORKOUT:
+                        mExerciseViewModel.insertSingleExercise(newExercise);
+                        break;
+                    case FLAG_UPDATE_WORKOUT:
+                        updatedExercises.add(newExercise);
+                        break;
+                }
+            }
+
+            if (currentFlag == FLAG_UPDATE_WORKOUT) {
+                mExerciseViewModel.deleteAllExercisesByWorkoutId(mWorkout.id);
+                mExerciseViewModel.insertMultipleExercises(updatedExercises);
+            }
+        }
+
+        String action = currentFlag == FLAG_ADD_WORKOUT ? "added" : "updated";
+        Toast.makeText(mActivity, "Exercise " + action + " successfully!",
+                Toast.LENGTH_SHORT).show();
     }
 }
