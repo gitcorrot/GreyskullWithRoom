@@ -44,13 +44,12 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
     }
 
     private NewWorkoutViewModel newWorkoutViewModel;
-
     private final LayoutInflater mInflater;
     private List<ExerciseItem> mExercises;
 
     public ExercisesListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
-        newWorkoutViewModel = ViewModelProviders.of((AppCompatActivity)context). // ???
+        newWorkoutViewModel = ViewModelProviders.of((AppCompatActivity) context). // ???
                 get(NewWorkoutViewModel.class);
         newWorkoutViewModel.init();
     }
@@ -58,7 +57,8 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
     @NonNull
     @Override
     public exerciseViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_exercise_item, viewGroup, false);
+        View itemView =
+                mInflater.inflate(R.layout.recyclerview_exercise_item, viewGroup,false);
         return new exerciseViewHolder(itemView);
     }
 
@@ -67,7 +67,7 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
 
         // Attach sets to recycler view
         final SetsListAdapter exerciseSetsAdapter =
-                new SetsListAdapter(viewHolder.setsRecyclerView.getContext()); // wrong context??
+                new SetsListAdapter(viewHolder.setsRecyclerView.getContext());
 
         viewHolder.setsRecyclerView.setAdapter(exerciseSetsAdapter);
         viewHolder.setsRecyclerView.setLayoutManager(
@@ -75,13 +75,13 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
 
         final int exercisePosition = viewHolder.getAdapterPosition();
 
-        if(exercisePosition != RecyclerView.NO_POSITION) {
-            //int exerciseItemPosition = mExercises.get(exercisePosition).position;
-            List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExercisePosition(exercisePosition);
+        if (exercisePosition != RecyclerView.NO_POSITION) {
+            List<ExerciseSetItem> items =
+                    newWorkoutViewModel.getSetsByExercisePosition(exercisePosition);
             exerciseSetsAdapter.setSets(items);
         }
 
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT) {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView,
                                   @NonNull RecyclerView.ViewHolder viewHolder,
@@ -92,19 +92,24 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder vh, int i) {
                 int setPosition = vh.getAdapterPosition();
+
                 ExerciseSetItem item = newWorkoutViewModel
                         .getSetsByExercisePosition(exercisePosition).get(setPosition);
                 newWorkoutViewModel.removeSet(item);
-                List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExercisePosition(exercisePosition);
+
+                List<ExerciseSetItem> items = newWorkoutViewModel
+                        .getSetsByExercisePosition(exercisePosition);
+
                 viewHolder.setsRecyclerView.setAdapter(exerciseSetsAdapter);
                 exerciseSetsAdapter.setSets(items);
-                Toast.makeText(viewHolder.itemView.getContext(), "Set deleted!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(viewHolder.itemView.getContext(),
+                        "Set deleted!", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(viewHolder.setsRecyclerView);
 
-        if(mExercises != null) {
+        if (mExercises != null) {
             ExerciseItem exercise = mExercises.get(viewHolder.getAdapterPosition());
-            viewHolder.exerciseTextView.setText(exercise.name + " Position: "+ exercise.position);
+            viewHolder.exerciseTextView.setText(exercise.name);
         }
 
         viewHolder.addSetButton.setOnClickListener(new View.OnClickListener() {

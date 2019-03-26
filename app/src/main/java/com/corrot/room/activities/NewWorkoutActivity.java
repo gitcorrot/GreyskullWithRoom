@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -146,6 +147,9 @@ public class NewWorkoutActivity extends AppCompatActivity {
         saveWorkoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // do it to lose focus from editText to save its value.
+                v.setFocusableInTouchMode(true);
+                v.requestFocus();
                 saveWorkout();
                 mActivity.finishAndRemoveTask();
             }
