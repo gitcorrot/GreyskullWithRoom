@@ -2,23 +2,22 @@ package com.corrot.room;
 
 public class ExerciseItem {
 
-    public int id;
+    public int exerciseId;
+    public int position;
     public String name;
-    //public List<ExerciseSetItem> sets;
-
-    public ExerciseItem(int id, String name) {
-        this.id = id;
-        this.name = name;
-        //this.sets = new ArrayList<>();
-    }
 
     public ExerciseItem(String name) {
         this.name = name;
-        //this.sets = new ArrayList<>();
     }
 
-    /*public ExerciseItem(String name, List<ExerciseSetItem> sets) {
+    public ExerciseItem(int position, String name) {
+        this.position = position;
         this.name = name;
-        this.sets = sets;
-    }*/
+    }
+
+    public ExerciseItem(int exerciseId, int position, String name) {
+        this.exerciseId = exerciseId;
+        this.position = position;
+        this.name = name;
+    }
 }

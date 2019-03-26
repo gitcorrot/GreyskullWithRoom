@@ -78,8 +78,8 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
         final int exercisePosition = viewHolder.getAdapterPosition();
 
         if(exercisePosition != RecyclerView.NO_POSITION) {
-            int exerciseId = mExercises.get(exercisePosition).id;
-            List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExerciseId(exerciseId);
+            //int exerciseItemPosition = mExercises.get(exercisePosition).position;
+            List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExercisePosition(exercisePosition);
             exerciseSetsAdapter.setSets(items);
         }
 
@@ -95,9 +95,9 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
             public void onSwiped(@NonNull RecyclerView.ViewHolder vh, int i) {
                 int setPosition = vh.getAdapterPosition();
                 ExerciseSetItem item = newWorkoutViewModel
-                        .getSetsByExerciseId(exercisePosition).get(setPosition);
+                        .getSetsByExercisePosition(exercisePosition).get(setPosition);
                 newWorkoutViewModel.removeSet(item);
-                List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExerciseId(exercisePosition);
+                List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExercisePosition(exercisePosition);
                 viewHolder.setsRecyclerView.setAdapter(exerciseSetsAdapter);
                 exerciseSetsAdapter.setSets(items);
                 Toast.makeText(viewHolder.itemView.getContext(), "Set deleted!", Toast.LENGTH_SHORT).show();
@@ -106,7 +106,7 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
 
         if(mExercises != null) {
             ExerciseItem exercise = mExercises.get(viewHolder.getAdapterPosition());
-            viewHolder.exerciseTextView.setText(exercise.name + " ID: "+ exercise.id);
+            viewHolder.exerciseTextView.setText(exercise.name + " Position: "+ exercise.position);
         }
 
         viewHolder.addSetButton.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +114,7 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
             public void onClick(View v) {
                 int id = viewHolder.getAdapterPosition();
                 newWorkoutViewModel.addSet(new ExerciseSetItem(id));
-                List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExerciseId(id);
+                List<ExerciseSetItem> items = newWorkoutViewModel.getSetsByExercisePosition(id);
                 viewHolder.setsRecyclerView.setAdapter(exerciseSetsAdapter);
                 exerciseSetsAdapter.setSets(items);
             }
@@ -123,7 +123,7 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
         viewHolder.removeExerciseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ExerciseItem exercise = newWorkoutViewModel.getExerciseById(exercisePosition);
+                ExerciseItem exercise = newWorkoutViewModel.getExerciseByPosition(exercisePosition);
                 newWorkoutViewModel.removeExercise(exercise);
             }
         });

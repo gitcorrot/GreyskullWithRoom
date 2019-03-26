@@ -31,8 +31,8 @@ public class NewWorkoutViewModel extends ViewModel {
         mNewWorkoutRepository.setExercises(exercises);
     }
 
-    public ExerciseItem getExerciseById(int id) {
-        return mNewWorkoutRepository.getExerciseById(id);
+    public ExerciseItem getExerciseByPosition(int position) {
+        return mNewWorkoutRepository.getExerciseByPosition(position);
     }
 
     public void addExercise(ExerciseItem exerciseItem) {
@@ -53,8 +53,8 @@ public class NewWorkoutViewModel extends ViewModel {
         mNewWorkoutRepository.setSets(sets);
     }
 
-    public List<ExerciseSetItem> getSetsByExerciseId(int exerciseId) {
-        return mNewWorkoutRepository.getSetsByExerciseId(exerciseId);
+    public List<ExerciseSetItem> getSetsByExercisePosition(int exercisePosition) {
+        return mNewWorkoutRepository.getSetsByExercisePosition(exercisePosition);
     }
 
     public void addSet(ExerciseSetItem setItem) {

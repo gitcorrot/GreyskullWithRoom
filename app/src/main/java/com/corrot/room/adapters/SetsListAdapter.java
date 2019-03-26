@@ -127,7 +127,8 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
                     if (item.reps != reps) {
                         item.reps = reps;
                         newWorkoutViewModel.updateSet(item, position);
-                        Log.d("asdasd", "Updating ID: "+item.exerciseId+ " on position: " + position + "!");
+                        Log.d("asdasd", "Updating exercisePosition: "
+                                +item.exercisePosition+ " on position: " + position + "!");
                     }
                 }
                 else if (type == SetsListAdapter.WEIGHT_EDIT_TEXT) {
@@ -141,7 +142,8 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
                     if (item.weight != weight) {
                         item.weight = weight;
                         newWorkoutViewModel.updateSet(item, position);
-                        Log.d("asdasd", "Updating ID: "+item.exerciseId+ " on position: " + position + "!");
+                        Log.d("asdasd", "Updating exercisePosition: "
+                                +item.exercisePosition+ " on position: " + position + "!");
                     }
                 }
             }

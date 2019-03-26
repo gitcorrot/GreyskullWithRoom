@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +29,6 @@ import com.corrot.room.viewmodel.ExerciseViewModel;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
 import com.corrot.room.viewmodel.WorkoutViewModel;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,6 +53,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
     private AppCompatActivity mActivity;
     private Date date;
     private int currentFlag;
+    private Workout mWorkout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,37 +76,49 @@ public class NewWorkoutActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentFlag = extras.getInt("flags", FLAG_ERROR);
+            Log.d("asdasd", "Activity opened with flag: " + currentFlag + "!");
             switch (currentFlag) {
-                case FLAG_ERROR:
+
+                case FLAG_ERROR: {
                     Log.d("asdasd", "Error flag!");
                     break;
-                case FLAG_ADD_WORKOUT:
+                }
+
+                case FLAG_ADD_WORKOUT: {
                     date = Calendar.getInstance().getTime();
-                    dateTextView.setText(MyTimeUtils.parseDate(date,"dd/MM/yyyy"));
+                    dateTextView.setText(MyTimeUtils.parseDate(date, "dd/MM/yyyy"));
                     break;
-                case FLAG_UPDATE_WORKOUT:
+                }
+
+                case FLAG_UPDATE_WORKOUT: {
                     String workoutId = extras.getString("workoutId", "no workout");
                     try {
-                        Workout w = mWorkoutViewModel.getWorkoutById(workoutId);
-                        date = w.workoutDate;
-                        dateTextView.setText(MyTimeUtils.parseDate(date,"dd/MM/yyyy"));
+                        mWorkout = mWorkoutViewModel.getWorkoutById(workoutId);
+                        date = mWorkout.workoutDate;
+                        dateTextView.setText(MyTimeUtils.parseDate(date, "dd/MM/yyyy"));
+                    } catch (InterruptedException e) {
+                        Log.d("asdasd", e.getMessage());
+                    } catch (ExecutionException e) {
+                        Log.d("asdasd", e.getMessage());
                     }
-                    catch (InterruptedException e) { Log.d("asdasd", e.getMessage()); }
-                    catch (ExecutionException e) { Log.d("asdasd", e.getMessage()); }
 
-                    if(!workoutId.equals("no workout")) {
+                    if (!workoutId.equals("no workout")) {
                         try {
                             List<Exercise> exercises =
                                     mExerciseViewModel.getExercisesByWorkoutId(workoutId);
-                            if(exercises != null) {
+                            if (exercises != null) {
                                 mNewWorkoutViewModel.setExercises(EntityUtils.getExerciseItems(exercises));
                                 mNewWorkoutViewModel.setSets(EntityUtils.getExerciseSetItems(exercises));
+                                Log.d("asdasd", "MNEWWORKOUTVIEWMODEL UPDATING SETS AND EXERCISES");
                             }
+                        } catch (InterruptedException e) {
+                            Log.d("asdasd", e.getMessage());
+                        } catch (ExecutionException e) {
+                            Log.d("asdasd", e.getMessage());
                         }
-                        catch (InterruptedException e) { Log.d("asdasd", e.getMessage()); }
-                        catch (ExecutionException e) { Log.d("asdasd", e.getMessage()); }
                     }
                     break;
+                }
             }
         }
 
@@ -136,13 +147,24 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 List<ExerciseItem> exercises = mNewWorkoutViewModel.getAllExerciseItems().getValue();
                 if(exercises != null) {
 
-                    Workout newWorkout = new Workout(date);
-                    mWorkoutViewModel.insertSingleWorkout(newWorkout);
+                    switch (currentFlag) {
+
+                        case FLAG_ADD_WORKOUT:
+                            mWorkout = new Workout(date);
+                            mWorkoutViewModel.insertSingleWorkout(mWorkout);
+                            break;
+
+                        case FLAG_UPDATE_WORKOUT:
+                            // TODO: update only if workout has changed.
+                            // TODO: what if exercise is removed?
+                            mWorkoutViewModel.updateWorkout(mWorkout);
+                            break;
+                    }
 
                     for(ExerciseItem e : exercises) {
 
                         // Getting sets of exercise
-                        List<ExerciseSetItem> sets = mNewWorkoutViewModel.getSetsByExerciseId(e.id);
+                        List<ExerciseSetItem> sets = mNewWorkoutViewModel.getSetsByExercisePosition(e.position);
                         List<Integer> reps = new ArrayList<>();
                         List<Float> weights = new ArrayList<>();
                         if(sets != null) {
@@ -151,21 +173,25 @@ public class NewWorkoutActivity extends AppCompatActivity {
                                 weights.add(esi.weight);
                             }
                         }
-                        Exercise newExercise = new Exercise(newWorkout.id,e.name, weights, reps);
+
+                        Log.d("asdasd", "Gettign exercise of ID: " + e.position);
+                        Exercise newExercise = new Exercise(e.exerciseId, mWorkout.id,e.name, weights, reps);
+
                         switch (currentFlag) {
                             case FLAG_ADD_WORKOUT:
                                 mExerciseViewModel.insertSingleExercise(newExercise);
+                                Log.d("asdasd", "Exercise added successfully!");
                                 break;
                             case FLAG_UPDATE_WORKOUT:
                                 mExerciseViewModel.updateSingleExercise(newExercise);
+                                Log.d("asdasd", "Exercise updated successfully!");
                                 break;
                         }
                     }
                 }
-
-                mActivity.finishAndRemoveTask();//.finish();
-                Toast.makeText(mActivity, "Workout added succesfully!",
+                Toast.makeText(mActivity, "Exercise added successfully!",
                         Toast.LENGTH_SHORT).show();
+                mActivity.finishAndRemoveTask(); //.finish();
             }
         });
     }
