@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.corrot.room.NewExerciseNameDialog;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.viewmodel.ExerciseViewModel;
 import com.corrot.room.R;

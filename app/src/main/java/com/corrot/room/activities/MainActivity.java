@@ -7,9 +7,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.corrot.room.NewExerciseNameDialog;
 import com.corrot.room.fragments.HistoryFragment;
 import com.corrot.room.fragments.HomeFragment;
 import com.corrot.room.R;
@@ -26,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         PreferencesManager.init(this);
 
@@ -85,6 +93,29 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.toolbar_settings_add_new: {
+                if (getFragmentManager() != null) {
+                    NewExerciseNameDialog dialog = new NewExerciseNameDialog();
+                    dialog.show(getSupportFragmentManager(), "new exercise dialog");
+                } else
+                    Toast.makeText(this, "Can't find FragmentManager!",
+                            Toast.LENGTH_SHORT).show();
+                break;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onDestroy() {

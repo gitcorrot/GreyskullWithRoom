@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/toolbar_settings_add_new"
+        android:icon="@drawable/ic_more_vert_black_24dp"
+        android:title="Add new exercise">
+
+    </item>
+</menu>

@@ -9,6 +9,10 @@
     android:orientation="vertical"
     tools:context=".activities.MainActivity">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floating_button"
         android:layout_width="wrap_content"
