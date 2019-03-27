@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -26,6 +25,7 @@ import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.EntityUtils;
 import com.corrot.room.utils.MyTimeUtils;
+import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.viewmodel.ExerciseViewModel;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
 import com.corrot.room.viewmodel.WorkoutViewModel;
@@ -192,15 +192,16 @@ public class NewWorkoutActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Which exercise you want to add?");
 
-        // TODO: get it from shared preferences
-        final String[] exercises = {"Squat", "Deadlift", "Bench Press", "Barbel Row",
-                                    "Pull-ups", "Head over press"};
+        final String[] exercises = PreferencesManager.getExercises();
 
         builder.setItems(exercises, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mNewWorkoutViewModel.addExercise(new ExerciseItem(exercises[which]));
-            }
+                if (exercises != null) {
+                    ExerciseItem exerciseItem = new ExerciseItem(exercises[which]);
+                    mNewWorkoutViewModel.addExercise(exerciseItem);
+                }
+          }
         });
         return builder.create();
     }

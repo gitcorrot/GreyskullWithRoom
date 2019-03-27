@@ -15,15 +15,27 @@ import com.corrot.room.fragments.HomeFragment;
 import com.corrot.room.R;
 import com.corrot.room.fragments.StatsFragment;
 import com.corrot.room.db.WorkoutsDatabase;
+import com.corrot.room.utils.PreferencesManager;
 
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton floatingButton;
+    public static boolean firstStart = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        PreferencesManager.init(this);
+
+        if (firstStart) {
+            final String[] exercises = {
+                    "Squats", "Deadlift", "Bench Press", "Barbell Row",
+                    "Pull-ups", "Overhead Press"
+            };
+            PreferencesManager.saveExercises(exercises);
+        }
 
         floatingButton = findViewById(R.id.floating_button);
 
@@ -48,32 +60,31 @@ public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView.OnNavigationItemSelectedListener navItemListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment selectedFragment = null;
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Fragment selectedFragment = null;
 
-            switch (item.getItemId()) {
-                case R.id.navigation_bar_home:
-                    selectedFragment = new HomeFragment();
-                    break;
-                case R.id.navigation_bar_history:
-                    selectedFragment = new HistoryFragment();
-                    break;
-                case R.id.navigation_bar_stats:
-                    selectedFragment = new StatsFragment();
-                    break;
-            }
+                    switch (item.getItemId()) {
+                        case R.id.navigation_bar_home:
+                            selectedFragment = new HomeFragment();
+                            break;
+                        case R.id.navigation_bar_history:
+                            selectedFragment = new HistoryFragment();
+                            break;
+                        case R.id.navigation_bar_stats:
+                            selectedFragment = new StatsFragment();
+                            break;
+                    }
 
-            if(selectedFragment != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_activity_fragment_container, selectedFragment).commit();
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-    };
+                    if (selectedFragment != null) {
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.main_activity_fragment_container, selectedFragment).commit();
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            };
 
     @Override
     protected void onDestroy() {

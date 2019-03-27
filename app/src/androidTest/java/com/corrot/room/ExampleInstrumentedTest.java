@@ -1,4 +1,4 @@
-package com.corrot.room;
+/*package com.corrot.room;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  * Instrumented test, which will execute on an Android device.
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
+ *//*
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentedTest {
     @Test
@@ -24,3 +24,4 @@ public class ExampleInstrumentedTest {
         assertEquals("com.corrot.room", appContext.getPackageName());
     }
 }
+*/
