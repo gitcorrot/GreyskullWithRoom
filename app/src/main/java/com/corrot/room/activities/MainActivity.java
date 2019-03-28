@@ -37,12 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
         PreferencesManager.init(this);
 
+        firstStart = PreferencesManager.isFirstStart();
         if (firstStart) {
-            final String[] exercises = {
-                    "Squats", "Deadlift", "Bench Press", "Barbell Row",
-                    "Pull-ups", "Overhead Press"
-            };
-            PreferencesManager.saveExercises(exercises);
+            firstStartInit();
         }
 
         floatingButton = findViewById(R.id.floating_button);
@@ -93,6 +90,16 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             };
+
+    private void firstStartInit() {
+        PreferencesManager.setFirstStart(false);
+
+        final String[] exercises = {
+                "Squats", "Deadlift", "Bench Press", "Barbell Row",
+                "Pull-ups", "Overhead Press"
+        };
+        PreferencesManager.saveExercises(exercises);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -12,6 +12,7 @@ public class PreferencesManager {
 
     private final static String PREFS_NAME = "com.corrot";
     private final static String PREFS_EXERCISES_KEY = "exercises";
+    private final static String PREFS_FIRST_START_KEY = "first start";
 
     private static PreferencesManager instance;
     private static SharedPreferences mPreferences;
@@ -34,6 +35,16 @@ public class PreferencesManager {
     }
 
     //---------------------------------------- UTILS -------------------------------------------//
+
+    public static boolean isFirstStart() {
+        return mPreferences.getBoolean(PREFS_FIRST_START_KEY, true);
+    }
+
+    public static void setFirstStart(boolean isFirst) {
+        mPreferences.edit()
+                .putBoolean(PREFS_FIRST_START_KEY, isFirst)
+                .apply();
+    }
 
     public static void saveExercises(String[] exercises) {
         if (exercises != null) {
