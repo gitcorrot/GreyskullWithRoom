@@ -8,4 +8,5 @@
     <color name="colorFragmentStats">#807BFFD1</color>
     <color name="colorTransparentButton">#0DE2E2E2</color>
     <color name="transparent">#00000000</color>
+    <color name="white">#E0F7FA</color>
 </resources>
