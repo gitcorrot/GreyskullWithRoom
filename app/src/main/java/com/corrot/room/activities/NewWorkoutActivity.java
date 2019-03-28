@@ -1,9 +1,13 @@
 package com.corrot.room.activities;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -11,10 +15,15 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.corrot.room.ExerciseItem;
@@ -33,6 +42,7 @@ import com.corrot.room.viewmodel.WorkoutViewModel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -53,6 +63,9 @@ public class NewWorkoutActivity extends AppCompatActivity {
 
     private AppCompatActivity mActivity;
     private Date date;
+    private DatePickerDialog.OnDateSetListener dateListener;
+    private TimePickerDialog.OnTimeSetListener timeListener;
+    Calendar calendar;
     private int currentFlag;
     private Workout mWorkout;
 
@@ -86,13 +99,11 @@ public class NewWorkoutActivity extends AppCompatActivity {
                     Log.e("NewWorkoutActivity", "Error flag!");
                     break;
                 }
-
                 case FLAG_ADD_WORKOUT: {
                     date = Calendar.getInstance().getTime();
                     dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
                     break;
                 }
-
                 case FLAG_UPDATE_WORKOUT: {
                     String workoutId = extras.getString("workoutId", "no workout");
                     try {
@@ -136,6 +147,64 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 exercisesListAdapter.setExercises(exerciseItems);
             }
         });
+
+        dateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT > 23) {
+                    DatePickerDialog datePickerDialog = new DatePickerDialog(
+                            mActivity,
+                            R.style.Theme_AppCompat_Light,
+                            dateListener,
+                            Calendar.getInstance().get(Calendar.YEAR),
+                            Calendar.getInstance().get(Calendar.MONTH),
+                            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+                    );
+                    // Set dialog in center of screen.
+                    Window window = datePickerDialog.getWindow();
+                    if (window != null) {
+                        window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        window.setGravity(Gravity.CENTER);
+                    }
+                    datePickerDialog.show();
+                }
+            }
+        });
+
+        dateListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                calendar = new GregorianCalendar(
+                        datePicker.getYear(),
+                        datePicker.getMonth(),
+                        datePicker.getDayOfMonth()
+                );
+                TimePickerDialog timePickerDialog = new TimePickerDialog(
+                        mActivity,
+                        R.style.Theme_AppCompat_Light,
+                        timeListener,
+                        Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
+                        Calendar.getInstance().get(Calendar.MINUTE),
+                        true);
+                // Set dialog in center of screen.
+                Window window = timePickerDialog.getWindow();
+                if (window != null) {
+                    window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    window.setGravity(Gravity.CENTER);
+                }
+                timePickerDialog.show();
+            }
+        };
+
+        timeListener = new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                date = calendar.getTime();
+                dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
+            }
+        };
 
         addExerciseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,13 +288,12 @@ public class NewWorkoutActivity extends AppCompatActivity {
         if (exercises != null) {
 
             switch (currentFlag) {
-
                 case FLAG_ADD_WORKOUT:
                     mWorkout = new Workout(date);
                     mWorkoutViewModel.insertSingleWorkout(mWorkout);
                     break;
-
                 case FLAG_UPDATE_WORKOUT:
+                    mWorkout.workoutDate = date;
                     mWorkoutViewModel.updateWorkout(mWorkout);
                     mExerciseViewModel.deleteAllExercisesByWorkoutId(mWorkout.id);
                     break;
@@ -251,7 +319,6 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 Exercise newExercise = new Exercise(mWorkout.id, e.name, weights, reps);
 
                 switch (currentFlag) {
-
                     case FLAG_ADD_WORKOUT:
                         mExerciseViewModel.insertSingleExercise(newExercise);
                         break;
