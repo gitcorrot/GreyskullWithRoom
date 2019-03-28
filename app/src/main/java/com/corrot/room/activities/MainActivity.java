@@ -25,7 +25,6 @@ import com.corrot.room.utils.PreferencesManager;
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton floatingButton;
-    public static boolean firstStart = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,14 +36,14 @@ public class MainActivity extends AppCompatActivity {
 
         PreferencesManager.init(this);
 
-        firstStart = PreferencesManager.isFirstStart();
+        boolean firstStart = PreferencesManager.isFirstStart();
         if (firstStart) {
             firstStartInit();
         }
 
         floatingButton = findViewById(R.id.floating_button);
-
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
+
         bottomNavigationView.setOnNavigationItemSelectedListener(navItemListener);
 
         // Initiate home fragment

@@ -11,7 +11,6 @@
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:hint="set"
@@ -22,12 +21,20 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
         android:layout_toEndOf="@id/new_set_text_view"
         android:layout_centerVertical="true"
         android:hint="weight"
         android:inputType="numberDecimal"
         android:textAlignment="center"/>
+
+    <TextView
+        android:id="@+id/new_set_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="kg"
+        android:layout_marginEnd="10dp"
+        android:layout_toRightOf="@id/new_set_weight_edit_text"
+        android:layout_centerVertical="true"/>
 
     <EditText
         android:id="@+id/new_set_reps_edit_text"
@@ -35,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_toEndOf="@id/new_set_weight_edit_text"
+        android:layout_toEndOf="@id/new_set_unit"
         android:layout_centerVertical="true"
         android:hint="reps"
         android:inputType="number"

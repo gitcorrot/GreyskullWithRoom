@@ -27,6 +27,11 @@ public class ExercisesRepository {
         return mAllExercises;
     }
 
+    public List<Exercise> getAllExercises(String name)
+            throws ExecutionException, InterruptedException {
+        return new getAllExercisesAsync(mExerciseDao).execute(name).get();
+    }
+
     public void insertSingleExercise(Exercise exercise) {
         new insertSingleExerciseAsync(mExerciseDao).execute(exercise);
     }
@@ -103,6 +108,19 @@ public class ExercisesRepository {
         }
     }
 
+    private static class getAllExercisesAsync extends AsyncTask<String, Void, List<Exercise>> {
+
+        private final ExerciseDAO exerciseDAO;
+
+        getAllExercisesAsync(ExerciseDAO dao) {
+            this.exerciseDAO = dao;
+        }
+
+        @Override
+        protected  List<Exercise> doInBackground(final String... params) {
+            return exerciseDAO.getAllExercises(params[0]);
+        }
+    }
 
     private static class deleteAllExercisesByWorkoutIdAsync extends AsyncTask<String, Void, Void> {
 

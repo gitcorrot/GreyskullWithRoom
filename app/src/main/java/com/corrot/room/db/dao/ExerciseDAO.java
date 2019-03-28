@@ -25,6 +25,9 @@ public interface ExerciseDAO {
     @Query("SELECT * FROM Exercise")
     LiveData<List<Exercise>> getAllExercises();    // For future diagrams :)
 
+    @Query("SELECT * FROM Exercise WHERE Name=:name")
+    List<Exercise> getAllExercises(String name);
+
     @Query("DELETE FROM Exercise WHERE workoutId=:workoutId")
     void deleteAllExercisesByWorkoutId(String workoutId);
 

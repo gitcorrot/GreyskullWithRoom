@@ -89,7 +89,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
 
                 case FLAG_ADD_WORKOUT: {
                     date = Calendar.getInstance().getTime();
-                    dateTextView.setText(MyTimeUtils.parseDate(date, "dd/MM/yyyy"));
+                    dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
                     break;
                 }
 
@@ -98,7 +98,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                     try {
                         mWorkout = mWorkoutViewModel.getWorkoutById(workoutId);
                         date = mWorkout.workoutDate;
-                        dateTextView.setText(MyTimeUtils.parseDate(date, "dd/MM/yyyy"));
+                        dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
                     } catch (InterruptedException e) {
                         Log.d("NewWorkoutActivity", e.getMessage());
                     } catch (ExecutionException e) {
@@ -158,28 +158,36 @@ public class NewWorkoutActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Do you want to save this workout?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                saveWorkout();
-                mActivity.finishAndRemoveTask();
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mActivity.finishAndRemoveTask();
-            }
-        });
-        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
+        // do it to lose focus from editText to save its value.
+        saveWorkoutButton.setFocusableInTouchMode(true);
+        saveWorkoutButton.requestFocus();
 
-        builder.create().show();
+        if (mNewWorkoutViewModel.isChanged) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Do you want to save this workout?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    saveWorkout();
+                    mActivity.finishAndRemoveTask();
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mActivity.finishAndRemoveTask();
+                }
+            });
+            builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+
+            builder.create().show();
+        } else {
+            mActivity.finishAndRemoveTask();
+        }
     }
 
     @Override
@@ -201,7 +209,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                     ExerciseItem exerciseItem = new ExerciseItem(exercises[which]);
                     mNewWorkoutViewModel.addExercise(exerciseItem);
                 }
-          }
+            }
         });
         return builder.create();
     }

@@ -8,6 +8,8 @@ import java.util.Locale;
 
 public class MyTimeUtils {
 
+    public static String MAIN_FORMAT = "dd/MM/yyyy";
+
     public static String getCurrentDateString(String format) { // for example: "dd/MM/yyyy"
         final Date date = Calendar.getInstance().getTime();
         Locale locale = Locale.getDefault();
