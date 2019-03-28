@@ -6,7 +6,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -62,12 +61,12 @@ public class NewWorkoutActivity extends AppCompatActivity {
     private ExerciseViewModel mExerciseViewModel;
 
     private AppCompatActivity mActivity;
+    private Workout mWorkout;
     private Date date;
+    private Calendar calendar;
     private DatePickerDialog.OnDateSetListener dateListener;
     private TimePickerDialog.OnTimeSetListener timeListener;
-    Calendar calendar;
     private int currentFlag;
-    private Workout mWorkout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,7 +162,8 @@ public class NewWorkoutActivity extends AppCompatActivity {
                     // Set dialog in center of screen.
                     Window window = datePickerDialog.getWindow();
                     if (window != null) {
-                        window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT,
+                                         LinearLayout.LayoutParams.WRAP_CONTENT);
                         window.setGravity(Gravity.CENTER);
                     }
                     datePickerDialog.show();
@@ -189,7 +189,8 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 // Set dialog in center of screen.
                 Window window = timePickerDialog.getWindow();
                 if (window != null) {
-                    window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT,
+                                     LinearLayout.LayoutParams.WRAP_CONTENT);
                     window.setGravity(Gravity.CENTER);
                 }
                 timePickerDialog.show();
@@ -202,6 +203,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 calendar.set(Calendar.MINUTE, minute);
                 date = calendar.getTime();
+                mNewWorkoutViewModel.isChanged = true;
                 dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
             }
         };
