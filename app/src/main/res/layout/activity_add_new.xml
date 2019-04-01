@@ -1,60 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".activities.NewWorkoutActivity">
 
-    <TextView
-        android:id="@+id/new_workout_date_text_view"
-        android:layout_width="match_parent"
+    <android.support.design.card.MaterialCardView
+        android:id="@+id/materialCardView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:hint="New workout"
-        android:textSize="24sp"
-        android:layout_margin="8dp"/>
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/exercises_recycler_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <RelativeLayout
+        <TextView
+            android:id="@+id/new_workout_date_text_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_margin="8dp"
-            android:layout_below="@id/new_workout_date_text_view"
-            android:layout_above="@id/new_workout_save_button">
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:elevation="4dp"
+            android:textAlignment="center"
+            android:textSize="24sp" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/exercises_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentBottom="true"/>
+    </android.support.design.card.MaterialCardView>
 
-        </RelativeLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/exercises_recycler_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/new_workout_save_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
 
     <Button
         android:id="@+id/new_exercise_button"
-        android:layout_width="280dp"
-        android:layout_height="30dp"
-        android:text="ADD EXERCISE"
-        android:layout_margin="8dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="8dp"
         android:background="@color/colorTransparentButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"/>
+        android:text="ADD EXERCISE"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/exercises_recycler_view"
+        app:layout_constraintStart_toStartOf="@+id/exercises_recycler_view"
+        app:layout_constraintTop_toBottomOf="@+id/exercises_recycler_view" />
 
     <ImageButton
         android:id="@+id/new_workout_save_button"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@color/colorTransparentButton"
         android:scaleX="1.5"
         android:scaleY="1.5"
         android:src="@drawable/ic_save_black_24dp"
         android:text="SAVE"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@id/new_exercise_button"
-        android:layout_margin="8dp"
-        android:background="@color/colorTransparentButton"/>
+        app:layout_constraintBottom_toBottomOf="@id/new_exercise_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/new_exercise_button" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

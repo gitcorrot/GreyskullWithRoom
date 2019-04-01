@@ -1,5 +1,6 @@
 package com.corrot.room.activities;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -22,6 +23,7 @@ import com.corrot.room.R;
 import com.corrot.room.fragments.StatsFragment;
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.utils.PreferencesManager;
+import com.corrot.room.viewmodel.WorkoutViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,11 +32,14 @@ public class MainActivity extends AppCompatActivity {
     private final Fragment historyFragment = new HistoryFragment();
     private final Fragment statsFragment = new StatsFragment();
     private Fragment currentFragment = homeFragment;
+    WorkoutViewModel mWorkoutViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -128,6 +133,12 @@ public class MainActivity extends AppCompatActivity {
                 } else
                     Toast.makeText(this, "Can't find FragmentManager!",
                             Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case R.id.toolbar_settings_delete_all: {
+                mWorkoutViewModel.deleteAll();
+                Toast.makeText(this,
+                        "All workouts deleted!", Toast.LENGTH_SHORT).show();
                 break;
             }
         }

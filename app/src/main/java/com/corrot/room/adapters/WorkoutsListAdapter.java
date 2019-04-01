@@ -18,6 +18,7 @@ import com.corrot.room.activities.MainActivity;
 import com.corrot.room.activities.NewWorkoutActivity;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
+import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.viewmodel.ExerciseViewModel;
 
 import java.util.ConcurrentModificationException;
@@ -64,8 +65,9 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
     public void onBindViewHolder(@NonNull final WorkoutsListAdapter.WorkoutViewHolder workoutViewHolder, int i) {
         if(mWorkouts != null) {
             Workout w = mWorkouts.get(i);
-            workoutViewHolder.workoutIdTextView.setText("Workout ID: " + w.id);
-            workoutViewHolder.workoutDateTextView.setText("Date: " + w.workoutDate.toString());
+            workoutViewHolder.workoutIdTextView.setText("Daily workout"/* ID: " + w.id*/);
+            String date = MyTimeUtils.parseDate(w.workoutDate, MyTimeUtils.MAIN_FORMAT);
+            workoutViewHolder.workoutDateTextView.setText(date);
 
             // exercises and sets
             try {

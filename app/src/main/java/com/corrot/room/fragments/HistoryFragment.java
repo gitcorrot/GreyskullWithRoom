@@ -28,8 +28,6 @@ import java.util.List;
 
 public class HistoryFragment extends Fragment {
 
-    private Button deleteButton;
-
     private WorkoutViewModel mWorkoutViewModel;
 
     @Nullable
@@ -38,7 +36,6 @@ public class HistoryFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_history, container, false);
-        deleteButton = view.findViewById(R.id.button_delete_all);
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
 
         final RecyclerView recyclerView = view.findViewById(R.id.workoutsRecyclerView);
@@ -47,15 +44,6 @@ public class HistoryFragment extends Fragment {
 
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mWorkoutViewModel.deleteAll();
-                Toast.makeText(view.getContext(),
-                        "All workouts deleted!", Toast.LENGTH_SHORT).show();
-            }
-        });
 
         mWorkoutViewModel.getAllWorkouts().observe(this, new Observer<List<Workout>>() {
             @Override
@@ -80,7 +68,6 @@ public class HistoryFragment extends Fragment {
                         "Workout deleted!", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
-
         return view;
     }
 }

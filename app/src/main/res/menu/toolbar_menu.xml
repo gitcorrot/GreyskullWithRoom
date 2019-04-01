@@ -4,7 +4,10 @@
     <item
         android:id="@+id/toolbar_settings_add_new"
         android:icon="@drawable/ic_more_vert_black_24dp"
-        android:title="Add new exercise">
+        android:title="Add new exercise" />
 
-    </item>
+    <item
+        android:id="@+id/toolbar_settings_delete_all"
+        android:title="Delete all workouts" />
+
 </menu>

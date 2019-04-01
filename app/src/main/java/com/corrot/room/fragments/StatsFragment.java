@@ -48,6 +48,8 @@ public class StatsFragment extends Fragment {
     ExerciseViewModel mExerciseViewModel;
     WorkoutViewModel mWorkoutViewModel;
 
+    // TODO: bind charts to liveData
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

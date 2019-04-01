@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimary">#288A80</color>
+    <color name="colorPrimaryDark">#088170</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="colorFragmentHome">#80C7FFA5</color>
-    <color name="colorFragmentHistory">#80A1FFBC</color>
-    <color name="colorFragmentStats">#807BFFD1</color>
     <color name="colorTransparentButton">#0DE2E2E2</color>
     <color name="transparent">#00000000</color>
     <color name="white">#E0F7FA</color>
