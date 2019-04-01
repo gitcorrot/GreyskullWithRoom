@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +26,10 @@ import com.corrot.room.utils.PreferencesManager;
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton floatingButton;
+    private final Fragment homeFragment = new HomeFragment();
+    private final Fragment historyFragment = new HistoryFragment();
+    private final Fragment statsFragment = new StatsFragment();
+    private Fragment currentFragment = homeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +48,15 @@ public class MainActivity extends AppCompatActivity {
 
         floatingButton = findViewById(R.id.floating_button);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
-
         bottomNavigationView.setOnNavigationItemSelectedListener(navItemListener);
 
-        // Initiate home fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_activity_fragment_container, new HomeFragment()).commit();
+                .add(R.id.main_activity_fragment_container, homeFragment)   // don't hide
+                .add(R.id.main_activity_fragment_container, historyFragment)
+                .add(R.id.main_activity_fragment_container, statsFragment)
+                .hide(historyFragment)
+                .hide(statsFragment)
+                .commit();
 
         // Start NewWorkoutActivity on floatingButton click
         floatingButton.setOnClickListener(new View.OnClickListener() {
@@ -66,27 +74,30 @@ public class MainActivity extends AppCompatActivity {
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    Fragment selectedFragment = null;
-
                     switch (item.getItemId()) {
                         case R.id.navigation_bar_home:
-                            selectedFragment = new HomeFragment();
-                            break;
+                            getSupportFragmentManager().beginTransaction()
+                                    .hide(currentFragment)
+                                    .show(homeFragment)
+                                    .commit();
+                            currentFragment = homeFragment;
+                            return true;
                         case R.id.navigation_bar_history:
-                            selectedFragment = new HistoryFragment();
-                            break;
+                            getSupportFragmentManager().beginTransaction()
+                                    .hide(currentFragment)
+                                    .show(historyFragment)
+                                    .commit();
+                            currentFragment = historyFragment;
+                            return true;
                         case R.id.navigation_bar_stats:
-                            selectedFragment = new StatsFragment();
-                            break;
+                            getSupportFragmentManager().beginTransaction()
+                                    .hide(currentFragment)
+                                    .show(statsFragment)
+                                    .commit();
+                            currentFragment = statsFragment;
+                            return true;
                     }
-
-                    if (selectedFragment != null) {
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.main_activity_fragment_container, selectedFragment).commit();
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return false;
                 }
             };
 

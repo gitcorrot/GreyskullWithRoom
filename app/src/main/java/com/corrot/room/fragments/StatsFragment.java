@@ -54,6 +54,11 @@ public class StatsFragment extends Fragment {
         mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
         exercisesNames = PreferencesManager.getExercises();
+
+        /*if (savedInstanceState != null) {
+            this.save
+        }*/
+
         return inflater.inflate(R.layout.fragment_stats, container, false);
     }
 
@@ -169,12 +174,15 @@ public class StatsFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d("asdasd", "onSaveInstanceState");
         outState.putInt("saved spinner item", nameSpinner.getSelectedItemPosition());
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
+
+        Log.d("asdasd", "onViewStateRestored");
 
         if (savedInstanceState != null) {
             int savedPosition = savedInstanceState.getInt("saved spinner item", -1);
