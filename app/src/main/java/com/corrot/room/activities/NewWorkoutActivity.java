@@ -2,17 +2,23 @@ package com.corrot.room.activities;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -89,11 +95,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             currentFlag = extras.getInt("flags", FLAG_ERROR);
-
-            Log.d("NewWorkoutActivity", "Activity opened with flag: " + currentFlag + "!");
-
             switch (currentFlag) {
-
                 case FLAG_ERROR: {
                     Log.e("NewWorkoutActivity", "Error flag!");
                     break;
@@ -153,19 +155,11 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT > 23) {
                     DatePickerDialog datePickerDialog = new DatePickerDialog(
                             mActivity,
-                            R.style.Theme_AppCompat_Light,
                             dateListener,
                             Calendar.getInstance().get(Calendar.YEAR),
                             Calendar.getInstance().get(Calendar.MONTH),
                             Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
                     );
-                    // Set dialog in center of screen.
-                    Window window = datePickerDialog.getWindow();
-                    if (window != null) {
-                        window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT,
-                                         LinearLayout.LayoutParams.WRAP_CONTENT);
-                        window.setGravity(Gravity.CENTER);
-                    }
                     datePickerDialog.show();
                 }
             }
@@ -181,7 +175,6 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 );
                 TimePickerDialog timePickerDialog = new TimePickerDialog(
                         mActivity,
-                        R.style.Theme_AppCompat_Light,
                         timeListener,
                         Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
                         Calendar.getInstance().get(Calendar.MINUTE),
@@ -190,7 +183,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 Window window = timePickerDialog.getWindow();
                 if (window != null) {
                     window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT,
-                                     LinearLayout.LayoutParams.WRAP_CONTENT);
+                            LinearLayout.LayoutParams.WRAP_CONTENT);
                     window.setGravity(Gravity.CENTER);
                 }
                 timePickerDialog.show();

@@ -1,7 +1,7 @@
 package com.corrot.room;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
+import androidx.appcompat.app.AlertDialog;
+
 import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -19,7 +19,7 @@ public class NewExerciseNameDialog extends AppCompatDialogFragment {
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public AlertDialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
