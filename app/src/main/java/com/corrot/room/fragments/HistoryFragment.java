@@ -33,7 +33,7 @@ public class HistoryFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_history, container, false);
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
 
-        final RecyclerView recyclerView = view.findViewById(R.id.workoutsRecyclerView);
+        final RecyclerView recyclerView = view.findViewById(R.id.fragment_history_recycler_view);
         final WorkoutsListAdapter workoutListAdapter =
                 new WorkoutsListAdapter(this.getContext(), this.getActivity());
 

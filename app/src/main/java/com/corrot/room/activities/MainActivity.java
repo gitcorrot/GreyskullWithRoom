@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 
+import com.corrot.room.fragments.BodyFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private final Fragment homeFragment = new HomeFragment();
     private final Fragment historyFragment = new HistoryFragment();
     private final Fragment statsFragment = new StatsFragment();
+    private final Fragment bodyFragment = new BodyFragment();
     private Fragment currentFragment = homeFragment;
     WorkoutViewModel mWorkoutViewModel;
     private final static String CURRENT_FRAGMENT_KEY = "current fragment";
@@ -67,8 +69,10 @@ public class MainActivity extends AppCompatActivity {
                 .add(R.id.main_activity_fragment_container, homeFragment)   // don't hide
                 .add(R.id.main_activity_fragment_container, historyFragment)
                 .add(R.id.main_activity_fragment_container, statsFragment)
+                .add(R.id.main_activity_fragment_container, bodyFragment)
                 .hide(historyFragment)
                 .hide(statsFragment)
+                .hide(bodyFragment)
                 .commit();
 
         // Start NewWorkoutActivity on floatingButton click
@@ -108,6 +112,13 @@ public class MainActivity extends AppCompatActivity {
                                     .show(statsFragment)
                                     .commit();
                             currentFragment = statsFragment;
+                            return true;
+                        case R.id.navigation_bar_body:
+                            getSupportFragmentManager().beginTransaction()
+                                    .hide(currentFragment)
+                                    .show(bodyFragment)
+                                    .commit();
+                            currentFragment = bodyFragment;
                             return true;
                     }
                     return false;
@@ -157,12 +168,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         int fragment = -1;
         if (currentFragment.equals(homeFragment)) {
-            fragment = 0;
+            fragment = R.id.navigation_bar_home;
         } else if (currentFragment.equals(historyFragment)) {
-            fragment = 1;
+            fragment = R.id.navigation_bar_history;
         } else if (currentFragment.equals(statsFragment)) {
-            fragment = 2;
+            fragment = R.id.navigation_bar_stats;
+        } else if (currentFragment.equals(bodyFragment)) {
+            fragment = R.id.navigation_bar_body;
         }
+
         if (fragment != -1)
             outState.putInt(CURRENT_FRAGMENT_KEY, fragment);
         else  {
@@ -176,23 +190,33 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             int fragment = savedInstanceState.getInt(CURRENT_FRAGMENT_KEY);
             switch (fragment) {
-                case 0:
+                case R.id.navigation_bar_home:
                     getSupportFragmentManager().beginTransaction()
                             .show(homeFragment)
                             .hide(historyFragment)
                             .hide(statsFragment)
+                            .hide(bodyFragment)
                             .commit();
-                case 1:
+                case R.id.navigation_bar_history:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
                             .show(historyFragment)
                             .hide(statsFragment)
+                            .hide(bodyFragment)
                             .commit();
-                case 2:
+                case R.id.navigation_bar_stats:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
                             .hide(historyFragment)
                             .show(statsFragment)
+                            .hide(bodyFragment)
+                            .commit();
+                case R.id.navigation_bar_body:
+                    getSupportFragmentManager().beginTransaction()
+                            .hide(homeFragment)
+                            .hide(historyFragment)
+                            .hide(statsFragment)
+                            .show(bodyFragment)
                             .commit();
             }
         }
