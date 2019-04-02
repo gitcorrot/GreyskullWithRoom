@@ -47,8 +47,7 @@ public class BodyFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         // TODO: on shared preferences changed
-        Set<String> asdasd = PreferencesManager.getBodyWeights();
-        bodyWeightsAdapter.setBodyWeights(asdasd);
+        bodyWeightsAdapter.setBodyWeights(PreferencesManager.getBodyWeightsList());
 
         return view;
     }

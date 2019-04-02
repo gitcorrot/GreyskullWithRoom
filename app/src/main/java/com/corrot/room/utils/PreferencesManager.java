@@ -54,6 +54,8 @@ public class PreferencesManager {
                 .apply();
     }
 
+    //-------------------------------------- EXERCISES -------------------------------------------//
+
     public static void saveExercises(String[] exercises) {
         if (exercises != null) {
             Set<String> set = new HashSet<>();
@@ -89,22 +91,24 @@ public class PreferencesManager {
         }
     }
 
+    //------------------------------------- BODY WEIGHT -----------------------------------------//
+
     private static void saveBodyWeights(Set<String> bodyWeights) {
         mPreferences.edit()
                 .putStringSet(PREFS_BODY_WEIGHTS_KEY, bodyWeights)
                 .apply();
     }
 
-    public static Set<String> getBodyWeights() {
+    private static Set<String> getBodyWeightsSet() {
         Set<String> bodyWeights = mPreferences.getStringSet(PREFS_BODY_WEIGHTS_KEY, null);
         if (bodyWeights != null) {
-            return sortBodyWeights(bodyWeights);
+            return sortBodyWeightsSet(bodyWeights);
         } else {
             return new HashSet<>();
         }
     }
 
-    private static Set<String> sortBodyWeights(Set<String> bodyWeights) {
+    private static Set<String> sortBodyWeightsSet(Set<String> bodyWeights) {
         List<BodyWeightItem> weightsList = new ArrayList<>();
         for (String s : bodyWeights) {
             weightsList.add(new BodyWeightItem(s));
@@ -118,8 +122,26 @@ public class PreferencesManager {
         return sorted;
     }
 
+    public static List<BodyWeightItem> getBodyWeightsList() {
+        Set<String> bodyWeights = getBodyWeightsSet();
+        if (bodyWeights != null) {
+            return sortBodyWeightsList(bodyWeights);
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    private static List<BodyWeightItem> sortBodyWeightsList(Set<String> bodyWeights) {
+        List<BodyWeightItem> weightsList = new ArrayList<>();
+        for (String s : bodyWeights) {
+            weightsList.add(new BodyWeightItem(s));
+        }
+        Collections.sort(weightsList);
+        return weightsList;
+    }
+
     public static void addBodyWeight(String bodyWeight, String date) {
-        Set<String> bodyWeights = getBodyWeights();
+        Set<String> bodyWeights = getBodyWeightsSet();
         String bodyWeightRecord = bodyWeight + "_" + date;
         bodyWeights.add(bodyWeightRecord);
         saveBodyWeights(bodyWeights);

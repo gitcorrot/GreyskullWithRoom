@@ -14,6 +14,7 @@ import com.corrot.room.R;
 import com.corrot.room.activities.NewWorkoutActivity;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
+import com.corrot.room.utils.MyDiffUtilCallback;
 import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.viewmodel.ExerciseViewModel;
@@ -28,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class BodyWeightsAdapter extends RecyclerView.Adapter<BodyWeightsAdapter.BodyWeightViewHolder> {
@@ -85,18 +87,13 @@ public class BodyWeightsAdapter extends RecyclerView.Adapter<BodyWeightsAdapter.
         }
     }
 
-    public void setBodyWeights(Set<String> bodyWeights) {
-        if (mBodyWeights == null)
-            mBodyWeights = new ArrayList<>();
-
-        if (bodyWeights != null) {
-            for (String s : bodyWeights) {
-                mBodyWeights.add(new BodyWeightItem(s));
-            }
-        } else {
-            mBodyWeights = new ArrayList<>();
+    public void setBodyWeights(List<BodyWeightItem> newBodyWeights) {
+        if (newBodyWeights != null) {
+            mBodyWeights = newBodyWeights;
+            DiffUtil.DiffResult diffResult =
+                    DiffUtil.calculateDiff(new MyDiffUtilCallback(mBodyWeights, newBodyWeights));
+            diffResult.dispatchUpdatesTo(this);
         }
-        notifyDataSetChanged();
     }
 
     @Override
