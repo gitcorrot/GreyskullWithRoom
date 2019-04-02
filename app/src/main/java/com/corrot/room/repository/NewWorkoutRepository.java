@@ -1,12 +1,11 @@
 package com.corrot.room.repository;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import android.util.Log;
 
 import com.corrot.room.ExerciseItem;
 import com.corrot.room.ExerciseSetItem;
-import com.corrot.room.db.entity.Exercise;
 
 import java.util.ArrayList;
 import java.util.List;

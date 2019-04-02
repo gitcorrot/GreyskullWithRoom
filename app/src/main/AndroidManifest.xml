@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.corrot.room">
 
@@ -13,12 +12,13 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".activities.NewWorkoutActivity"
-                  android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden">
         </activity>
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.MainActivity"
+            android:configChanges="keyboardHidden|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

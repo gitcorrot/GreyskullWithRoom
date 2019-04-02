@@ -1,7 +1,7 @@
 package com.corrot.room.db.converters;
 
-import android.arch.persistence.room.TypeConverter;
-import android.nfc.FormatException;
+import androidx.room.TypeConverter;
+
 import android.util.Log;
 
 import java.util.ArrayList;

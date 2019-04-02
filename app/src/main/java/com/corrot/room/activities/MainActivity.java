@@ -1,15 +1,22 @@
 package com.corrot.room.activities;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+
+import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private final Fragment statsFragment = new StatsFragment();
     private Fragment currentFragment = homeFragment;
     WorkoutViewModel mWorkoutViewModel;
+    private final static String CURRENT_FRAGMENT_KEY = "current fragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +151,52 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        int fragment = -1;
+        if (currentFragment.equals(homeFragment)) {
+            fragment = 0;
+        } else if (currentFragment.equals(historyFragment)) {
+            fragment = 1;
+        } else if (currentFragment.equals(statsFragment)) {
+            fragment = 2;
+        }
+        if (fragment != -1)
+            outState.putInt(CURRENT_FRAGMENT_KEY, fragment);
+        else  {
+            Log.d("MainActivity", "onSaveInstanceState: NO FRAGMENT TO SAVE.");
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            int fragment = savedInstanceState.getInt(CURRENT_FRAGMENT_KEY);
+            switch (fragment) {
+                case 0:
+                    getSupportFragmentManager().beginTransaction()
+                            .show(homeFragment)
+                            .hide(historyFragment)
+                            .hide(statsFragment)
+                            .commit();
+                case 1:
+                    getSupportFragmentManager().beginTransaction()
+                            .hide(homeFragment)
+                            .show(historyFragment)
+                            .hide(statsFragment)
+                            .commit();
+                case 2:
+                    getSupportFragmentManager().beginTransaction()
+                            .hide(homeFragment)
+                            .hide(historyFragment)
+                            .show(statsFragment)
+                            .commit();
+            }
+        }
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
