@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private Fragment currentFragment = homeFragment;
     WorkoutViewModel mWorkoutViewModel;
     private final static String CURRENT_FRAGMENT_KEY = "current fragment";
+    PreferencesManager pm;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +52,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
+        pm = PreferencesManager.getInstance();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         PreferencesManager.init(this);
 
-        boolean firstStart = PreferencesManager.isFirstStart();
+        boolean firstStart = pm.isFirstStart();
         if (firstStart) {
             firstStartInit();
         }
@@ -126,13 +129,13 @@ public class MainActivity extends AppCompatActivity {
             };
 
     private void firstStartInit() {
-        PreferencesManager.setFirstStart(false);
+        pm.setFirstStart(false);
 
         final String[] exercises = {
                 "Squats", "Deadlift", "Bench Press", "Barbell Row",
                 "Pull-ups", "Overhead Press"
         };
-        PreferencesManager.saveExercises(exercises);
+        pm.saveExercises(exercises);
     }
 
     @Override

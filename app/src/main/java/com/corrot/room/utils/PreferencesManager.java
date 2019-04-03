@@ -19,11 +19,11 @@ public class PreferencesManager {
 
     private final static String PREFS_NAME = "com.corrot";
     private final static String PREFS_EXERCISES_KEY = "exercises";
-    private final static String PREFS_BODY_WEIGHTS_KEY = "body weights";
+    public final static String PREFS_BODY_WEIGHTS_KEY = "body weights";
     private final static String PREFS_FIRST_START_KEY = "first start";
 
     private static PreferencesManager instance;
-    private static SharedPreferences mPreferences;
+    private final SharedPreferences mPreferences;
 
     private PreferencesManager(Context context) {
         mPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -44,11 +44,11 @@ public class PreferencesManager {
 
     //---------------------------------------- UTILS -------------------------------------------//
 
-    public static boolean isFirstStart() {
+    public boolean isFirstStart() {
         return mPreferences.getBoolean(PREFS_FIRST_START_KEY, true);
     }
 
-    public static void setFirstStart(boolean isFirst) {
+    public void setFirstStart(boolean isFirst) {
         mPreferences.edit()
                 .putBoolean(PREFS_FIRST_START_KEY, isFirst)
                 .apply();
@@ -56,7 +56,7 @@ public class PreferencesManager {
 
     //-------------------------------------- EXERCISES -------------------------------------------//
 
-    public static void saveExercises(String[] exercises) {
+    public void saveExercises(String[] exercises) {
         if (exercises != null) {
             Set<String> set = new HashSet<>();
             Collections.addAll(set, exercises);
@@ -67,7 +67,7 @@ public class PreferencesManager {
         }
     }
 
-    private static void saveExercises(Set<String> exercises) {
+    private void saveExercises(Set<String> exercises) {
         if (exercises != null) {
             mPreferences.edit()
                     .putStringSet(PREFS_EXERCISES_KEY, exercises)
@@ -75,7 +75,7 @@ public class PreferencesManager {
         }
     }
 
-    public static String[] getExercises() {
+    public String[] getExercises() {
         Set<String> exercises = mPreferences.getStringSet(PREFS_EXERCISES_KEY, null);
         if (exercises == null) {
             return null;
@@ -83,7 +83,7 @@ public class PreferencesManager {
         return new ArrayList<>(exercises).toArray(new String[exercises.size()]);
     }
 
-    public static void addExercise(String exercise) {
+    public void addExercise(String exercise) {
         Set<String> exercises = mPreferences.getStringSet(PREFS_EXERCISES_KEY, null);
         if (exercises != null && exercise != null) {
             exercises.add(exercise);
@@ -93,13 +93,13 @@ public class PreferencesManager {
 
     //------------------------------------- BODY WEIGHT -----------------------------------------//
 
-    private static void saveBodyWeights(Set<String> bodyWeights) {
+    private void saveBodyWeights(Set<String> bodyWeights) {
         mPreferences.edit()
                 .putStringSet(PREFS_BODY_WEIGHTS_KEY, bodyWeights)
                 .apply();
     }
 
-    private static Set<String> getBodyWeightsSet() {
+    private Set<String> getBodyWeightsSet() {
         Set<String> bodyWeights = mPreferences.getStringSet(PREFS_BODY_WEIGHTS_KEY, null);
         if (bodyWeights != null) {
             return sortBodyWeightsSet(bodyWeights);
@@ -108,7 +108,7 @@ public class PreferencesManager {
         }
     }
 
-    private static Set<String> sortBodyWeightsSet(Set<String> bodyWeights) {
+    private Set<String> sortBodyWeightsSet(Set<String> bodyWeights) {
         List<BodyWeightItem> weightsList = new ArrayList<>();
         for (String s : bodyWeights) {
             weightsList.add(new BodyWeightItem(s));
@@ -122,7 +122,7 @@ public class PreferencesManager {
         return sorted;
     }
 
-    public static List<BodyWeightItem> getBodyWeightsList() {
+    public List<BodyWeightItem> getBodyWeightsList() {
         Set<String> bodyWeights = getBodyWeightsSet();
         if (bodyWeights != null) {
             return sortBodyWeightsList(bodyWeights);
@@ -131,7 +131,7 @@ public class PreferencesManager {
         }
     }
 
-    private static List<BodyWeightItem> sortBodyWeightsList(Set<String> bodyWeights) {
+    private List<BodyWeightItem> sortBodyWeightsList(Set<String> bodyWeights) {
         List<BodyWeightItem> weightsList = new ArrayList<>();
         for (String s : bodyWeights) {
             weightsList.add(new BodyWeightItem(s));
@@ -140,7 +140,7 @@ public class PreferencesManager {
         return weightsList;
     }
 
-    public static void addBodyWeight(String bodyWeight, String date) {
+    public void addBodyWeight(String bodyWeight, String date) {
         Set<String> bodyWeights = getBodyWeightsSet();
         String bodyWeightRecord = bodyWeight + "_" + date;
         bodyWeights.add(bodyWeightRecord);

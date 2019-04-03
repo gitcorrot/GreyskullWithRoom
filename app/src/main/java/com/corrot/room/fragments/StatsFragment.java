@@ -1,12 +1,7 @@
 package com.corrot.room.fragments;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,16 +32,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 public class StatsFragment extends Fragment {
 
-    LineChart lineChart;
-    Spinner nameSpinner;
-    String name;
-    String[] exercisesNames;
-    List<Entry> entries;
+    private LineChart lineChart;
+    private Spinner nameSpinner;
+    private String name;
+    private String[] exercisesNames;
+    private List<Entry> entries;
 
-    ExerciseViewModel mExerciseViewModel;
-    WorkoutViewModel mWorkoutViewModel;
+    private ExerciseViewModel mExerciseViewModel;
+    private WorkoutViewModel mWorkoutViewModel;
+    private PreferencesManager pm;
 
     // TODO: bind charts to liveData
 
@@ -55,7 +57,9 @@ public class StatsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
-        exercisesNames = PreferencesManager.getExercises();
+
+        pm = PreferencesManager.getInstance();
+        exercisesNames = pm.getExercises();
 
         /*if (savedInstanceState != null) {
             this.save

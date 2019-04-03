@@ -30,6 +30,7 @@ public class NewBodyWeightDialog extends AppCompatDialogFragment {
     private EditText bodyWeightEditText;
     private ImageButton changeDateButton;
     private Date date;
+    private PreferencesManager pm;
 
     private DatePickerDialog.OnDateSetListener dateListener;
 
@@ -40,6 +41,7 @@ public class NewBodyWeightDialog extends AppCompatDialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_add_weight, null);
+        pm = PreferencesManager.getInstance();
 
         bodyWeightEditText = view.findViewById(R.id.dialog_new_weight_edit_text);
         dateTextView = view.findViewById(R.id.dialog_new_weight_text_view);
@@ -85,7 +87,7 @@ public class NewBodyWeightDialog extends AppCompatDialogFragment {
                         // TODO: handle exceptions
                         String bodyWeight = bodyWeightEditText.getText().toString();
                         String dateString = MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT);
-                        PreferencesManager.addBodyWeight(bodyWeight, dateString);
+                        pm.addBodyWeight(bodyWeight, dateString);
 
                         Log.d("asdasd", "ADDING " + bodyWeight + dateString);
                         Toast.makeText(getContext(),

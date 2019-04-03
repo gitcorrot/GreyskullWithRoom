@@ -15,7 +15,8 @@ import com.corrot.room.utils.PreferencesManager;
 
 public class NewExerciseNameDialog extends AppCompatDialogFragment {
 
-    EditText exerciseEditText;
+    private EditText exerciseEditText;
+    PreferencesManager pm;
 
     @NonNull
     @Override
@@ -25,13 +26,15 @@ public class NewExerciseNameDialog extends AppCompatDialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_new_exercise_name, null);
         exerciseEditText = view.findViewById(R.id.dialog_new_exercise_edit_text);
+        pm = PreferencesManager.getInstance();
+
         builder.setView(view)
                 .setTitle("Add new exercise")
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String exercise = exerciseEditText.getText().toString();
-                        PreferencesManager.addExercise(exercise);
+                        pm.addExercise(exercise);
                         Toast.makeText(getContext(),
                                 "Exercise added",
                                 Toast.LENGTH_SHORT).show();

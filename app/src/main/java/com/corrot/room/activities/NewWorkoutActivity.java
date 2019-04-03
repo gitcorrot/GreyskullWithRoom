@@ -72,6 +72,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
     private Calendar calendar;
     private DatePickerDialog.OnDateSetListener dateListener;
     private TimePickerDialog.OnTimeSetListener timeListener;
+    private PreferencesManager pm;
     private int currentFlag;
 
     @Override
@@ -80,6 +81,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_new);
 
         mActivity = this;
+        pm = PreferencesManager.getInstance();
 
         dateTextView = findViewById(R.id.new_workout_date_text_view);
         exercisesRecyclerView = findViewById(R.id.exercises_recycler_view);
@@ -264,7 +266,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Which exercise you want to add?");
 
-        final String[] exercises = PreferencesManager.getExercises();
+        final String[] exercises = pm.getExercises();
 
         builder.setItems(exercises, new DialogInterface.OnClickListener() {
             @Override
