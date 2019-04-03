@@ -52,12 +52,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
+        PreferencesManager.init(this);
         pm = PreferencesManager.getInstance();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        PreferencesManager.init(this);
 
         boolean firstStart = pm.isFirstStart();
         if (firstStart) {

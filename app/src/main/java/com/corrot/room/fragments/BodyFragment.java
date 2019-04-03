@@ -3,6 +3,7 @@ package com.corrot.room.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,24 +31,12 @@ public class BodyFragment extends Fragment
     private MaterialButton addWeightButton;
     private PreferencesManager pm;
 
+    private BodyWeightsAdapter bodyWeightsAdapter; // it should be final
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_body, container, false);
-
-        PreferencesManager pm = PreferencesManager.getInstance();
-
-        final RecyclerView recyclerView = view.findViewById(R.id.fragment_body_recycler_view);
-        final BodyWeightsAdapter bodyWeightsAdapter =
-                new BodyWeightsAdapter(this.getContext());
-
-        recyclerView.setAdapter(bodyWeightsAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-
-        // TODO: on shared preferences changed
-        bodyWeightsAdapter.setBodyWeights(pm.getBodyWeightsList());
-
-        return view;
+        return inflater.inflate(R.layout.fragment_body, container, false);
     }
 
     @Override
@@ -55,6 +44,13 @@ public class BodyFragment extends Fragment
         bodyWeightLineChart = view.findViewById(R.id.fragment_body_chart);
         bodyWeightRecyclerView = view.findViewById(R.id.fragment_body_recycler_view);
         addWeightButton = view.findViewById(R.id.fragment_body_add_button);
+
+        pm = PreferencesManager.getInstance();
+
+        bodyWeightsAdapter = new BodyWeightsAdapter(this.getContext());
+        bodyWeightRecyclerView.setAdapter(bodyWeightsAdapter);
+        bodyWeightRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        bodyWeightsAdapter.setBodyWeights(pm.getBodyWeightsList());
 
         addWeightButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,7 +72,19 @@ public class BodyFragment extends Fragment
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(PreferencesManager.PREFS_BODY_WEIGHTS_KEY)) {
-            // UPDATE CHART THERE
+            bodyWeightsAdapter.setBodyWeights(pm.getBodyWeightsList());
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        pm.registerListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        pm.unregisterListener(this);
     }
 }

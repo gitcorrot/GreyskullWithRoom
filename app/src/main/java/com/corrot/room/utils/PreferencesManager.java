@@ -35,6 +35,14 @@ public class PreferencesManager {
         }
     }
 
+    public void registerListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+        mPreferences.registerOnSharedPreferenceChangeListener(listener);
+    }
+
+    public void unregisterListener(SharedPreferences.OnSharedPreferenceChangeListener listener) {
+        mPreferences.unregisterOnSharedPreferenceChangeListener(listener);
+    }
+
     public static synchronized PreferencesManager getInstance() {
         if (instance == null) {
             throw new IllegalStateException("You have to initiate shared preferences first!");
