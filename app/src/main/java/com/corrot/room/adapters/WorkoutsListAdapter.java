@@ -1,12 +1,16 @@
 package com.corrot.room.adapters;
 
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +22,10 @@ import com.corrot.room.activities.NewWorkoutActivity;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.MyTimeUtils;
+import com.corrot.room.utils.WorkoutsDiffUtilCallback;
 import com.corrot.room.viewmodel.ExerciseViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -48,7 +54,7 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
         mActivity = activity;
 
         mExerciseViewModel = ViewModelProviders // ??
-                .of((AppCompatActivity)context).get(ExerciseViewModel .class);
+                .of((AppCompatActivity) context).get(ExerciseViewModel.class);
 
     }
 
@@ -61,7 +67,7 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull final WorkoutsListAdapter.WorkoutViewHolder workoutViewHolder, int i) {
-        if(mWorkouts != null) {
+        if (mWorkouts != null) {
             Workout w = mWorkouts.get(i);
             workoutViewHolder.workoutIdTextView.setText("Daily workout"/* ID: " + w.id*/);
             String date = MyTimeUtils.parseDate(w.workoutDate, MyTimeUtils.MAIN_FORMAT);
@@ -74,13 +80,13 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
 
                 String exercisesText = "";
 
-                for(Exercise e : exercises) {
+                for (Exercise e : exercises) {
 
                     String rxw = "";
 
                     exercisesText += "\n" + e.name + "\n";
 
-                    if(e.weights.size() == e.reps.size()) {
+                    if (e.weights.size() == e.reps.size()) {
                         for (int j = 0; j < e.weights.size(); j++) {
                             rxw += e.reps.get(j) + "x" + e.weights.get(j) + "kg, ";
                         }
@@ -95,8 +101,7 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
             } catch (ExecutionException ee) {
                 Log.e("asdasd", ee.getMessage());
             }
-        }
-        else {
+        } else {
             workoutViewHolder.workoutIdTextView.setText("Workout ID");
             workoutViewHolder.workoutDateTextView.setText("Date");
         }
@@ -115,9 +120,19 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
         });
     }
 
-    public void setWorkouts(List<Workout> workouts) {
-        mWorkouts = workouts;
-        notifyDataSetChanged();
+    public void setWorkouts(List<Workout> newWorkouts) {
+        if (this.mWorkouts == null) {
+            this.mWorkouts = new ArrayList<>();
+        }
+        if (newWorkouts != null) {
+            WorkoutsDiffUtilCallback callback =
+                    new WorkoutsDiffUtilCallback(this.mWorkouts, newWorkouts);
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback);
+
+            this.mWorkouts.clear();
+            this.mWorkouts.addAll(newWorkouts);
+            diffResult.dispatchUpdatesTo(this);
+        }
     }
 
     public Workout getWorkoutAt(int position) {
@@ -126,7 +141,7 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
 
     @Override
     public int getItemCount() {
-        if(mWorkouts != null)
+        if (mWorkouts != null)
             return mWorkouts.size();
         else return 0;
     }

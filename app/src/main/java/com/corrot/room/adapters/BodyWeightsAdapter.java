@@ -1,9 +1,6 @@
 package com.corrot.room.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.ArraySet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,24 +8,13 @@ import android.widget.TextView;
 
 import com.corrot.room.BodyWeightItem;
 import com.corrot.room.R;
-import com.corrot.room.activities.NewWorkoutActivity;
-import com.corrot.room.db.entity.Exercise;
-import com.corrot.room.db.entity.Workout;
-import com.corrot.room.utils.MyDiffUtilCallback;
+import com.corrot.room.utils.BodyWeightDiffUtilCallback;
 import com.corrot.room.utils.MyTimeUtils;
-import com.corrot.room.utils.PreferencesManager;
-import com.corrot.room.viewmodel.ExerciseViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -88,18 +74,22 @@ public class BodyWeightsAdapter extends RecyclerView.Adapter<BodyWeightsAdapter.
     }
 
     public void setBodyWeights(List<BodyWeightItem> newBodyWeights) {
+        if (this.mBodyWeights == null) {
+            this.mBodyWeights = new ArrayList<>();
+        }
         if (newBodyWeights != null) {
-            mBodyWeights = newBodyWeights;
-            DiffUtil.DiffResult diffResult =
-                    DiffUtil.calculateDiff(new MyDiffUtilCallback(mBodyWeights, newBodyWeights));
+            BodyWeightDiffUtilCallback callback =
+                    new BodyWeightDiffUtilCallback(this.mBodyWeights, newBodyWeights);
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback);
+
+            this.mBodyWeights.clear();
+            this.mBodyWeights.addAll(newBodyWeights);
             diffResult.dispatchUpdatesTo(this);
         }
     }
 
     @Override
     public int getItemCount() {
-        if (mBodyWeights != null)
-            return mBodyWeights.size();
-        else return 0;
+        return mBodyWeights != null ? mBodyWeights.size() : 0;
     }
 }
