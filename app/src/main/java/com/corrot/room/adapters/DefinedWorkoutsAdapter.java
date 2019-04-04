@@ -8,13 +8,16 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.corrot.room.DefinedWorkout;
 import com.corrot.room.R;
+import com.corrot.room.db.entity.DefinedWorkout;
+import com.corrot.room.viewmodel.DefinedWorkoutViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkoutsAdapter.DefinedWorkoutViewHolder> {
@@ -38,11 +41,13 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
 
     private final LayoutInflater mInflater;
     private List<DefinedWorkout> mDefinedWorkouts;
-    //private FragmentActivity mActivity;
+    private DefinedWorkoutViewModel definedWorkoutViewModel;
+    private FragmentActivity mActivity;
 
-    public DefinedWorkoutsAdapter(Context context/*, FragmentActivity activity*/) {
+    public DefinedWorkoutsAdapter(Context context, FragmentActivity activity) {
         mInflater = LayoutInflater.from(context);
-       // mActivity = activity;
+        mActivity = activity;
+        definedWorkoutViewModel = ViewModelProviders.of(mActivity).get(DefinedWorkoutViewModel.class);
     }
 
     @NonNull
@@ -78,7 +83,7 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
             viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mDefinedWorkouts.remove(workout);
+                    definedWorkoutViewModel.deleteWorkout(workout);
                     notifyItemRemoved(viewHolder.getAdapterPosition());
                 }
             });

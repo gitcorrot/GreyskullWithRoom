@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
+
         PreferencesManager.init(getApplicationContext());
         pm = PreferencesManager.getInstance();
 
