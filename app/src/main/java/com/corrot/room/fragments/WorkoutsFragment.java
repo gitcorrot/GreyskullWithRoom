@@ -20,6 +20,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class WorkoutsFragment extends Fragment {
 
@@ -34,16 +35,18 @@ public class WorkoutsFragment extends Fragment {
                 ViewModelProviders.of(this).get(DefinedWorkoutViewModel.class);
 
         final RecyclerView recyclerView = view.findViewById(R.id.fragment_workouts_recycler_view);
+
+        ((SimpleItemAnimator)recyclerView.getItemAnimator()).setSupportsChangeAnimations(true);
         final DefinedWorkoutsAdapter workoutListAdapter =
                 new DefinedWorkoutsAdapter(this.getContext(), this.getActivity());
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        //recyclerView.setItemAnimator(null);
 
         definedWorkoutViewModel.getAllWorkouts().observe(this, new Observer<List<DefinedWorkout>>() {
             @Override
             public void onChanged(List<DefinedWorkout> definedWorkouts) {
                 workoutListAdapter.setDefinedWorkouts(definedWorkouts);
-                // TODO: DIFF UTILS
             }
         });
 

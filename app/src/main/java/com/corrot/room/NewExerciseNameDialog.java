@@ -16,7 +16,7 @@ import com.corrot.room.utils.PreferencesManager;
 public class NewExerciseNameDialog extends AppCompatDialogFragment {
 
     private EditText exerciseEditText;
-    PreferencesManager pm;
+    private PreferencesManager pm;
 
     @NonNull
     @Override

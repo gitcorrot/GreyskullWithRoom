@@ -1,6 +1,8 @@
 package com.corrot.room.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 
 import com.corrot.room.R;
 import com.corrot.room.db.entity.DefinedWorkout;
+import com.corrot.room.utils.DefinedWorkoutsDiffUtilCallback;
 import com.corrot.room.viewmodel.DefinedWorkoutViewModel;
 
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkoutsAdapter.DefinedWorkoutViewHolder> {
@@ -52,7 +56,7 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
 
     @NonNull
     @Override
-    public DefinedWorkoutsAdapter.DefinedWorkoutViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public DefinedWorkoutViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View itemView = mInflater.inflate(R.layout.recyclerview_defined_workout_item, viewGroup, false);
         return new DefinedWorkoutViewHolder(itemView);
     }
@@ -64,7 +68,7 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
             viewHolder.labelTextView.setText(workout.label);
 
             StringBuilder exercises = new StringBuilder();
-            for(String s : workout.exercises) {
+            for (String s : workout.exercises) {
                 exercises.append(s);
                 exercises.append("\n");
             }
@@ -83,8 +87,7 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
             viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    definedWorkoutViewModel.deleteWorkout(workout);
-                    notifyItemRemoved(viewHolder.getAdapterPosition());
+                    showDeleteDialog(mActivity, workout).show();
                 }
             });
 
@@ -102,8 +105,13 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
             this.mDefinedWorkouts = new ArrayList<>();
         }
         if (newWorkouts != null) {
+            DefinedWorkoutsDiffUtilCallback callback =
+                    new DefinedWorkoutsDiffUtilCallback(this.mDefinedWorkouts, newWorkouts);
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback);
             this.mDefinedWorkouts.clear();
             this.mDefinedWorkouts.addAll(newWorkouts);
+            //mDefinedWorkouts = newWorkouts;
+            diffResult.dispatchUpdatesTo(this);
         }
     }
 
@@ -112,5 +120,23 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
         if (mDefinedWorkouts != null)
             return mDefinedWorkouts.size();
         else return 0;
+    }
+
+    private AlertDialog showDeleteDialog(FragmentActivity fragmentActivity, final DefinedWorkout workout) {
+        return new AlertDialog.Builder(fragmentActivity.getThemedContext())
+                .setTitle("Are you sure you want delete this workout?")
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        definedWorkoutViewModel.deleteWorkout(workout);
+                    }
+                })
+                .create();
     }
 }
