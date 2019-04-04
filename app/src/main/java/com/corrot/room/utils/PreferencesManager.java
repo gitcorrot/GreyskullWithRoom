@@ -2,25 +2,22 @@ package com.corrot.room.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.ArraySet;
 
 import com.corrot.room.BodyWeightItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 public class PreferencesManager {
 
-    private final static String PREFS_NAME = "com.corrot";
-    private final static String PREFS_EXERCISES_KEY = "exercises";
-    public final static String PREFS_BODY_WEIGHTS_KEY = "body weights";
-    private final static String PREFS_FIRST_START_KEY = "first start";
+    private final static String PREFS_NAME = "com.corrot key";
+    private final static String PREFS_EXERCISES_KEY = "exercises key";
+    public final static String PREFS_BODY_WEIGHTS_KEY = "body weights key";
+    private final static String PREFS_FIRST_START_KEY = "first start key";
 
     private static PreferencesManager instance;
     private final SharedPreferences mPreferences;
@@ -53,27 +50,39 @@ public class PreferencesManager {
     //---------------------------------------- UTILS -------------------------------------------//
 
     public boolean isFirstStart() {
-        return mPreferences.getBoolean(PREFS_FIRST_START_KEY, true);
+        boolean isFirst = mPreferences.getBoolean(PREFS_FIRST_START_KEY, true);
+        if (isFirst) {
+            initFirstStart();
+            return true;
+        } else
+            return false;
     }
 
-    public void setFirstStart(boolean isFirst) {
+    private void initFirstStart() {
         mPreferences.edit()
-                .putBoolean(PREFS_FIRST_START_KEY, isFirst)
+                .putBoolean(PREFS_FIRST_START_KEY, false)
                 .apply();
+        Set<String> exercises = new HashSet<>();
+        exercises.add("Squats");
+        exercises.add("Deadlift");
+        exercises.add("Bench Press");
+        exercises.add("Barbell Row");
+        exercises.add("Pull-ups");
+        saveExercises(exercises);
     }
 
-    //-------------------------------------- EXERCISES -------------------------------------------//
+    //--------------------------------EXERCISES' NAMES -------------------------------------------//
 
-    public void saveExercises(String[] exercises) {
+    /*public void saveExercises(String[] exercises) {
         if (exercises != null) {
-            Set<String> set = new HashSet<>();
-            Collections.addAll(set, exercises);
+            Set<String> set = new LinkedHashSet<>(Arrays.asList(exercises));
+            //Collections.addAll(set, exercises);
 
             mPreferences.edit()
                     .putStringSet(PREFS_EXERCISES_KEY, set)
                     .apply();
         }
-    }
+    }*/
 
     private void saveExercises(Set<String> exercises) {
         if (exercises != null) {
@@ -93,10 +102,9 @@ public class PreferencesManager {
 
     public void addExercise(String exercise) {
         Set<String> exercises = mPreferences.getStringSet(PREFS_EXERCISES_KEY, null);
-        if (exercises != null && exercise != null) {
-            exercises.add(exercise);
-            saveExercises(exercises);
-        }
+        Set<String> exercisesCopy = new HashSet<>(exercises); // MOST IMPORTANT THING - MAKE COPY OF SET
+        exercisesCopy.add(exercise);
+        saveExercises(exercisesCopy);
     }
 
     //------------------------------------- BODY WEIGHT -----------------------------------------//
@@ -110,9 +118,10 @@ public class PreferencesManager {
     private Set<String> getBodyWeightsSet() {
         Set<String> bodyWeights = mPreferences.getStringSet(PREFS_BODY_WEIGHTS_KEY, null);
         if (bodyWeights != null) {
-            return sortBodyWeightsSet(bodyWeights);
+            Set<String> bodyWeightsCopy = new LinkedHashSet<>(bodyWeights); // !!!
+            return sortBodyWeightsSet(bodyWeightsCopy);
         } else {
-            return new HashSet<>();
+            return new LinkedHashSet<>();
         }
     }
 

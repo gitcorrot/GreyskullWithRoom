@@ -33,6 +33,10 @@ import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.viewmodel.WorkoutViewModel;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton floatingButton;
@@ -52,14 +56,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
-        PreferencesManager.init(this);
+        PreferencesManager.init(getApplicationContext());
         pm = PreferencesManager.getInstance();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        boolean firstStart = pm.isFirstStart();
-        if (firstStart) {
+        if (pm.isFirstStart()) {
             firstStartInit();
         }
 
@@ -100,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
                                     .show(homeFragment)
                                     .commit();
                             currentFragment = homeFragment;
+                            floatingButton.show();
                             return true;
                         case R.id.navigation_bar_history:
                             getSupportFragmentManager().beginTransaction()
@@ -107,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
                                     .show(historyFragment)
                                     .commit();
                             currentFragment = historyFragment;
+                            floatingButton.show();
                             return true;
                         case R.id.navigation_bar_stats:
                             getSupportFragmentManager().beginTransaction()
@@ -114,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
                                     .show(statsFragment)
                                     .commit();
                             currentFragment = statsFragment;
+                            floatingButton.show();
                             return true;
                         case R.id.navigation_bar_body:
                             getSupportFragmentManager().beginTransaction()
@@ -121,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                                     .show(bodyFragment)
                                     .commit();
                             currentFragment = bodyFragment;
+                            floatingButton.hide();
                             return true;
                     }
                     return false;
@@ -128,13 +135,7 @@ public class MainActivity extends AppCompatActivity {
             };
 
     private void firstStartInit() {
-        pm.setFirstStart(false);
-
-        final String[] exercises = {
-                "Squats", "Deadlift", "Bench Press", "Barbell Row",
-                "Pull-ups", "Overhead Press"
-        };
-        pm.saveExercises(exercises);
+        // init
     }
 
     @Override
@@ -181,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (fragment != -1)
             outState.putInt(CURRENT_FRAGMENT_KEY, fragment);
-        else  {
+        else {
             Log.d("MainActivity", "onSaveInstanceState: NO FRAGMENT TO SAVE.");
         }
         super.onSaveInstanceState(outState);
@@ -220,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
                             .hide(statsFragment)
                             .show(bodyFragment)
                             .commit();
+                    floatingButton.hide();
             }
         }
         super.onRestoreInstanceState(savedInstanceState);

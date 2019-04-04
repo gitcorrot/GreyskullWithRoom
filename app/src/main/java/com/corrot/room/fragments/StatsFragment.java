@@ -55,24 +55,21 @@ public class StatsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
-        mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
-
-        pm = PreferencesManager.getInstance();
-        exercisesNames = pm.getExercises();
-
-        /*if (savedInstanceState != null) {
-            this.save
-        }*/
-
         return inflater.inflate(R.layout.fragment_stats, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         lineChart = view.findViewById(R.id.fragment_statistics_line_chart);
         nameSpinner = view.findViewById(R.id.fragment_statistics_name_spinner);
+
+        mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
+        mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
+
+        pm = PreferencesManager.getInstance();
+        exercisesNames = pm.getExercises();
 
         if (getContext() != null && exercisesNames != null) {
             ArrayAdapter namesAdapter = new ArrayAdapter<>(
