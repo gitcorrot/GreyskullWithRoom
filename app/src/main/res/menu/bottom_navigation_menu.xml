@@ -8,6 +8,11 @@
         android:icon="@drawable/ic_home_black_24dp"/>
 
     <item
+        android:id="@+id/navigation_bar_workouts"
+        android:title="Workouts"
+        android:icon="@drawable/ic_dumbbell"/>
+
+    <item
         android:id="@+id/navigation_bar_history"
         android:title="History"
         android:icon="@drawable/ic_history_black_24dp"/>
