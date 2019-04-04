@@ -5,10 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.corrot.room.NewDefinedWorkoutDialog;
 import com.corrot.room.R;
 import com.corrot.room.adapters.DefinedWorkoutsAdapter;
 import com.corrot.room.db.entity.DefinedWorkout;
 import com.corrot.room.viewmodel.DefinedWorkoutViewModel;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,8 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class WorkoutsFragment extends Fragment {
 
+    private MaterialButton addWorkotuButton;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -31,6 +35,15 @@ public class WorkoutsFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_workouts, container, false);
+        addWorkotuButton = view.findViewById(R.id.fragment_workouts_add_new_button);
+
+        addWorkotuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new NewDefinedWorkoutDialog().show(getFragmentManager(), "Add");
+            }
+        });
+
         DefinedWorkoutViewModel definedWorkoutViewModel =
                 ViewModelProviders.of(this).get(DefinedWorkoutViewModel.class);
 

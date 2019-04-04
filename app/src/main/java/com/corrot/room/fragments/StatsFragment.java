@@ -75,7 +75,8 @@ public class StatsFragment extends Fragment {
             ArrayAdapter namesAdapter = new ArrayAdapter<>(
                     getContext(),
                     R.layout.spinner_item,
-                    R.id.spinner_text_view, exercisesNames
+                    R.id.spinner_text_view,
+                    exercisesNames
             );
             namesAdapter.setDropDownViewResource(R.layout.spinner_item);
             nameSpinner.setAdapter(namesAdapter);
