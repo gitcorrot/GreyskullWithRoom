@@ -53,18 +53,25 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final DefinedWorkoutsAdapter.DefinedWorkoutViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull final DefinedWorkoutViewHolder viewHolder, int i) {
         if (mDefinedWorkouts != null) {
             final DefinedWorkout workout = mDefinedWorkouts.get(i);
             viewHolder.labelTextView.setText(workout.label);
-            viewHolder.exercisesTextView.setText(workout.exercises);
+
+            StringBuilder exercises = new StringBuilder();
+            for(String s : workout.exercises) {
+                exercises.append(s);
+                exercises.append("\n");
+            }
+            viewHolder.exercisesTextView.setText(exercises.toString());
+
             viewHolder.subItem.setVisibility(workout.expanded ? View.VISIBLE : View.GONE);
 
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     workout.expanded = !workout.expanded;
-                    notifyItemChanged(i);
+                    notifyItemChanged(viewHolder.getAdapterPosition());
                 }
             });
 
@@ -72,7 +79,7 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
                 @Override
                 public void onClick(View v) {
                     mDefinedWorkouts.remove(workout);
-                    notifyItemRemoved(i);
+                    notifyItemRemoved(viewHolder.getAdapterPosition());
                 }
             });
 

@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import com.corrot.room.DefinedWorkout;
 import com.corrot.room.R;
 import com.corrot.room.adapters.DefinedWorkoutsAdapter;
-import com.corrot.room.adapters.WorkoutsListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +27,19 @@ public class WorkoutsFragment extends Fragment {
 
         final RecyclerView recyclerView = view.findViewById(R.id.fragment_workouts_recycler_view);
         final DefinedWorkoutsAdapter workoutListAdapter =
-                new DefinedWorkoutsAdapter(this.getContext(), this.getActivity());
+                new DefinedWorkoutsAdapter(this.getContext()/*, this.getActivity()*/);
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         List<DefinedWorkout> test = new ArrayList<>();
-        DefinedWorkout d1 = new DefinedWorkout("FIRST WORKOUT", "ASDASDASD");
-        DefinedWorkout d2 = new DefinedWorkout("SECOND WORKOUT", "ZXCZXCZXC");
-        DefinedWorkout d3 = new DefinedWorkout("THIRD WORKOUT", "QWEQWEQWE");
-        test.add(d1); test.add(d2); test.add(d3);
+        List<String> ex = new ArrayList<>();
+        ex.add("exercise 1"); ex.add("exercise 2"); ex.add("exercise 3");
+        DefinedWorkout d1 = new DefinedWorkout("FIRST WORKOUT", ex);
+        DefinedWorkout d2 = new DefinedWorkout("SECOND WORKOUT", ex);
+        DefinedWorkout d3 = new DefinedWorkout("THIRD WORKOUT", ex);
+        test.add(d1);
+        test.add(d2);
+        test.add(d3);
         workoutListAdapter.setDefinedWorkouts(test);
 
         return view;
