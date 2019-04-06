@@ -19,6 +19,7 @@ import com.corrot.room.db.entity.DefinedWorkout;
 import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.viewmodel.DefinedWorkoutViewModel;
+import com.corrot.room.viewmodel.NewDefinedWorkoutViewModel;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,43 +41,61 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
     private EditText workoutNameEditText;
     private MaterialButton addExerciseButton;
     private RecyclerView recyclerView;
-    private PreferencesManager pm;
 
     @NonNull
     @Override
     public AlertDialog onCreateDialog(Bundle savedInstanceState) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        LayoutInflater inflater = this.getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_add_defined_workout, null);
 
         workoutNameEditText = view.findViewById(R.id.dialog_add_defined_workout_name);
         addExerciseButton = view.findViewById(R.id.dialog_add_defined_add_exercise);
         recyclerView = view.findViewById(R.id.dialog_add_defined_recycler_view);
 
+        final DefinedWorkoutExercisesAdapter workoutListAdapter =
+                new DefinedWorkoutExercisesAdapter(getActivity());
+        recyclerView.setAdapter(workoutListAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+
+        final NewDefinedWorkoutViewModel mNewDefinedWorkoutViewModel
+                = ViewModelProviders.of(this).get(NewDefinedWorkoutViewModel.class);
+        mNewDefinedWorkoutViewModel.init();
+
+        mNewDefinedWorkoutViewModel.getAllExerciseItems().observe(getActivity(),
+                new Observer<List<DefinedWorkoutExerciseItem>>() {
+                    @Override
+                    public void onChanged(List<DefinedWorkoutExerciseItem> definedWorkoutExerciseItems) {
+                        workoutListAdapter.setExercises(definedWorkoutExerciseItems);
+                    }
+                });
+
+
         addExerciseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Add item to recyclerView
+                mNewDefinedWorkoutViewModel.addExercise(new DefinedWorkoutExerciseItem());
             }
         });
-
-        final DefinedWorkoutExercisesAdapter workoutListAdapter =
-                new DefinedWorkoutExercisesAdapter(this.getContext());
-        recyclerView.setAdapter(workoutListAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        List<DefinedWorkoutExerciseItem> e = new ArrayList<>();
-        DefinedWorkoutExerciseItem i = new DefinedWorkoutExerciseItem();
-        i.name = "NAME"; i.sets = 5;
-        e.add(i); e.add(i); e.add(i);
-        workoutListAdapter.setExercises(e);
 
         builder.setView(view)
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String name = workoutNameEditText.getText().toString();
+
+
                         List<String> exercises = new ArrayList<>();
+                        List<DefinedWorkoutExerciseItem> items
+                                = mNewDefinedWorkoutViewModel.getAllExerciseItems().getValue();
+                        for(DefinedWorkoutExerciseItem i : items) {
+                            String s = i.name + ", " + i.sets + " sets.";
+                            exercises.add(s);
+                        }
+
+
+
                         // TODO: Get exercises from all recyclerView views
                         // TODO: handle exceptions
                         DefinedWorkout definedWorkout = new DefinedWorkout(name, exercises);
@@ -85,6 +105,7 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
                         Toast.makeText(getContext(),
                                 "Workout added",
                                 Toast.LENGTH_SHORT).show();
+                        mNewDefinedWorkoutViewModel.destroyInstance();
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -92,6 +113,7 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        mNewDefinedWorkoutViewModel.destroyInstance();
                     }
                 });
 

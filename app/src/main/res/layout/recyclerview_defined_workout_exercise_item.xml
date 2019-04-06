@@ -8,8 +8,16 @@
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp">
 
-    <Spinner
-        android:id="@+id/dialog_add_defined_exercise_spinner"
+    <ImageButton
+        android:id="@+id/dialog_add_defined_exercise_menu"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="0.5"
+        android:src="@drawable/ic_arrow_drop_down_black_24dp"
+        android:background="@color/transparent"/>
+
+    <TextView
+        android:id="@+id/dialog_add_defined_exercise_name"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="1.5"
@@ -17,10 +25,11 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
+        android:gravity="center"
         android:textAlignment="center" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/dialog_add_defined_increment"
+        android:id="@+id/dialog_add_defined_decrement"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="0.3"
@@ -29,7 +38,7 @@
         android:textAlignment="gravity"
         android:gravity="center"
         android:text="-"
-        android:textSize="21sp"/>
+        android:textSize="14sp"/>
 
     <TextView
         android:id="@+id/dialog_add_defined_sets_number"
@@ -42,20 +51,20 @@
         android:layout_marginBottom="8dp"
         android:text="0"
         android:gravity="center"
-        android:textAlignment="gravity" />
+        android:textAlignment="center" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/dialog_add_defined_decrement"
+        android:id="@+id/dialog_add_defined_increment"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="0.3"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:textAlignment="gravity"
+        android:textAlignment="center"
         android:gravity="center"
         android:text="+"
-        android:textSize="21sp"
+        android:textSize="14sp"
         android:background="@color/transparent"/>
 
 </LinearLayout>

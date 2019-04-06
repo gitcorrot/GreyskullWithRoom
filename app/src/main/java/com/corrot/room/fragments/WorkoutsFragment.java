@@ -67,12 +67,8 @@ public class WorkoutsFragment extends Fragment {
         ex.add("exercise 1");
         ex.add("exercise 2");
         ex.add("exercise 3");
-        DefinedWorkout d1 = new DefinedWorkout("FIRST WORKOUT", ex);
-        DefinedWorkout d2 = new DefinedWorkout("SECOND WORKOUT", ex);
-        DefinedWorkout d3 = new DefinedWorkout("THIRD WORKOUT", ex);
+        DefinedWorkout d1 = new DefinedWorkout("TEST WORKOUT", ex);
         definedWorkoutViewModel.insertSingleWorkout(d1);
-        definedWorkoutViewModel.insertSingleWorkout(d2);
-        definedWorkoutViewModel.insertSingleWorkout(d3);
 
         return view;
     }
