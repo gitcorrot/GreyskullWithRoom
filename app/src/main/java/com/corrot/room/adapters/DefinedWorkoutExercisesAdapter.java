@@ -2,15 +2,11 @@ package com.corrot.room.adapters;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.corrot.room.DefinedWorkoutExerciseItem;
@@ -19,6 +15,7 @@ import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.viewmodel.NewDefinedWorkoutViewModel;
 import com.google.android.material.button.MaterialButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -48,17 +45,15 @@ public class DefinedWorkoutExercisesAdapter
 
     private final LayoutInflater mInflater;
     private List<DefinedWorkoutExerciseItem> mExercises;
-    private PreferencesManager pm;
     private final String[] exercisesNames;
     private NewDefinedWorkoutViewModel mNewDefinedWorkoutViewModel;
 
     public DefinedWorkoutExercisesAdapter(FragmentActivity activity) {
         mInflater = LayoutInflater.from(activity);
-        mNewDefinedWorkoutViewModel
-                = ViewModelProviders.of(activity).get(NewDefinedWorkoutViewModel.class);
+        exercisesNames = PreferencesManager.getInstance().getExercises();
+        mNewDefinedWorkoutViewModel = new NewDefinedWorkoutViewModel();
+              //  = ViewModelProviders.of(activity).get(NewDefinedWorkoutViewModel.class);
         mNewDefinedWorkoutViewModel.init();
-        pm = PreferencesManager.getInstance();
-        exercisesNames = pm.getExercises(); // TODO: GET IT IN REPOSITORY
     }
 
     @NonNull
@@ -108,8 +103,6 @@ public class DefinedWorkoutExercisesAdapter
                 }
             }
         });
-
-
         return vh;
     }
 
@@ -126,10 +119,19 @@ public class DefinedWorkoutExercisesAdapter
         return mExercises != null ? mExercises.size() : 0;
     }
 
-    public void setExercises(List<DefinedWorkoutExerciseItem> exercises) {
-        mExercises = exercises;
-        notifyDataSetChanged();
-        // TODO: diff utils
+    public DefinedWorkoutExerciseItem getExerciseAt(int pos) {
+        return mExercises.get(pos);
+    }
+
+    public void setExercises(List<DefinedWorkoutExerciseItem> newExercises) {
+        if (mExercises == null) {
+            mExercises = new ArrayList<>();
+        }
+        if (newExercises != null) {
+            this.mExercises.clear();
+            this.mExercises.addAll(newExercises);
+            notifyDataSetChanged();
+        }
     }
 }
 

@@ -44,17 +44,16 @@ public class WorkoutsFragment extends Fragment {
             }
         });
 
+
+
         DefinedWorkoutViewModel definedWorkoutViewModel =
                 ViewModelProviders.of(this).get(DefinedWorkoutViewModel.class);
 
         final RecyclerView recyclerView = view.findViewById(R.id.fragment_workouts_recycler_view);
-
-        ((SimpleItemAnimator)recyclerView.getItemAnimator()).setSupportsChangeAnimations(true);
         final DefinedWorkoutsAdapter workoutListAdapter =
                 new DefinedWorkoutsAdapter(this.getContext(), this.getActivity());
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        //recyclerView.setItemAnimator(null);
 
         definedWorkoutViewModel.getAllWorkouts().observe(this, new Observer<List<DefinedWorkout>>() {
             @Override
@@ -62,13 +61,6 @@ public class WorkoutsFragment extends Fragment {
                 workoutListAdapter.setDefinedWorkouts(definedWorkouts);
             }
         });
-
-        List<String> ex= new ArrayList<>();
-        ex.add("exercise 1");
-        ex.add("exercise 2");
-        ex.add("exercise 3");
-        DefinedWorkout d1 = new DefinedWorkout("TEST WORKOUT", ex);
-        definedWorkoutViewModel.insertSingleWorkout(d1);
 
         return view;
     }

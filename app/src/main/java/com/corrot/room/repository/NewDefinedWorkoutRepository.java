@@ -67,7 +67,7 @@ public class NewDefinedWorkoutRepository {
         }
     }
 
-    public void removeExercise(DefinedWorkoutExerciseItem exerciseItem) {
+    public void deleteExercise(DefinedWorkoutExerciseItem exerciseItem) {
         List<DefinedWorkoutExerciseItem> items = getAllExercises().getValue();
         if (items != null) {
             // Remove exercise

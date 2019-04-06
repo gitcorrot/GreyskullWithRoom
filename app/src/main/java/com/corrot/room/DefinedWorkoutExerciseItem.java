@@ -5,9 +5,15 @@ public class DefinedWorkoutExerciseItem {
     public int sets;
     public int position;
 
-    DefinedWorkoutExerciseItem() {
+    public DefinedWorkoutExerciseItem() {
         name = "";
         sets = 0;
         position = 0;
+    }
+
+    public DefinedWorkoutExerciseItem(String name, int sets, int position) {
+        this.name = name;
+        this.sets = sets;
+        this.position = position;
     }
 }

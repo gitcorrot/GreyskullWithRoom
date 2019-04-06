@@ -11,8 +11,9 @@ import androidx.lifecycle.ViewModel;
 public class NewDefinedWorkoutViewModel extends ViewModel {
 
     private NewDefinedWorkoutRepository mNewWorkoutRepository;
-    public boolean isChanged;
-
+    public boolean isChanged; // TODO: handle it
+    public String label;
+    public int id;
 
     public void init() {
         mNewWorkoutRepository = NewDefinedWorkoutRepository.getInstance();
@@ -21,6 +22,14 @@ public class NewDefinedWorkoutViewModel extends ViewModel {
 
     public void destroyInstance() {
         mNewWorkoutRepository.destroyInstance();
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     //------------------------------EXERCISES---------------------------------//
@@ -38,13 +47,13 @@ public class NewDefinedWorkoutViewModel extends ViewModel {
         mNewWorkoutRepository.addExercise(exercise);
     }
 
+    public void deleteExercise(DefinedWorkoutExerciseItem exercise) {
+        isChanged = true;
+        mNewWorkoutRepository.deleteExercise(exercise);
+    }
+
     public void updateExercise(DefinedWorkoutExerciseItem exercise) {
         isChanged = true;
         mNewWorkoutRepository.updateExercise(exercise);
-    }
-
-    public void removeExercise(DefinedWorkoutExerciseItem exercise) {
-        mNewWorkoutRepository.removeExercise(exercise);
-        isChanged = true;
     }
 }

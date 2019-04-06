@@ -10,10 +10,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.corrot.room.DefinedWorkoutExerciseItem;
+import com.corrot.room.NewDefinedWorkoutDialog;
 import com.corrot.room.R;
 import com.corrot.room.db.entity.DefinedWorkout;
 import com.corrot.room.utils.DefinedWorkoutsDiffUtilCallback;
 import com.corrot.room.viewmodel.DefinedWorkoutViewModel;
+import com.corrot.room.viewmodel.NewDefinedWorkoutViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +61,51 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
     @Override
     public DefinedWorkoutViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View itemView = mInflater.inflate(R.layout.recyclerview_defined_workout_item, viewGroup, false);
-        return new DefinedWorkoutViewHolder(itemView);
+        final DefinedWorkoutViewHolder viewHolder = new DefinedWorkoutViewHolder(itemView);
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final DefinedWorkout workout = mDefinedWorkouts.get(viewHolder.getAdapterPosition());
+                workout.expanded = !workout.expanded;
+                notifyItemChanged(viewHolder.getAdapterPosition());
+            }
+        });
+
+        viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final DefinedWorkout workout = mDefinedWorkouts.get(viewHolder.getAdapterPosition());
+                showDeleteDialog(mActivity, workout).show();
+            }
+        });
+
+        viewHolder.editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final DefinedWorkout workout = mDefinedWorkouts.get(viewHolder.getAdapterPosition());
+                List<DefinedWorkoutExerciseItem> exerciseItems = new ArrayList<>();
+
+                for (int i = 0; i < workout.exercises.size(); i++) { // "Squats = 2 sets."
+                    DefinedWorkoutExerciseItem item = new DefinedWorkoutExerciseItem();
+                    String[] name = workout.exercises.get(i).split(" - ");
+                    item.name = name[0];
+                    String[] sets = name[1].split(" ");
+                    item.sets = Integer.parseInt(sets[0]);
+                    item.position = i;
+                    exerciseItems.add(item);
+                }
+                NewDefinedWorkoutViewModel mNewDefinedWorkoutViewModel = new NewDefinedWorkoutViewModel();
+                        //ViewModelProviders.of(mActivity).get(NewDefinedWorkoutViewModel.class);
+                mNewDefinedWorkoutViewModel.init();
+                mNewDefinedWorkoutViewModel.setExercises(exerciseItems);
+                mNewDefinedWorkoutViewModel.setLabel(workout.label);
+                mNewDefinedWorkoutViewModel.setId(workout.id);
+                new NewDefinedWorkoutDialog().show(mActivity.getSupportFragmentManager(), "Edit");
+            }
+        });
+
+        return viewHolder;
     }
 
     @Override
@@ -76,27 +123,7 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
 
             viewHolder.subItem.setVisibility(workout.expanded ? View.VISIBLE : View.GONE);
 
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    workout.expanded = !workout.expanded;
-                    notifyItemChanged(viewHolder.getAdapterPosition());
-                }
-            });
 
-            viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showDeleteDialog(mActivity, workout).show();
-                }
-            });
-
-            viewHolder.editButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // open edit fragment
-                }
-            });
         }
     }
 
@@ -110,7 +137,6 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback);
             this.mDefinedWorkouts.clear();
             this.mDefinedWorkouts.addAll(newWorkouts);
-            //mDefinedWorkouts = newWorkouts;
             diffResult.dispatchUpdatesTo(this);
         }
     }
