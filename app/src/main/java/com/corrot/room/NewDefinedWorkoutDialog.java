@@ -20,6 +20,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -29,27 +30,26 @@ import androidx.recyclerview.widget.RecyclerView;
 public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
 
     private EditText workoutNameEditText;
-    private MaterialButton addExerciseButton;
-    private RecyclerView recyclerView;
     private NewDefinedWorkoutViewModel mNewDefinedWorkoutViewModel;
 
     private String mTag;
-    private String mWorkoutLabel;
     private int mWorkoutId;
+    private FragmentActivity mActivity;
 
     @NonNull
     @Override
     public AlertDialog onCreateDialog(Bundle savedInstanceState) {
+        mActivity = getActivity();
+        mTag = getTag();
+        String mWorkoutLabel;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
-        LayoutInflater inflater = this.getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_add_defined_workout, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        LayoutInflater inflater = mActivity.getLayoutInflater();
+        View view = View.inflate(getContext(), R.layout.dialog_add_defined_workout, null);
 
         workoutNameEditText = view.findViewById(R.id.dialog_add_defined_workout_name);
-        addExerciseButton = view.findViewById(R.id.dialog_add_defined_add_exercise);
-        recyclerView = view.findViewById(R.id.dialog_add_defined_recycler_view);
-
-        mTag = getTag();
+        MaterialButton addExerciseButton = view.findViewById(R.id.dialog_add_defined_add_exercise);
+        RecyclerView recyclerView = view.findViewById(R.id.dialog_add_defined_recycler_view);
 
         if (mTag != null && mTag.equals("Edit")) {
             Bundle args = getArguments();
@@ -61,7 +61,7 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
                 }
                 if (mWorkoutLabel != null && mWorkoutLabel.equals("")) {
                     Log.e("NewDefinedWorkoutDialog", "Can't find workout label!");
-                } else if (mWorkoutLabel != null && !mWorkoutLabel.equals("")){
+                } else if (mWorkoutLabel != null && !mWorkoutLabel.equals("")) {
                     workoutNameEditText.setText(mWorkoutLabel);
                 }
             }
@@ -73,7 +73,7 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
 
 
         final DefinedWorkoutExercisesAdapter workoutListAdapter =
-                new DefinedWorkoutExercisesAdapter(getActivity());
+                new DefinedWorkoutExercisesAdapter(mActivity);
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
@@ -93,7 +93,7 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
             }
         }).attachToRecyclerView(recyclerView);
 
-        mNewDefinedWorkoutViewModel.getAllExerciseItems().observe(getActivity(),
+        mNewDefinedWorkoutViewModel.getAllExerciseItems().observe(mActivity,
                 new Observer<List<DefinedWorkoutExerciseItem>>() {
                     @Override
                     public void onChanged(List<DefinedWorkoutExerciseItem> definedWorkoutExerciseItems) {
@@ -111,7 +111,7 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
 
 
         builder.setView(view)
-                .setPositiveButton(mTag, new DialogInterface.OnClickListener() {
+                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String name = workoutNameEditText.getText().toString();
@@ -129,7 +129,7 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
                         // TODO: handle exceptions
                         DefinedWorkout definedWorkout = new DefinedWorkout(name, exercises);
                         DefinedWorkoutViewModel definedWorkoutViewModel =
-                                ViewModelProviders.of(getActivity()).get(DefinedWorkoutViewModel.class);
+                                ViewModelProviders.of(mActivity).get(DefinedWorkoutViewModel.class);
 
                         switch (mTag) {
                             case "Add":

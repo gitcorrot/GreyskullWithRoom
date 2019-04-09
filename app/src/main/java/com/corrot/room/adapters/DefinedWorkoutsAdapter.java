@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,21 +86,13 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
             @Override
             public void onClick(View v) {
                 final DefinedWorkout workout = mDefinedWorkouts.get(viewHolder.getAdapterPosition());
-                List<DefinedWorkoutExerciseItem> exerciseItems = new ArrayList<>();
+                List<DefinedWorkoutExerciseItem> exerciseItems = getWorkoutExercises(workout);
 
-                for (int i = 0; i < workout.exercises.size(); i++) { // "Squats = 2 sets."
-                    DefinedWorkoutExerciseItem item = new DefinedWorkoutExerciseItem();
-                    String[] name = workout.exercises.get(i).split(" - ");
-                    item.name = name[0];
-                    String[] sets = name[1].split(" ");
-                    item.sets = Integer.parseInt(sets[0]);
-                    item.position = i;
-                    exerciseItems.add(item);
-                }
                 NewDefinedWorkoutViewModel mNewDefinedWorkoutViewModel =
                         ViewModelProviders.of(mActivity).get(NewDefinedWorkoutViewModel.class);
                 mNewDefinedWorkoutViewModel.init();
                 mNewDefinedWorkoutViewModel.setExercises(exerciseItems);
+
                 NewDefinedWorkoutDialog dialog = new NewDefinedWorkoutDialog();
                 Bundle args = new Bundle();
                 args.putInt("id", workout.id);
@@ -168,5 +161,32 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
                     }
                 })
                 .create();
+    }
+
+    private List<DefinedWorkoutExerciseItem> getWorkoutExercises(DefinedWorkout workout) {
+        List<DefinedWorkoutExerciseItem> exerciseItems = new ArrayList<>();
+
+        for (int i = 0; i < workout.exercises.size(); i++) {
+            // Parse for example "Squats = 2 sets." into object
+            DefinedWorkoutExerciseItem item = new DefinedWorkoutExerciseItem();
+            try {
+                String[] name = workout.exercises.get(i).split(" - ");
+                item.name = name[0];
+                try {
+                    String[] sets = name[1].split(" ");
+                    item.sets = Integer.parseInt(sets[0]);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    Log.e("DefinedWorkoutAdapter", "Can't find ' ' in String!");
+                    item.sets = 0;
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                Log.e("DefinedWorkoutAdapter", "Can't find ' - ' in String!");
+                item.name = "Name";
+                item.sets = 0;
+            }
+            item.position = i;
+            exerciseItems.add(item);
+        }
+        return exerciseItems;
     }
 }
