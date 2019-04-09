@@ -9,7 +9,7 @@
     android:layout_marginBottom="4dp">
 
     <ImageButton
-        android:id="@+id/dialog_add_defined_exercise_menu"
+        android:id="@+id/dialog_add_routine_exercise_menu"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="0.5"
@@ -17,7 +17,7 @@
         android:background="@color/transparent"/>
 
     <TextView
-        android:id="@+id/dialog_add_defined_exercise_name"
+        android:id="@+id/dialog_add_routine_exercise_name"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="1.5"
@@ -29,7 +29,7 @@
         android:textAlignment="center" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/dialog_add_defined_decrement"
+        android:id="@+id/dialog_add_routine_decrement"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="0.3"
@@ -41,7 +41,7 @@
         android:textSize="14sp"/>
 
     <TextView
-        android:id="@+id/dialog_add_defined_sets_number"
+        android:id="@+id/dialog_add_routine_sets_number"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="0.3"
@@ -54,7 +54,7 @@
         android:textAlignment="center" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/dialog_add_defined_increment"
+        android:id="@+id/dialog_add_routine_increment"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="0.3"

@@ -1,6 +1,6 @@
 package com.corrot.room.repository;
 
-import com.corrot.room.DefinedWorkoutExerciseItem;
+import com.corrot.room.RoutineExerciseItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,14 +8,14 @@ import java.util.List;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-public class NewDefinedWorkoutRepository {
+public class NewRoutineRepository {
 
-    private static NewDefinedWorkoutRepository instance;
-    private MutableLiveData<List<DefinedWorkoutExerciseItem>> mNewExercises;
+    private static NewRoutineRepository instance;
+    private MutableLiveData<List<RoutineExerciseItem>> mNewExercises;
 
-    public static NewDefinedWorkoutRepository getInstance() {
+    public static NewRoutineRepository getInstance() {
         if (instance == null) {
-            instance = new NewDefinedWorkoutRepository();
+            instance = new NewRoutineRepository();
         }
         return instance;
     }
@@ -28,21 +28,21 @@ public class NewDefinedWorkoutRepository {
 
     //------------------------------EXERCISES---------------------------------//
 
-    public LiveData<List<DefinedWorkoutExerciseItem>> getAllExercises() {
+    public LiveData<List<RoutineExerciseItem>> getAllExercises() {
         if (mNewExercises == null) {
             mNewExercises = new MutableLiveData<>();
         }
         return mNewExercises;
     }
 
-    public void setExercises(List<DefinedWorkoutExerciseItem> exercises) {
+    public void setExercises(List<RoutineExerciseItem> exercises) {
         mNewExercises = new MutableLiveData<>();
         mNewExercises.postValue(exercises);
     }
 
     // add exercise and set its position
-    public void addExercise(DefinedWorkoutExerciseItem exercise) {
-        List<DefinedWorkoutExerciseItem> items = getAllExercises().getValue();
+    public void addExercise(RoutineExerciseItem exercise) {
+        List<RoutineExerciseItem> items = getAllExercises().getValue();
         if (items != null) {
             exercise.position = items.size();
             items.add(exercise);
@@ -55,18 +55,22 @@ public class NewDefinedWorkoutRepository {
         }
     }
 
-    public void updateExercise(DefinedWorkoutExerciseItem exercise) {
-        List<DefinedWorkoutExerciseItem> items = getAllExercises().getValue();
-        if (items != null) {
+    public void updateExercise(RoutineExerciseItem exercise) {
+        List<RoutineExerciseItem> items = getAllExercises().getValue();
+        if (items != null && items.size() >= exercise.position) {
             if (items.get(exercise.position) != null) {
                 items.set(exercise.position, exercise);
                 mNewExercises.postValue(items);
             }
+        } else {
+            items = new ArrayList<>();
+            items.add(exercise);
+            mNewExercises.postValue(items);
         }
     }
 
-    public void deleteExercise(DefinedWorkoutExerciseItem exerciseItem) {
-        List<DefinedWorkoutExerciseItem> items = getAllExercises().getValue();
+    public void deleteExercise(RoutineExerciseItem exerciseItem) {
+        List<RoutineExerciseItem> items = getAllExercises().getValue();
         if (items != null) {
             // Remove exercise
             items.remove(exerciseItem);

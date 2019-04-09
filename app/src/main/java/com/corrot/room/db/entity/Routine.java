@@ -10,9 +10,9 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-@Entity(tableName = "Defined workout")
+@Entity(tableName = "Routine")
 @TypeConverters({ExercisesConverter.class})
-public class DefinedWorkout {
+public class Routine {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
@@ -26,7 +26,7 @@ public class DefinedWorkout {
     @Ignore
     public boolean expanded;
 
-    public DefinedWorkout(String label, List<String> exercises) {
+    public Routine(String label, List<String> exercises) {
         this.label = label;
         this.exercises = exercises;
         this.expanded = false;

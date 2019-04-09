@@ -1,24 +1,7 @@
 package com.corrot.room.activities;
 
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Intent;
-
-import androidx.annotation.NonNull;
-
-import com.corrot.room.fragments.BodyFragment;
-import com.corrot.room.fragments.WorkoutsFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-
-import androidx.appcompat.widget.Toolbar;
-
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,23 +9,29 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.corrot.room.NewExerciseNameDialog;
+import com.corrot.room.R;
+import com.corrot.room.db.WorkoutsDatabase;
+import com.corrot.room.fragments.BodyFragment;
 import com.corrot.room.fragments.HistoryFragment;
 import com.corrot.room.fragments.HomeFragment;
-import com.corrot.room.R;
 import com.corrot.room.fragments.StatsFragment;
-import com.corrot.room.db.WorkoutsDatabase;
+import com.corrot.room.fragments.RoutinesFragment;
 import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.viewmodel.WorkoutViewModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton floatingButton;
     private final Fragment homeFragment = new HomeFragment();
-    private final Fragment workoutsFragment = new WorkoutsFragment();
+    private final Fragment routinesFragment = new RoutinesFragment();
     private final Fragment historyFragment = new HistoryFragment();
     private final Fragment statsFragment = new StatsFragment();
     private final Fragment bodyFragment = new BodyFragment();
@@ -50,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     WorkoutViewModel mWorkoutViewModel;
     private final static String CURRENT_FRAGMENT_KEY = "current fragment";
     PreferencesManager pm;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +63,11 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.main_activity_fragment_container, homeFragment)   // don't hide
-                .add(R.id.main_activity_fragment_container, workoutsFragment)
+                .add(R.id.main_activity_fragment_container, routinesFragment)
                 .add(R.id.main_activity_fragment_container, historyFragment)
                 .add(R.id.main_activity_fragment_container, statsFragment)
                 .add(R.id.main_activity_fragment_container, bodyFragment)
-                .hide(workoutsFragment)
+                .hide(routinesFragment)
                 .hide(historyFragment)
                 .hide(statsFragment)
                 .hide(bodyFragment)
@@ -110,12 +98,12 @@ public class MainActivity extends AppCompatActivity {
                             currentFragment = homeFragment;
                             floatingButton.show();
                             return true;
-                        case R.id.navigation_bar_workouts:
+                        case R.id.navigation_bar_routines:
                             getSupportFragmentManager().beginTransaction()
                                     .hide(currentFragment)
-                                    .show(workoutsFragment)
+                                    .show(routinesFragment)
                                     .commit();
-                            currentFragment = workoutsFragment;
+                            currentFragment = routinesFragment;
                             floatingButton.show();
                             return true;
                         case R.id.navigation_bar_history:
@@ -148,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             };
 
     private void firstStartInit() {
-        // init
+        // TODO: if it is first applications start add example routines
     }
 
     @Override
@@ -195,15 +183,15 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_bar_home:
                     getSupportFragmentManager().beginTransaction()
                             .show(homeFragment)
-                            .hide(workoutsFragment)
+                            .hide(routinesFragment)
                             .hide(historyFragment)
                             .hide(statsFragment)
                             .hide(bodyFragment)
                             .commit();
-                case R.id.navigation_bar_workouts:
+                case R.id.navigation_bar_routines:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
-                            .show(workoutsFragment)
+                            .show(routinesFragment)
                             .hide(historyFragment)
                             .hide(statsFragment)
                             .hide(bodyFragment)
@@ -211,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_bar_history:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
-                            .hide(workoutsFragment)
+                            .hide(routinesFragment)
                             .show(historyFragment)
                             .hide(statsFragment)
                             .hide(bodyFragment)
@@ -219,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_bar_stats:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
-                            .hide(workoutsFragment)
+                            .hide(routinesFragment)
                             .hide(historyFragment)
                             .show(statsFragment)
                             .hide(bodyFragment)
@@ -227,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_bar_body:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
-                            .hide(workoutsFragment)
+                            .hide(routinesFragment)
                             .hide(historyFragment)
                             .hide(statsFragment)
                             .show(bodyFragment)

@@ -9,10 +9,10 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.corrot.room.DefinedWorkoutExerciseItem;
+import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.R;
 import com.corrot.room.utils.PreferencesManager;
-import com.corrot.room.viewmodel.NewDefinedWorkoutViewModel;
+import com.corrot.room.viewmodel.NewRoutineViewModel;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -23,43 +23,44 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class DefinedWorkoutExercisesAdapter
-        extends RecyclerView.Adapter<DefinedWorkoutExercisesAdapter.DefinedWorkoutExerciseViewHolder> {
+public class RoutineExercisesAdapter
+        extends RecyclerView.Adapter<RoutineExercisesAdapter.RoutineExerciseViewHolder> {
 
-    class DefinedWorkoutExerciseViewHolder extends RecyclerView.ViewHolder {
+    class RoutineExerciseViewHolder extends RecyclerView.ViewHolder {
         private final ImageButton dropDownButton;
         private final TextView exerciseNameTextView;
         private final MaterialButton incrementButton;
         private final MaterialButton decrementButton;
         private final TextView setsNumberTextView;
 
-        private DefinedWorkoutExerciseViewHolder(View itemView) {
+        private RoutineExerciseViewHolder(View itemView) {
             super(itemView);
-            dropDownButton = itemView.findViewById(R.id.dialog_add_defined_exercise_menu);
-            exerciseNameTextView = itemView.findViewById(R.id.dialog_add_defined_exercise_name);
-            incrementButton = itemView.findViewById(R.id.dialog_add_defined_increment);
-            decrementButton = itemView.findViewById(R.id.dialog_add_defined_decrement);
-            setsNumberTextView = itemView.findViewById(R.id.dialog_add_defined_sets_number);
+            dropDownButton = itemView.findViewById(R.id.dialog_add_routine_exercise_menu);
+            exerciseNameTextView = itemView.findViewById(R.id.dialog_add_routine_exercise_name);
+            incrementButton = itemView.findViewById(R.id.dialog_add_routine_increment);
+            decrementButton = itemView.findViewById(R.id.dialog_add_routine_decrement);
+            setsNumberTextView = itemView.findViewById(R.id.dialog_add_routine_sets_number);
         }
     }
 
     private final LayoutInflater mInflater;
-    private List<DefinedWorkoutExerciseItem> mExercises;
+    private List<RoutineExerciseItem> mExercises;
+    private NewRoutineViewModel mNewRoutineViewModel;
     private final String[] exercisesNames;
-    private NewDefinedWorkoutViewModel mNewDefinedWorkoutViewModel;
 
-    public DefinedWorkoutExercisesAdapter(FragmentActivity activity) {
+    public RoutineExercisesAdapter(FragmentActivity activity) {
         mInflater = LayoutInflater.from(activity);
         exercisesNames = PreferencesManager.getInstance().getExercises();
-        mNewDefinedWorkoutViewModel =
-                ViewModelProviders.of(activity).get(NewDefinedWorkoutViewModel.class);
+        mNewRoutineViewModel =
+                ViewModelProviders.of(activity).get(NewRoutineViewModel.class);
+        mNewRoutineViewModel.init();
     }
 
     @NonNull
     @Override
-    public DefinedWorkoutExerciseViewHolder onCreateViewHolder(@NonNull final ViewGroup viewGroup, final int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_defined_workout_exercise_item, viewGroup, false);
-        final DefinedWorkoutExerciseViewHolder vh = new DefinedWorkoutExerciseViewHolder(itemView);
+    public RoutineExerciseViewHolder onCreateViewHolder(@NonNull final ViewGroup viewGroup, final int viewType) {
+        View itemView = mInflater.inflate(R.layout.recyclerview_routine_exercise_item, viewGroup, false);
+        final RoutineExerciseViewHolder vh = new RoutineExerciseViewHolder(itemView);
 
         final PopupMenu popup = new PopupMenu(vh.exerciseNameTextView.getContext(), vh.dropDownButton);
         for (int i = 0; i < exercisesNames.length; i++) {
@@ -69,9 +70,12 @@ public class DefinedWorkoutExercisesAdapter
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int pos = item.getItemId();
-                DefinedWorkoutExerciseItem e = mExercises.get(vh.getAdapterPosition());
+                RoutineExerciseItem e = mExercises.get(vh.getAdapterPosition());
+                if(e == null) {
+                    e = new RoutineExerciseItem("", 0,0);
+                }
                 e.name = exercisesNames[pos];
-                mNewDefinedWorkoutViewModel.updateExercise(e);
+                mNewRoutineViewModel.updateExercise(e);
                 return true;
             }
         });
@@ -86,19 +90,19 @@ public class DefinedWorkoutExercisesAdapter
         vh.incrementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DefinedWorkoutExerciseItem e = mExercises.get(vh.getAdapterPosition());
+                RoutineExerciseItem e = mExercises.get(vh.getAdapterPosition());
                 e.sets++;
-                mNewDefinedWorkoutViewModel.updateExercise(e);
+                mNewRoutineViewModel.updateExercise(e);
             }
         });
 
         vh.decrementButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DefinedWorkoutExerciseItem e = mExercises.get(vh.getAdapterPosition());
+                RoutineExerciseItem e = mExercises.get(vh.getAdapterPosition());
                 if (e.sets > 0) {
                     e.sets--;
-                    mNewDefinedWorkoutViewModel.updateExercise(e);
+                    mNewRoutineViewModel.updateExercise(e);
                 }
             }
         });
@@ -106,10 +110,10 @@ public class DefinedWorkoutExercisesAdapter
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final DefinedWorkoutExerciseViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull final RoutineExerciseViewHolder viewHolder, int position) {
         int sets = mExercises.get(viewHolder.getAdapterPosition()).sets;
-        viewHolder.setsNumberTextView.setText(String.valueOf(sets));
         String name = mExercises.get(viewHolder.getAdapterPosition()).name;
+        viewHolder.setsNumberTextView.setText(String.valueOf(sets));
         viewHolder.exerciseNameTextView.setText(name);
     }
 
@@ -118,11 +122,11 @@ public class DefinedWorkoutExercisesAdapter
         return mExercises != null ? mExercises.size() : 0;
     }
 
-    public DefinedWorkoutExerciseItem getExerciseAt(int pos) {
+    public RoutineExerciseItem getExerciseAt(int pos) {
         return mExercises.get(pos);
     }
 
-    public void setExercises(List<DefinedWorkoutExerciseItem> newExercises) {
+    public void setExercises(List<RoutineExerciseItem> newExercises) {
         if (mExercises == null) {
             mExercises = new ArrayList<>();
         }

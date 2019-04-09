@@ -12,13 +12,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.corrot.room.DefinedWorkoutExerciseItem;
-import com.corrot.room.NewDefinedWorkoutDialog;
+import com.corrot.room.NewRoutineDialog;
+import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.R;
-import com.corrot.room.db.entity.DefinedWorkout;
-import com.corrot.room.utils.DefinedWorkoutsDiffUtilCallback;
-import com.corrot.room.viewmodel.DefinedWorkoutViewModel;
-import com.corrot.room.viewmodel.NewDefinedWorkoutViewModel;
+import com.corrot.room.db.entity.Routine;
+import com.corrot.room.utils.RoutinesDiffUtilCallback;
+import com.corrot.room.viewmodel.RoutineViewModel;
+import com.corrot.room.viewmodel.NewRoutineViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,46 +29,46 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkoutsAdapter.DefinedWorkoutViewHolder> {
+public class RoutinesAdapter extends RecyclerView.Adapter<RoutinesAdapter.RoutineViewHolder> {
 
-    class DefinedWorkoutViewHolder extends RecyclerView.ViewHolder {
+    class RoutineViewHolder extends RecyclerView.ViewHolder {
         private final TextView labelTextView;
         private final TextView exercisesTextView;
         private final LinearLayout subItem;
         private final ImageButton deleteButton;
         private final ImageButton editButton;
 
-        private DefinedWorkoutViewHolder(View itemView) {
+        private RoutineViewHolder(View itemView) {
             super(itemView);
-            labelTextView = itemView.findViewById(R.id.defined_workout_label);
-            exercisesTextView = itemView.findViewById(R.id.defined_workout_exercises);
-            subItem = itemView.findViewById(R.id.defined_workout_sub_item);
-            deleteButton = itemView.findViewById(R.id.defined_workout_delete_button);
-            editButton = itemView.findViewById(R.id.defined_workout_edit_button);
+            labelTextView = itemView.findViewById(R.id.routine_label);
+            exercisesTextView = itemView.findViewById(R.id.routine_exercises);
+            subItem = itemView.findViewById(R.id.routine_sub_item);
+            deleteButton = itemView.findViewById(R.id.routine_delete_button);
+            editButton = itemView.findViewById(R.id.routine_edit_button);
         }
     }
 
     private final LayoutInflater mInflater;
-    private List<DefinedWorkout> mDefinedWorkouts;
-    private DefinedWorkoutViewModel definedWorkoutViewModel;
+    private List<Routine> mRoutines;
+    private RoutineViewModel mRoutineViewModel;
     private FragmentActivity mActivity;
 
-    public DefinedWorkoutsAdapter(Context context, FragmentActivity activity) {
+    public RoutinesAdapter(Context context, FragmentActivity activity) {
         mInflater = LayoutInflater.from(context);
         mActivity = activity;
-        definedWorkoutViewModel = ViewModelProviders.of(mActivity).get(DefinedWorkoutViewModel.class);
+        mRoutineViewModel = ViewModelProviders.of(mActivity).get(RoutineViewModel.class);
     }
 
     @NonNull
     @Override
-    public DefinedWorkoutViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_defined_workout_item, viewGroup, false);
-        final DefinedWorkoutViewHolder viewHolder = new DefinedWorkoutViewHolder(itemView);
+    public RoutineViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View itemView = mInflater.inflate(R.layout.recyclerview_routine_item, viewGroup, false);
+        final RoutineViewHolder viewHolder = new RoutineViewHolder(itemView);
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final DefinedWorkout workout = mDefinedWorkouts.get(viewHolder.getAdapterPosition());
+                final Routine workout = mRoutines.get(viewHolder.getAdapterPosition());
                 workout.expanded = !workout.expanded;
                 notifyItemChanged(viewHolder.getAdapterPosition());
             }
@@ -77,7 +77,7 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
         viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final DefinedWorkout workout = mDefinedWorkouts.get(viewHolder.getAdapterPosition());
+                final Routine workout = mRoutines.get(viewHolder.getAdapterPosition());
                 showDeleteDialog(mActivity, workout).show();
             }
         });
@@ -85,15 +85,15 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
         viewHolder.editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final DefinedWorkout workout = mDefinedWorkouts.get(viewHolder.getAdapterPosition());
-                List<DefinedWorkoutExerciseItem> exerciseItems = getWorkoutExercises(workout);
+                final Routine workout = mRoutines.get(viewHolder.getAdapterPosition());
+                List<RoutineExerciseItem> exerciseItems = getRoutineExercises(workout);
 
-                NewDefinedWorkoutViewModel mNewDefinedWorkoutViewModel =
-                        ViewModelProviders.of(mActivity).get(NewDefinedWorkoutViewModel.class);
-                mNewDefinedWorkoutViewModel.init();
-                mNewDefinedWorkoutViewModel.setExercises(exerciseItems);
+                NewRoutineViewModel mNewRoutineViewModel =
+                        ViewModelProviders.of(mActivity).get(NewRoutineViewModel.class);
+                mNewRoutineViewModel.init();
+                mNewRoutineViewModel.setExercises(exerciseItems);
 
-                NewDefinedWorkoutDialog dialog = new NewDefinedWorkoutDialog();
+                NewRoutineDialog dialog = new NewRoutineDialog();
                 Bundle args = new Bundle();
                 args.putInt("id", workout.id);
                 args.putString("label", workout.label);
@@ -101,14 +101,13 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
                 dialog.show(mActivity.getSupportFragmentManager(), "Edit");
             }
         });
-
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final DefinedWorkoutViewHolder viewHolder, int i) {
-        if (mDefinedWorkouts != null) {
-            final DefinedWorkout workout = mDefinedWorkouts.get(i);
+    public void onBindViewHolder(@NonNull final RoutineViewHolder viewHolder, int i) {
+        if (mRoutines != null) {
+            final Routine workout = mRoutines.get(i);
             viewHolder.labelTextView.setText(workout.label);
 
             StringBuilder exercises = new StringBuilder();
@@ -119,35 +118,33 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
             viewHolder.exercisesTextView.setText(exercises.toString());
 
             viewHolder.subItem.setVisibility(workout.expanded ? View.VISIBLE : View.GONE);
-
-
         }
     }
 
-    public void setDefinedWorkouts(List<DefinedWorkout> newWorkouts) {
-        if (this.mDefinedWorkouts == null) {
-            this.mDefinedWorkouts = new ArrayList<>();
+    public void setRoutines(List<Routine> newRoutines) {
+        if (this.mRoutines == null) {
+            this.mRoutines = new ArrayList<>();
         }
-        if (newWorkouts != null) {
-            DefinedWorkoutsDiffUtilCallback callback =
-                    new DefinedWorkoutsDiffUtilCallback(this.mDefinedWorkouts, newWorkouts);
+        if (newRoutines != null) {
+            RoutinesDiffUtilCallback callback =
+                    new RoutinesDiffUtilCallback(this.mRoutines, newRoutines);
             DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback);
-            this.mDefinedWorkouts.clear();
-            this.mDefinedWorkouts.addAll(newWorkouts);
+            this.mRoutines.clear();
+            this.mRoutines.addAll(newRoutines);
             diffResult.dispatchUpdatesTo(this);
         }
     }
 
     @Override
     public int getItemCount() {
-        if (mDefinedWorkouts != null)
-            return mDefinedWorkouts.size();
+        if (mRoutines != null)
+            return mRoutines.size();
         else return 0;
     }
 
-    private AlertDialog showDeleteDialog(FragmentActivity fragmentActivity, final DefinedWorkout workout) {
+    private AlertDialog showDeleteDialog(FragmentActivity fragmentActivity, final Routine workout) {
         return new AlertDialog.Builder(fragmentActivity.getThemedContext())
-                .setTitle("Are you sure you want delete this workout?")
+                .setTitle("Are you sure you want delete this routine?")
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -157,30 +154,30 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        definedWorkoutViewModel.deleteWorkout(workout);
+                        mRoutineViewModel.deleteRoutine(workout);
                     }
                 })
                 .create();
     }
 
-    private List<DefinedWorkoutExerciseItem> getWorkoutExercises(DefinedWorkout workout) {
-        List<DefinedWorkoutExerciseItem> exerciseItems = new ArrayList<>();
+    private List<RoutineExerciseItem> getRoutineExercises(Routine routine) {
+        List<RoutineExerciseItem> exerciseItems = new ArrayList<>();
 
-        for (int i = 0; i < workout.exercises.size(); i++) {
+        for (int i = 0; i < routine.exercises.size(); i++) {
             // Parse for example "Squats = 2 sets." into object
-            DefinedWorkoutExerciseItem item = new DefinedWorkoutExerciseItem();
+            RoutineExerciseItem item = new RoutineExerciseItem();
             try {
-                String[] name = workout.exercises.get(i).split(" - ");
+                String[] name = routine.exercises.get(i).split(" - ");
                 item.name = name[0];
                 try {
                     String[] sets = name[1].split(" ");
                     item.sets = Integer.parseInt(sets[0]);
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    Log.e("DefinedWorkoutAdapter", "Can't find ' ' in String!");
+                    Log.e("RoutinesAdapter", "Can't find ' ' in String!");
                     item.sets = 0;
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
-                Log.e("DefinedWorkoutAdapter", "Can't find ' - ' in String!");
+                Log.e("RoutinesAdapter", "Can't find ' - ' in String!");
                 item.name = "Name";
                 item.sets = 0;
             }

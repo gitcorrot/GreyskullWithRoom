@@ -1,17 +1,17 @@
 package com.corrot.room.utils;
 
-import com.corrot.room.db.entity.DefinedWorkout;
+import com.corrot.room.db.entity.Routine;
 
 import java.util.List;
 
 import androidx.recyclerview.widget.DiffUtil;
 
-public class DefinedWorkoutsDiffUtilCallback extends DiffUtil.Callback {
+public class RoutinesDiffUtilCallback extends DiffUtil.Callback {
 
-    private List<DefinedWorkout> oldList;
-    private List<DefinedWorkout> newList;
+    private List<Routine> oldList;
+    private List<Routine> newList;
 
-    public DefinedWorkoutsDiffUtilCallback(List<DefinedWorkout> oldList, List<DefinedWorkout> newList) {
+    public RoutinesDiffUtilCallback(List<Routine> oldList, List<Routine> newList) {
         this.oldList = oldList;
         this.newList = newList;
     }

@@ -1,17 +1,17 @@
 package com.corrot.room;
 
-public class DefinedWorkoutExerciseItem {
+public class RoutineExerciseItem {
     public String name;
     public int sets;
     public int position;
 
-    public DefinedWorkoutExerciseItem() {
+    public RoutineExerciseItem() {
         name = "";
         sets = 0;
         position = 0;
     }
 
-    public DefinedWorkoutExerciseItem(String name, int sets, int position) {
+    public RoutineExerciseItem(String name, int sets, int position) {
         this.name = name;
         this.sets = sets;
         this.position = position;

@@ -1,16 +1,7 @@
 package com.corrot.room.adapters;
 
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Context;
 import android.content.Intent;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +19,13 @@ import com.corrot.room.viewmodel.ExerciseViewModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapter.WorkoutViewHolder> {
 
@@ -53,49 +51,56 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
         mInflater = LayoutInflater.from(context);
         mActivity = activity;
 
-        mExerciseViewModel = ViewModelProviders // ??
-                .of((AppCompatActivity) context).get(ExerciseViewModel.class);
-
+        mExerciseViewModel =
+                ViewModelProviders.of((AppCompatActivity) context).get(ExerciseViewModel.class);
     }
 
     @NonNull
     @Override
     public WorkoutsListAdapter.WorkoutViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_workout_item, viewGroup, false);
-        return new WorkoutViewHolder(itemView);
+        View view = mInflater.inflate(R.layout.recyclerview_workout_item, viewGroup, false);
+        final WorkoutViewHolder vh = new WorkoutViewHolder(view);
+
+        // OPEN WORKOUT IN EDITOR
+        vh.setsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent updateWorkoutIntent =
+                        new Intent(mActivity, NewWorkoutActivity.class);
+                updateWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_UPDATE_WORKOUT);
+                updateWorkoutIntent.putExtra("workoutId",
+                        mWorkouts.get(vh.getAdapterPosition()).id);
+                mActivity.startActivity(updateWorkoutIntent);
+            }
+        });
+
+        return vh;
     }
 
     @Override
     public void onBindViewHolder(@NonNull final WorkoutsListAdapter.WorkoutViewHolder workoutViewHolder, int i) {
         if (mWorkouts != null) {
             Workout w = mWorkouts.get(i);
-            workoutViewHolder.workoutIdTextView.setText("Daily workout"/* ID: " + w.id*/);
+            workoutViewHolder.workoutIdTextView.setText("Daily workout");
             String date = MyTimeUtils.parseDate(w.workoutDate, MyTimeUtils.MAIN_FORMAT);
             workoutViewHolder.workoutDateTextView.setText(date);
 
             // exercises and sets
             try {
-
                 List<Exercise> exercises = mExerciseViewModel.getExercisesByWorkoutId(w.id);
-
                 String exercisesText = "";
 
                 for (Exercise e : exercises) {
-
                     String rxw = "";
-
                     exercisesText += "\n" + e.name + "\n";
-
                     if (e.weights.size() == e.reps.size()) {
                         for (int j = 0; j < e.weights.size(); j++) {
                             rxw += e.reps.get(j) + "x" + e.weights.get(j) + "kg, ";
                         }
                     }
-
                     exercisesText += rxw;
                 }
                 workoutViewHolder.setsTextView.setText(exercisesText);
-
             } catch (InterruptedException ie) {
                 Log.e("asdasd", ie.getMessage());
             } catch (ExecutionException ee) {
@@ -105,19 +110,6 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
             workoutViewHolder.workoutIdTextView.setText("Workout ID");
             workoutViewHolder.workoutDateTextView.setText("Date");
         }
-
-        // OPEN WORKOUT IN EDITOR
-        workoutViewHolder.setsTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent updateWorkoutIntent =
-                        new Intent(mActivity, NewWorkoutActivity.class);
-                updateWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_UPDATE_WORKOUT);
-                updateWorkoutIntent.putExtra("workoutId",
-                        mWorkouts.get(workoutViewHolder.getAdapterPosition()).id);
-                mActivity.startActivity(updateWorkoutIntent);
-            }
-        });
     }
 
     public void setWorkouts(List<Workout> newWorkouts) {

@@ -8,10 +8,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.corrot.room.adapters.DefinedWorkoutExercisesAdapter;
-import com.corrot.room.db.entity.DefinedWorkout;
-import com.corrot.room.viewmodel.DefinedWorkoutViewModel;
-import com.corrot.room.viewmodel.NewDefinedWorkoutViewModel;
+import com.corrot.room.adapters.RoutineExercisesAdapter;
+import com.corrot.room.db.entity.Routine;
+import com.corrot.room.viewmodel.RoutineViewModel;
+import com.corrot.room.viewmodel.NewRoutineViewModel;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -27,10 +27,10 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
+public class NewRoutineDialog extends AppCompatDialogFragment {
 
     private EditText workoutNameEditText;
-    private NewDefinedWorkoutViewModel mNewDefinedWorkoutViewModel;
+    private NewRoutineViewModel mNewRoutineViewModel;
 
     private String mTag;
     private int mWorkoutId;
@@ -45,11 +45,11 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         LayoutInflater inflater = mActivity.getLayoutInflater();
-        View view = View.inflate(getContext(), R.layout.dialog_add_defined_workout, null);
+        View view = View.inflate(getContext(), R.layout.dialog_add_routine, null);
 
-        workoutNameEditText = view.findViewById(R.id.dialog_add_defined_workout_name);
-        MaterialButton addExerciseButton = view.findViewById(R.id.dialog_add_defined_add_exercise);
-        RecyclerView recyclerView = view.findViewById(R.id.dialog_add_defined_recycler_view);
+        workoutNameEditText = view.findViewById(R.id.dialog_add_routine_workout_name);
+        MaterialButton addExerciseButton = view.findViewById(R.id.dialog_add_routine_add_exercise);
+        RecyclerView recyclerView = view.findViewById(R.id.dialog_add_routine_recycler_view);
 
         if (mTag != null && mTag.equals("Edit")) {
             Bundle args = getArguments();
@@ -57,23 +57,23 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
                 mWorkoutId = args.getInt("id", 0);
                 mWorkoutLabel = args.getString("label");
                 if (mWorkoutId == 0) {
-                    Log.e("NewDefinedWorkoutDialog", "Can't find workout ID!");
+                    Log.e("NewRoutineDialog", "Can't find workout ID!");
                 }
                 if (mWorkoutLabel != null && mWorkoutLabel.equals("")) {
-                    Log.e("NewDefinedWorkoutDialog", "Can't find workout label!");
+                    Log.e("NewRoutineDialog", "Can't find workout label!");
                 } else if (mWorkoutLabel != null && !mWorkoutLabel.equals("")) {
                     workoutNameEditText.setText(mWorkoutLabel);
                 }
             }
         }
 
-        mNewDefinedWorkoutViewModel =
-                ViewModelProviders.of(this).get(NewDefinedWorkoutViewModel.class);
-        mNewDefinedWorkoutViewModel.init(); // ?
+        mNewRoutineViewModel =
+                ViewModelProviders.of(this).get(NewRoutineViewModel.class);
+        mNewRoutineViewModel.init(); // ?
 
 
-        final DefinedWorkoutExercisesAdapter workoutListAdapter =
-                new DefinedWorkoutExercisesAdapter(mActivity);
+        final RoutineExercisesAdapter workoutListAdapter =
+                new RoutineExercisesAdapter(mActivity);
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
@@ -87,17 +87,17 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                DefinedWorkoutExerciseItem e =
+                RoutineExerciseItem e =
                         workoutListAdapter.getExerciseAt(viewHolder.getAdapterPosition());
-                mNewDefinedWorkoutViewModel.deleteExercise(e);
+                mNewRoutineViewModel.deleteExercise(e);
             }
         }).attachToRecyclerView(recyclerView);
 
-        mNewDefinedWorkoutViewModel.getAllExerciseItems().observe(mActivity,
-                new Observer<List<DefinedWorkoutExerciseItem>>() {
+        mNewRoutineViewModel.getAllExerciseItems().observe(mActivity,
+                new Observer<List<RoutineExerciseItem>>() {
                     @Override
-                    public void onChanged(List<DefinedWorkoutExerciseItem> definedWorkoutExerciseItems) {
-                        workoutListAdapter.setExercises(definedWorkoutExerciseItems);
+                    public void onChanged(List<RoutineExerciseItem> routineExerciseItems) {
+                        workoutListAdapter.setExercises(routineExerciseItems);
                     }
                 });
 
@@ -105,7 +105,7 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
         addExerciseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mNewDefinedWorkoutViewModel.addExercise(new DefinedWorkoutExerciseItem());
+                mNewRoutineViewModel.addExercise(new RoutineExerciseItem());
             }
         });
 
@@ -118,29 +118,29 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
 
 
                         List<String> exercises = new ArrayList<>();
-                        List<DefinedWorkoutExerciseItem> items
-                                = mNewDefinedWorkoutViewModel.getAllExerciseItems().getValue();
+                        List<RoutineExerciseItem> items
+                                = mNewRoutineViewModel.getAllExerciseItems().getValue();
                         if (items != null) {
-                            for (DefinedWorkoutExerciseItem i : items) {
+                            for (RoutineExerciseItem i : items) {
                                 String s = i.name + " - " + i.sets + " sets.";
                                 exercises.add(s);
                             }
                         }
                         // TODO: handle exceptions
-                        DefinedWorkout definedWorkout = new DefinedWorkout(name, exercises);
-                        DefinedWorkoutViewModel definedWorkoutViewModel =
-                                ViewModelProviders.of(mActivity).get(DefinedWorkoutViewModel.class);
+                        Routine routine = new Routine(name, exercises);
+                        RoutineViewModel routineViewModel =
+                                ViewModelProviders.of(mActivity).get(RoutineViewModel.class);
 
                         switch (mTag) {
                             case "Add":
-                                definedWorkoutViewModel.insertSingleWorkout(definedWorkout);
+                                routineViewModel.insertSingleRoutine(routine);
                                 Toast.makeText(getContext(),
                                         "Workout added",
                                         Toast.LENGTH_SHORT).show();
                                 break;
                             case "Edit":
-                                definedWorkout.id = mWorkoutId;
-                                definedWorkoutViewModel.updateWorkout(definedWorkout);
+                                routine.id = mWorkoutId;
+                                routineViewModel.updateRoutine(routine);
                                 Toast.makeText(getContext(),
                                         "Workout updated",
                                         Toast.LENGTH_SHORT).show();
@@ -161,6 +161,6 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mNewDefinedWorkoutViewModel.destroyInstance();
+        mNewRoutineViewModel.destroyInstance();
     }
 }

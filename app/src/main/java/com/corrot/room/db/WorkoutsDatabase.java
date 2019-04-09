@@ -5,14 +5,14 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import android.content.Context;
 
-import com.corrot.room.db.dao.DefinedWorkoutDAO;
+import com.corrot.room.db.dao.RoutineDAO;
 import com.corrot.room.db.dao.ExerciseDAO;
 import com.corrot.room.db.dao.WorkoutDAO;
-import com.corrot.room.db.entity.DefinedWorkout;
+import com.corrot.room.db.entity.Routine;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
 
-@Database(entities =  {Workout.class, Exercise.class, DefinedWorkout.class},
+@Database(entities =  {Workout.class, Exercise.class, Routine.class},
           version = 1,
           exportSchema = false)
 public abstract class WorkoutsDatabase extends RoomDatabase {
@@ -21,7 +21,7 @@ public abstract class WorkoutsDatabase extends RoomDatabase {
 
     public abstract WorkoutDAO workoutDAO();
     public abstract ExerciseDAO exerciseDAO();
-    public abstract DefinedWorkoutDAO definedWorkoutDAO();
+    public abstract RoutineDAO routineDAO();
 
     private static WorkoutsDatabase INSTANCE;
 

@@ -7,7 +7,7 @@
     android:padding="10dp">
 
     <EditText
-        android:id="@+id/dialog_add_defined_workout_name"
+        android:id="@+id/dialog_add_routine_workout_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/dialog_add_defined_recycler_view"
+        android:id="@+id/dialog_add_routine_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -29,10 +29,10 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialog_add_defined_workout_name" />
+        app:layout_constraintTop_toBottomOf="@+id/dialog_add_routine_workout_name" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/dialog_add_defined_add_exercise"
+        android:id="@+id/dialog_add_routine_add_exercise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -41,6 +41,6 @@
         android:text="Add exercise"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialog_add_defined_recycler_view" />
+        app:layout_constraintTop_toBottomOf="@+id/dialog_add_routine_recycler_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
