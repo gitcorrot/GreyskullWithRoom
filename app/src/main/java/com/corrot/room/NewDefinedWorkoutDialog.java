@@ -2,6 +2,7 @@ package com.corrot.room;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -32,6 +33,10 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
     private RecyclerView recyclerView;
     private NewDefinedWorkoutViewModel mNewDefinedWorkoutViewModel;
 
+    private String mTag;
+    private String mWorkoutLabel;
+    private int mWorkoutId;
+
     @NonNull
     @Override
     public AlertDialog onCreateDialog(Bundle savedInstanceState) {
@@ -44,14 +49,28 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
         addExerciseButton = view.findViewById(R.id.dialog_add_defined_add_exercise);
         recyclerView = view.findViewById(R.id.dialog_add_defined_recycler_view);
 
-        mNewDefinedWorkoutViewModel = new NewDefinedWorkoutViewModel();
-                //= ViewModelProviders.of(this).get(NewDefinedWorkoutViewModel.class);
-        mNewDefinedWorkoutViewModel.init();
+        mTag = getTag();
 
-
-        if (mNewDefinedWorkoutViewModel.label != null) {
-            workoutNameEditText.setText(mNewDefinedWorkoutViewModel.label);
+        if (mTag != null && mTag.equals("Edit")) {
+            Bundle args = getArguments();
+            if (args != null) {
+                mWorkoutId = args.getInt("id", 0);
+                mWorkoutLabel = args.getString("label");
+                if (mWorkoutId == 0) {
+                    Log.e("NewDefinedWorkoutDialog", "Can't find workout ID!");
+                }
+                if (mWorkoutLabel != null && mWorkoutLabel.equals("")) {
+                    Log.e("NewDefinedWorkoutDialog", "Can't find workout label!");
+                } else if (mWorkoutLabel != null && !mWorkoutLabel.equals("")){
+                    workoutNameEditText.setText(mWorkoutLabel);
+                }
+            }
         }
+
+        mNewDefinedWorkoutViewModel =
+                ViewModelProviders.of(this).get(NewDefinedWorkoutViewModel.class);
+        mNewDefinedWorkoutViewModel.init(); // ?
+
 
         final DefinedWorkoutExercisesAdapter workoutListAdapter =
                 new DefinedWorkoutExercisesAdapter(getActivity());
@@ -92,7 +111,7 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
 
 
         builder.setView(view)
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                .setPositiveButton(mTag, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String name = workoutNameEditText.getText().toString();
@@ -101,18 +120,18 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
                         List<String> exercises = new ArrayList<>();
                         List<DefinedWorkoutExerciseItem> items
                                 = mNewDefinedWorkoutViewModel.getAllExerciseItems().getValue();
-                        for (DefinedWorkoutExerciseItem i : items) {
-                            String s = i.name + " - " + i.sets + " sets.";
-                            exercises.add(s);
+                        if (items != null) {
+                            for (DefinedWorkoutExerciseItem i : items) {
+                                String s = i.name + " - " + i.sets + " sets.";
+                                exercises.add(s);
+                            }
                         }
-
                         // TODO: handle exceptions
                         DefinedWorkout definedWorkout = new DefinedWorkout(name, exercises);
                         DefinedWorkoutViewModel definedWorkoutViewModel =
                                 ViewModelProviders.of(getActivity()).get(DefinedWorkoutViewModel.class);
 
-                        String tag = getTag();
-                        switch (tag) {
+                        switch (mTag) {
                             case "Add":
                                 definedWorkoutViewModel.insertSingleWorkout(definedWorkout);
                                 Toast.makeText(getContext(),
@@ -120,9 +139,7 @@ public class NewDefinedWorkoutDialog extends AppCompatDialogFragment {
                                         Toast.LENGTH_SHORT).show();
                                 break;
                             case "Edit":
-                                // TODO: SOMEWHERE IN THE CODE ViewModel INSTANCE IS BEING DESTROYED.
-                                int id = mNewDefinedWorkoutViewModel.id;
-                                definedWorkout.id = id;
+                                definedWorkout.id = mWorkoutId;
                                 definedWorkoutViewModel.updateWorkout(definedWorkout);
                                 Toast.makeText(getContext(),
                                         "Workout updated",

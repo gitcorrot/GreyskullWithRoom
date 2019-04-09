@@ -51,9 +51,8 @@ public class DefinedWorkoutExercisesAdapter
     public DefinedWorkoutExercisesAdapter(FragmentActivity activity) {
         mInflater = LayoutInflater.from(activity);
         exercisesNames = PreferencesManager.getInstance().getExercises();
-        mNewDefinedWorkoutViewModel = new NewDefinedWorkoutViewModel();
-              //  = ViewModelProviders.of(activity).get(NewDefinedWorkoutViewModel.class);
-        mNewDefinedWorkoutViewModel.init();
+        mNewDefinedWorkoutViewModel =
+                ViewModelProviders.of(activity).get(NewDefinedWorkoutViewModel.class);
     }
 
     @NonNull

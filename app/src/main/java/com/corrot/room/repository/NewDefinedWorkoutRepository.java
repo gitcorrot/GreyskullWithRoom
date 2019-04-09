@@ -1,7 +1,5 @@
 package com.corrot.room.repository;
 
-import android.view.LayoutInflater;
-
 import com.corrot.room.DefinedWorkoutExerciseItem;
 
 import java.util.ArrayList;

@@ -12,8 +12,6 @@ public class NewDefinedWorkoutViewModel extends ViewModel {
 
     private NewDefinedWorkoutRepository mNewWorkoutRepository;
     public boolean isChanged; // TODO: handle it
-    public String label;
-    public int id;
 
     public void init() {
         mNewWorkoutRepository = NewDefinedWorkoutRepository.getInstance();
@@ -22,14 +20,6 @@ public class NewDefinedWorkoutViewModel extends ViewModel {
 
     public void destroyInstance() {
         mNewWorkoutRepository.destroyInstance();
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     //------------------------------EXERCISES---------------------------------//

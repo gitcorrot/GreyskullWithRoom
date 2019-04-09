@@ -3,6 +3,7 @@ package com.corrot.room.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,13 +96,16 @@ public class DefinedWorkoutsAdapter extends RecyclerView.Adapter<DefinedWorkouts
                     item.position = i;
                     exerciseItems.add(item);
                 }
-                NewDefinedWorkoutViewModel mNewDefinedWorkoutViewModel = new NewDefinedWorkoutViewModel();
-                        //ViewModelProviders.of(mActivity).get(NewDefinedWorkoutViewModel.class);
+                NewDefinedWorkoutViewModel mNewDefinedWorkoutViewModel =
+                        ViewModelProviders.of(mActivity).get(NewDefinedWorkoutViewModel.class);
                 mNewDefinedWorkoutViewModel.init();
                 mNewDefinedWorkoutViewModel.setExercises(exerciseItems);
-                mNewDefinedWorkoutViewModel.setLabel(workout.label);
-                mNewDefinedWorkoutViewModel.setId(workout.id);
-                new NewDefinedWorkoutDialog().show(mActivity.getSupportFragmentManager(), "Edit");
+                NewDefinedWorkoutDialog dialog = new NewDefinedWorkoutDialog();
+                Bundle args = new Bundle();
+                args.putInt("id", workout.id);
+                args.putString("label", workout.label);
+                dialog.setArguments(args);
+                dialog.show(mActivity.getSupportFragmentManager(), "Edit");
             }
         });
 
