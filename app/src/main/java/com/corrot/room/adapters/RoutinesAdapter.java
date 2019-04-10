@@ -16,6 +16,7 @@ import com.corrot.room.NewRoutineDialog;
 import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.R;
 import com.corrot.room.db.entity.Routine;
+import com.corrot.room.utils.EntityUtils;
 import com.corrot.room.utils.RoutinesDiffUtilCallback;
 import com.corrot.room.viewmodel.RoutineViewModel;
 import com.corrot.room.viewmodel.NewRoutineViewModel;
@@ -86,7 +87,7 @@ public class RoutinesAdapter extends RecyclerView.Adapter<RoutinesAdapter.Routin
             @Override
             public void onClick(View v) {
                 final Routine workout = mRoutines.get(viewHolder.getAdapterPosition());
-                List<RoutineExerciseItem> exerciseItems = getRoutineExercises(workout);
+                List<RoutineExerciseItem> exerciseItems = EntityUtils.getRoutineExercises(workout);
 
                 NewRoutineViewModel mNewRoutineViewModel =
                         ViewModelProviders.of(mActivity).get(NewRoutineViewModel.class);
@@ -160,30 +161,4 @@ public class RoutinesAdapter extends RecyclerView.Adapter<RoutinesAdapter.Routin
                 .create();
     }
 
-    private List<RoutineExerciseItem> getRoutineExercises(Routine routine) {
-        List<RoutineExerciseItem> exerciseItems = new ArrayList<>();
-
-        for (int i = 0; i < routine.exercises.size(); i++) {
-            // Parse for example "Squats = 2 sets." into object
-            RoutineExerciseItem item = new RoutineExerciseItem();
-            try {
-                String[] name = routine.exercises.get(i).split(" - ");
-                item.name = name[0];
-                try {
-                    String[] sets = name[1].split(" ");
-                    item.sets = Integer.parseInt(sets[0]);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    Log.e("RoutinesAdapter", "Can't find ' ' in String!");
-                    item.sets = 0;
-                }
-            } catch (ArrayIndexOutOfBoundsException e) {
-                Log.e("RoutinesAdapter", "Can't find ' - ' in String!");
-                item.name = "Name";
-                item.sets = 0;
-            }
-            item.position = i;
-            exerciseItems.add(item);
-        }
-        return exerciseItems;
-    }
 }

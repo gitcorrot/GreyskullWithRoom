@@ -2,23 +2,10 @@ package com.corrot.room.activities;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -33,15 +20,17 @@ import android.widget.Toast;
 
 import com.corrot.room.ExerciseItem;
 import com.corrot.room.ExerciseSetItem;
-import com.corrot.room.adapters.ExercisesListAdapter;
 import com.corrot.room.R;
+import com.corrot.room.adapters.ExercisesListAdapter;
 import com.corrot.room.db.entity.Exercise;
+import com.corrot.room.db.entity.Routine;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.EntityUtils;
 import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.viewmodel.ExerciseViewModel;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
+import com.corrot.room.viewmodel.RoutineViewModel;
 import com.corrot.room.viewmodel.WorkoutViewModel;
 
 import java.util.ArrayList;
@@ -50,6 +39,14 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class NewWorkoutActivity extends AppCompatActivity {
 
@@ -105,6 +102,23 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 case FLAG_ADD_WORKOUT: {
                     date = Calendar.getInstance().getTime();
                     dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
+
+                    String routine = extras.getString("routine", "Normal workout");
+                    if (!routine.equals("Normal workout")) {
+                        RoutineViewModel routineViewModel =
+                                ViewModelProviders.of(mActivity).get(RoutineViewModel.class);
+                        try {
+                            Routine r = routineViewModel.getRoutineByName(routine);
+                            List<ExerciseItem> exercises = EntityUtils.getRoutineWorkoutExerciseItems(r);
+                            if (exercises != null) {
+                                mNewWorkoutViewModel.setExercises(exercises);
+                            }
+                        } catch (ExecutionException e) {
+                            Log.e("NewWorkoutActivity", e.getMessage());
+                        } catch (InterruptedException e) {
+                            Log.e("NewWorkoutActivity", e.getMessage());
+                        }
+                    }
                     break;
                 }
                 case FLAG_UPDATE_WORKOUT: {

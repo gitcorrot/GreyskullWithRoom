@@ -1,7 +1,6 @@
 package com.corrot.room.repository;
 
 import android.app.Application;
-import androidx.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -11,6 +10,8 @@ import com.corrot.room.db.entity.Workout;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import androidx.lifecycle.LiveData;
 
 public class WorkoutsRepository {
 
@@ -27,8 +28,9 @@ public class WorkoutsRepository {
         return mAllWorkouts;
     }
 
-    public Workout getWorkoutById(String id) throws ExecutionException, InterruptedException {
-            return new getWorkoutByIdAsync(mWorkoutDAO).execute(id).get();
+    public Workout getWorkoutById(String id)
+            throws ExecutionException, InterruptedException {
+        return new getWorkoutByIdAsync(mWorkoutDAO).execute(id).get();
     }
 
     public void deleteAll() {
@@ -47,7 +49,7 @@ public class WorkoutsRepository {
         new deleteWorkoutAsync(mWorkoutDAO).execute(workout);
     }
 
-     /**********************************************************************************************
+    /**********************************************************************************************
      *                                     ASYNC FUNCTIONS
      **********************************************************************************************/
 

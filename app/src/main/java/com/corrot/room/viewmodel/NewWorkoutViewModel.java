@@ -14,7 +14,6 @@ public class NewWorkoutViewModel extends ViewModel {
     private NewWorkoutRepository mNewWorkoutRepository;
     public boolean isChanged;
 
-
     public void init() {
         mNewWorkoutRepository = NewWorkoutRepository.getInstance();
         isChanged = false;

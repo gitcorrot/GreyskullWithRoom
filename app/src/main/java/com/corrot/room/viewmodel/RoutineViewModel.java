@@ -6,6 +6,7 @@ import com.corrot.room.db.entity.Routine;
 import com.corrot.room.repository.RoutinesRepository;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -22,7 +23,15 @@ public class RoutineViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Routine>> getAllRoutines() {
+        if (mRoutinesRepository == null) {
+            mAllRoutines = mRoutinesRepository.getAllRoutines();
+        }
         return mAllRoutines;
+    }
+
+    public Routine getRoutineByName(String name)
+            throws ExecutionException, InterruptedException {
+        return mRoutinesRepository.getRoutineByName(name);
     }
 
     public void insertSingleRoutine(Routine routine) {
@@ -37,7 +46,7 @@ public class RoutineViewModel extends AndroidViewModel {
         mRoutinesRepository.deleteRoutine(routine);
     }
 
-    public void deleteAll() {
+    /*public void deleteAll() {
         mRoutinesRepository.deleteAll();
-    }
+    }*/
 }

@@ -9,6 +9,7 @@ import com.corrot.room.db.dao.RoutineDAO;
 import com.corrot.room.db.entity.Routine;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import androidx.lifecycle.LiveData;
 
@@ -24,12 +25,20 @@ public class RoutinesRepository {
     }
 
     public LiveData<List<Routine>> getAllRoutines() {
+        if (mAllRoutines == null) {
+            mAllRoutines = mRoutineDAO.getAllRoutines();
+        }
         return mAllRoutines;
     }
 
-    public void deleteAll() {
-        new deleteAllAsync(mRoutineDAO).execute();
+    public Routine getRoutineByName(String name)
+            throws ExecutionException, InterruptedException {
+        return new getRoutineByNameAsync(mRoutineDAO).execute(name).get();
     }
+
+    /*public void deleteAll() {
+        new deleteAllAsync(mRoutineDAO).execute();
+    }*/
 
     public void insertSingleRoutine(Routine routine) {
         new insertSingleRoutineAsync(mRoutineDAO).execute(routine);
@@ -47,7 +56,7 @@ public class RoutinesRepository {
      *                                     ASYNC FUNCTIONS
      **********************************************************************************************/
 
-    private static class deleteAllAsync extends AsyncTask<Void, Void, Void> {
+    /*private static class deleteAllAsync extends AsyncTask<Void, Void, Void> {
 
         private final RoutineDAO workoutDAO;
 
@@ -59,6 +68,20 @@ public class RoutinesRepository {
         protected Void doInBackground(Void... voids) {
             workoutDAO.deleteAll();
             return null;
+        }
+    }*/
+
+    private static class getRoutineByNameAsync extends AsyncTask<String, Void, Routine> {
+
+        private final RoutineDAO routineDAO;
+
+        getRoutineByNameAsync(RoutineDAO dao) {
+            this.routineDAO = dao;
+        }
+
+        @Override
+        protected Routine doInBackground(String... params) {
+            return routineDAO.getRoutineByName(params[0]);
         }
     }
 
