@@ -21,6 +21,7 @@
             android:layout_marginEnd="8dp"
             android:padding="8dp"
             android:text="Routine name"
+            android:textColor="@color/white"
             android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@+id/routine_sub_item"
             app:layout_constraintEnd_toStartOf="@+id/routine_edit_button"
@@ -33,7 +34,10 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:background="@color/transparent"
+            android:scaleX="1.2"
+            android:scaleY="1.2"
             android:src="@drawable/ic_edit_black_24dp"
+            android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="@+id/routine_label"
             app:layout_constraintEnd_toStartOf="@+id/routine_delete_button"
             app:layout_constraintStart_toEndOf="@+id/routine_label"
@@ -47,7 +51,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:background="@color/transparent"
+            android:scaleX="1.2"
+            android:scaleY="1.2"
             android:src="@drawable/ic_delete_black_24dp"
+            android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="@+id/routine_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/routine_edit_button"
@@ -71,8 +78,6 @@
 
         </LinearLayout>
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 </androidx.cardview.widget.CardView>

@@ -40,6 +40,9 @@ public class RoutineExercisesAdapter
             incrementButton = itemView.findViewById(R.id.dialog_add_routine_increment);
             decrementButton = itemView.findViewById(R.id.dialog_add_routine_decrement);
             setsNumberTextView = itemView.findViewById(R.id.dialog_add_routine_sets_number);
+
+            incrementButton.setText("+");
+            decrementButton.setText("-");
         }
     }
 
