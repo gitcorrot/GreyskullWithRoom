@@ -1,5 +1,6 @@
 package com.corrot.room.fragments;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,17 +37,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-public class StatsFragment extends Fragment {
+public class StatsFragment extends Fragment
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private LineChart lineChart;
     private Spinner nameSpinner;
     private String name;
     private String[] exercisesNames;
-    private List<Entry> entries;
+    private List<Exercise> mExercises;
 
-    private ExerciseViewModel mExerciseViewModel;
     private WorkoutViewModel mWorkoutViewModel;
     private PreferencesManager pm;
 
@@ -55,6 +57,22 @@ public class StatsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mExercises = new ArrayList<>();
+        pm = PreferencesManager.getInstance();
+        exercisesNames = pm.getExercises();
+
+        ExerciseViewModel mExerciseViewModel =
+                ViewModelProviders.of(this).get(ExerciseViewModel.class);
+        mWorkoutViewModel =
+                ViewModelProviders.of(this).get(WorkoutViewModel.class);
+
+        mExerciseViewModel.getAllExercises().observe(this, new Observer<List<Exercise>>() {
+            @Override
+            public void onChanged(List<Exercise> exercises) {
+                mExercises = exercises;
+                showChart();
+            }
+        });
         return inflater.inflate(R.layout.fragment_stats, container, false);
     }
 
@@ -65,22 +83,7 @@ public class StatsFragment extends Fragment {
         lineChart = view.findViewById(R.id.fragment_statistics_line_chart);
         nameSpinner = view.findViewById(R.id.fragment_statistics_name_spinner);
 
-        mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
-        mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
-
-        pm = PreferencesManager.getInstance();
-        exercisesNames = pm.getExercises();
-
-        if (getContext() != null && exercisesNames != null) {
-            ArrayAdapter namesAdapter = new ArrayAdapter<>(
-                    getContext(),
-                    R.layout.spinner_item,
-                    R.id.spinner_text_view,
-                    exercisesNames
-            );
-            namesAdapter.setDropDownViewResource(R.layout.spinner_item);
-            nameSpinner.setAdapter(namesAdapter);
-        }
+        updateSpinnerAdapter();
 
         nameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -102,10 +105,9 @@ public class StatsFragment extends Fragment {
     }
 
     private void showChart() {
-        entries = new ArrayList<>();
+        List<Entry> entries = new ArrayList<>();
         try {
-            List<Exercise> exercises = mExerciseViewModel.getAllExercises(name);
-            for (Exercise e : exercises) {
+            for (Exercise e : mExercises) {
                 Date date = mWorkoutViewModel.getWorkoutById(e.workoutId).workoutDate;
                 float max = Collections.max(e.weights);
                 entries.add(new Entry(date.getTime(), max));
@@ -174,6 +176,19 @@ public class StatsFragment extends Fragment {
         }
     }
 
+    private void updateSpinnerAdapter() {
+        if (getContext() != null && exercisesNames != null) {
+            ArrayAdapter namesAdapter = new ArrayAdapter<>(
+                    getContext(),
+                    R.layout.spinner_item,
+                    R.id.spinner_text_view,
+                    exercisesNames
+            );
+            namesAdapter.setDropDownViewResource(R.layout.spinner_item);
+            nameSpinner.setAdapter(namesAdapter);
+        }
+    }
+
     // TODO: Learn how to use saveInstanceState
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -192,5 +207,26 @@ public class StatsFragment extends Fragment {
             int savedPosition = savedInstanceState.getInt("saved spinner item", -1);
             nameSpinner.setSelection(savedPosition);
         }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(PreferencesManager.PREFS_EXERCISES_KEY)) {
+            exercisesNames = pm.getExercises();
+            updateSpinnerAdapter();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        pm.registerListener(this);
+        showChart();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        pm.unregisterListener(this);
     }
 }

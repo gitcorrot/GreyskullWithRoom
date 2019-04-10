@@ -42,8 +42,6 @@ public class RoutinesFragment extends Fragment {
 
         RoutineViewModel routineViewModel =
                 ViewModelProviders.of(this).get(RoutineViewModel.class);
-        List<Routine> l = routineViewModel.getAllRoutines().getValue();
-        //
 
         final RecyclerView recyclerView = view.findViewById(R.id.fragment_routines_recycler_view);
         final RoutinesAdapter workoutListAdapter =

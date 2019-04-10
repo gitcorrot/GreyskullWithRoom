@@ -15,7 +15,7 @@ import java.util.Set;
 public class PreferencesManager {
 
     private final static String PREFS_NAME = "com.corrot key";
-    private final static String PREFS_EXERCISES_KEY = "exercises key";
+    public final static String PREFS_EXERCISES_KEY = "exercises key";
     public final static String PREFS_BODY_WEIGHTS_KEY = "body weights key";
     private final static String PREFS_FIRST_START_KEY = "first start key";
 
