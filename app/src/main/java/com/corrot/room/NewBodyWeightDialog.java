@@ -4,9 +4,8 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -28,7 +27,6 @@ public class NewBodyWeightDialog extends AppCompatDialogFragment {
 
     private TextView dateTextView;
     private EditText bodyWeightEditText;
-    private ImageButton changeDateButton;
     private Date date;
     private PreferencesManager pm;
 
@@ -38,14 +36,13 @@ public class NewBodyWeightDialog extends AppCompatDialogFragment {
     @Override
     public AlertDialog onCreateDialog(Bundle savedInstanceState) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_add_weight, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View view = View.inflate(getContext(), R.layout.dialog_add_weight, null);
         pm = PreferencesManager.getInstance();
 
         bodyWeightEditText = view.findViewById(R.id.dialog_new_weight_edit_text);
         dateTextView = view.findViewById(R.id.dialog_new_weight_text_view);
-        changeDateButton = view.findViewById(R.id.dialog_new_weight_button);
+        ImageButton changeDateButton = view.findViewById(R.id.dialog_new_weight_button);
 
         date = Calendar.getInstance().getTime();
         dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
@@ -81,20 +78,7 @@ public class NewBodyWeightDialog extends AppCompatDialogFragment {
 
         builder.setView(view)
                 .setTitle("Add body weight")
-                .setPositiveButton("Add", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO: handle exceptions
-                        String bodyWeight = bodyWeightEditText.getText().toString();
-                        String dateString = MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT);
-                        pm.addBodyWeight(bodyWeight, dateString);
-
-                        Log.d("asdasd", "ADDING " + bodyWeight + dateString);
-                        Toast.makeText(getContext(),
-                                "Body weight added",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                })
+                .setPositiveButton("Add", null)
                 .setNegativeButton("Cancel", null)
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
                     @Override
@@ -103,6 +87,33 @@ public class NewBodyWeightDialog extends AppCompatDialogFragment {
                     }
                 });
 
-        return builder.create();
+        final AlertDialog dialog = builder.create();
+
+        // This code is needed to override positive button listener to don't close dialog.
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface d) {
+                Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String bodyWeightString = bodyWeightEditText.getText().toString();
+                        if (bodyWeightString.isEmpty()) {
+                            bodyWeightEditText.requestFocus();
+                            bodyWeightEditText.setError("Please put body weight first!");
+                        } else {
+                            String dateString = MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT);
+                            pm.addBodyWeight(bodyWeightString, dateString);
+                            Toast.makeText(getContext(),
+                                    "Body weight added",
+                                    Toast.LENGTH_SHORT).show();
+                            dismiss();
+                        }
+                    }
+                });
+            }
+        });
+
+        return dialog;
     }
 }

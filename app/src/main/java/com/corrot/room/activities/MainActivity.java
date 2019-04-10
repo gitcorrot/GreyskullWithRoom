@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     WorkoutViewModel mWorkoutViewModel;
     private final static String CURRENT_FRAGMENT_KEY = "current fragment";
     PreferencesManager pm;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         PreferencesManager.init(getApplicationContext());
         pm = PreferencesManager.getInstance();
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("SIMPLE TRAINING LOG");
         setSupportActionBar(toolbar);
 
         if (pm.isFirstStart()) {
@@ -188,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
                             .hide(statsFragment)
                             .hide(bodyFragment)
                             .commit();
+                    toolbar.setTitle("Home");
                 case R.id.navigation_bar_routines:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
@@ -196,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
                             .hide(statsFragment)
                             .hide(bodyFragment)
                             .commit();
+                    toolbar.setTitle("Routines");
                 case R.id.navigation_bar_history:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
@@ -204,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
                             .hide(statsFragment)
                             .hide(bodyFragment)
                             .commit();
+                    toolbar.setTitle("History");
                 case R.id.navigation_bar_stats:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
@@ -212,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
                             .show(statsFragment)
                             .hide(bodyFragment)
                             .commit();
+                    toolbar.setTitle("Stats");
                 case R.id.navigation_bar_body:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
@@ -221,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
                             .show(bodyFragment)
                             .commit();
                     floatingButton.hide();
+                    toolbar.setTitle("Body");
             }
         }
         super.onRestoreInstanceState(savedInstanceState);
