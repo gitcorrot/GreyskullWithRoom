@@ -163,4 +163,18 @@ public class PreferencesManager {
         bodyWeights.add(bodyWeightRecord);
         saveBodyWeights(bodyWeights);
     }
+
+    public void removeBodyWeight(BodyWeightItem itemToRemove) {
+        List<BodyWeightItem> list = getBodyWeightsList();
+        Set<String> newSet = new HashSet<>();
+
+        // TODO: Sometimes it deletes two objects.
+        for (BodyWeightItem item : list) {
+            if (!item.date.equals(itemToRemove.date)
+                    && item.weight != itemToRemove.weight) {
+                newSet.add(item.itemToString());
+            }
+        }
+        saveBodyWeights(newSet);
+    }
 }

@@ -28,7 +28,6 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -36,6 +35,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -43,30 +43,45 @@ public class BodyFragment extends Fragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private LineChart bodyWeightLineChart;
-    private RecyclerView bodyWeightRecyclerView;
-    private MaterialButton addWeightButton;
     private PreferencesManager pm;
 
     private BodyWeightsAdapter bodyWeightsAdapter; // it should be final
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        pm = PreferencesManager.getInstance();
+
         return inflater.inflate(R.layout.fragment_body, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         bodyWeightLineChart = view.findViewById(R.id.fragment_body_chart);
-        bodyWeightRecyclerView = view.findViewById(R.id.fragment_body_recycler_view);
-        addWeightButton = view.findViewById(R.id.fragment_body_add_button);
-
-        pm = PreferencesManager.getInstance();
+        RecyclerView bodyWeightRecyclerView = view.findViewById(R.id.fragment_body_recycler_view);
+        MaterialButton addWeightButton = view.findViewById(R.id.fragment_body_add_button);
 
         bodyWeightsAdapter = new BodyWeightsAdapter(this.getContext());
         bodyWeightRecyclerView.setAdapter(bodyWeightsAdapter);
         bodyWeightRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         bodyWeightsAdapter.setBodyWeights(pm.getBodyWeightsList());
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder viewHolder1) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder vh, int i) {
+                BodyWeightItem item = bodyWeightsAdapter.getBodyWeightItemAt(vh.getAdapterPosition());
+                pm.removeBodyWeight(item);
+            }
+        }).attachToRecyclerView(bodyWeightRecyclerView);
 
         addWeightButton.setOnClickListener(new View.OnClickListener() {
             @Override

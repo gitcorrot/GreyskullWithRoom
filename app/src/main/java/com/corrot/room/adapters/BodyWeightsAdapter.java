@@ -88,6 +88,10 @@ public class BodyWeightsAdapter extends RecyclerView.Adapter<BodyWeightsAdapter.
         }
     }
 
+    public BodyWeightItem getBodyWeightItemAt(int position) {
+        return mBodyWeights.get(position);
+    }
+
     @Override
     public int getItemCount() {
         return mBodyWeights != null ? mBodyWeights.size() : 0;
