@@ -62,16 +62,13 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
         final WorkoutViewHolder vh = new WorkoutViewHolder(view);
 
         // OPEN WORKOUT IN EDITOR
-        vh.setsTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent updateWorkoutIntent =
-                        new Intent(mActivity, NewWorkoutActivity.class);
-                updateWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_UPDATE_WORKOUT);
-                updateWorkoutIntent.putExtra("workoutId",
-                        mWorkouts.get(vh.getAdapterPosition()).id);
-                mActivity.startActivity(updateWorkoutIntent);
-            }
+        vh.setsTextView.setOnClickListener(v -> {
+            Intent updateWorkoutIntent =
+                    new Intent(mActivity, NewWorkoutActivity.class);
+            updateWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_UPDATE_WORKOUT);
+            updateWorkoutIntent.putExtra("workoutId",
+                    mWorkouts.get(vh.getAdapterPosition()).id);
+            mActivity.startActivity(updateWorkoutIntent);
         });
 
         return vh;

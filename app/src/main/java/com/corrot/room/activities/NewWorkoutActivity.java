@@ -3,19 +3,15 @@ package com.corrot.room.activities;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.corrot.room.ExerciseItem;
@@ -40,10 +36,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -158,81 +152,61 @@ public class NewWorkoutActivity extends AppCompatActivity {
         exercisesRecyclerView.setAdapter(exercisesListAdapter);
         exercisesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mNewWorkoutViewModel.getAllExerciseItems().observe(this, new Observer<List<ExerciseItem>>() {
-            @Override
-            public void onChanged(@Nullable List<ExerciseItem> exerciseItems) {
-                exercisesListAdapter.setExercises(exerciseItems);
-            }
-        });
+        mNewWorkoutViewModel.getAllExerciseItems().observe(this, exerciseItems ->
+                exercisesListAdapter.setExercises(exerciseItems));
 
-        dateTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT > 23) {
-                    DatePickerDialog datePickerDialog = new DatePickerDialog(
-                            mActivity,
-                            dateListener,
-                            Calendar.getInstance().get(Calendar.YEAR),
-                            Calendar.getInstance().get(Calendar.MONTH),
-                            Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-                    );
-                    datePickerDialog.show();
-                }
-            }
-        });
-
-        dateListener = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                calendar = new GregorianCalendar(
-                        datePicker.getYear(),
-                        datePicker.getMonth(),
-                        datePicker.getDayOfMonth()
-                );
-                TimePickerDialog timePickerDialog = new TimePickerDialog(
+        dateTextView.setOnClickListener(v -> {
+            if (Build.VERSION.SDK_INT > 23) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
                         mActivity,
-                        timeListener,
-                        Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
-                        Calendar.getInstance().get(Calendar.MINUTE),
-                        true);
-                // Set dialog in center of screen.
-                Window window = timePickerDialog.getWindow();
-                if (window != null) {
-                    window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT);
-                    window.setGravity(Gravity.CENTER);
-                }
-                timePickerDialog.show();
-            }
-        };
-
-        timeListener = new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                calendar.set(Calendar.MINUTE, minute);
-                date = calendar.getTime();
-                mNewWorkoutViewModel.isChanged = true;
-                dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
-            }
-        };
-
-        addExerciseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showExercisesDialog(v.getContext()).show();
+                        dateListener,
+                        Calendar.getInstance().get(Calendar.YEAR),
+                        Calendar.getInstance().get(Calendar.MONTH),
+                        Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+                );
+                datePickerDialog.show();
             }
         });
 
-        saveWorkoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // do it to lose focus from editText to save its value.
-                v.setFocusableInTouchMode(true);
-                v.requestFocus();
-                saveWorkout();
-                mActivity.finishAndRemoveTask();
+        dateListener = (datePicker, year, month, dayOfMonth) -> {
+            calendar = new GregorianCalendar(
+                    datePicker.getYear(),
+                    datePicker.getMonth(),
+                    datePicker.getDayOfMonth()
+            );
+            TimePickerDialog timePickerDialog = new TimePickerDialog(
+                    mActivity,
+                    timeListener,
+                    Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
+                    Calendar.getInstance().get(Calendar.MINUTE),
+                    true);
+            // Set dialog in center of screen.
+            Window window = timePickerDialog.getWindow();
+            if (window != null) {
+                window.setLayout(LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
+                window.setGravity(Gravity.CENTER);
             }
+            timePickerDialog.show();
+        };
+
+        timeListener = (view, hourOfDay, minute) -> {
+            calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calendar.set(Calendar.MINUTE, minute);
+            date = calendar.getTime();
+            mNewWorkoutViewModel.isChanged = true;
+            dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
+        };
+
+        addExerciseButton.setOnClickListener(v ->
+                showExercisesDialog(v.getContext()).show());
+
+        saveWorkoutButton.setOnClickListener(v -> {
+            // do it to lose focus from editText to save its value.
+            v.setFocusableInTouchMode(true);
+            v.requestFocus();
+            saveWorkout();
+            mActivity.finishAndRemoveTask();
         });
     }
 
@@ -245,25 +219,13 @@ public class NewWorkoutActivity extends AppCompatActivity {
         if (mNewWorkoutViewModel.isChanged) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Do you want to save this workout?");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    saveWorkout();
-                    mActivity.finishAndRemoveTask();
-                }
+            builder.setPositiveButton("Yes", (dialog, which) -> {
+                saveWorkout();
+                mActivity.finishAndRemoveTask();
             });
-            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mActivity.finishAndRemoveTask();
-                }
-            });
-            builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
-
+            builder.setNegativeButton("No", (dialog, which) ->
+                    mActivity.finishAndRemoveTask());
+            builder.setNeutralButton("Cancel", null);
             builder.create().show();
         } else {
             mActivity.finishAndRemoveTask();
@@ -282,13 +244,10 @@ public class NewWorkoutActivity extends AppCompatActivity {
 
         final String[] exercises = pm.getExercises();
 
-        builder.setItems(exercises, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (exercises != null) {
-                    ExerciseItem exerciseItem = new ExerciseItem(exercises[which]);
-                    mNewWorkoutViewModel.addExercise(exerciseItem);
-                }
+        builder.setItems(exercises, (dialog, which) -> {
+            if (exercises != null) {
+                ExerciseItem exerciseItem = new ExerciseItem(exercises[which]);
+                mNewWorkoutViewModel.addExercise(exerciseItem);
             }
         });
         return builder.create();

@@ -4,7 +4,6 @@ import com.corrot.room.BodyWeightItem;
 
 import java.util.List;
 
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 
 public class BodyWeightDiffUtilCallback extends DiffUtil.Callback {

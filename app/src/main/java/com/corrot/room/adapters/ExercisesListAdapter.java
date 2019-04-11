@@ -1,13 +1,6 @@
 package com.corrot.room.adapters;
 
-import androidx.lifecycle.ViewModelProviders;
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +15,13 @@ import com.corrot.room.R;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdapter.exerciseViewHolder> {
 
@@ -60,8 +60,7 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
                 mInflater.inflate(R.layout.recyclerview_exercise_item, viewGroup,false);
        final exerciseViewHolder vh = new exerciseViewHolder(itemView);
 
-
-
+        // TODO: Refactor it.
 
         return vh;
     }
@@ -112,23 +111,17 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
         }).attachToRecyclerView(viewHolder.setsRecyclerView);
 
 
-        viewHolder.addSetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int id = viewHolder.getAdapterPosition();
-                mNewWorkoutViewModel.addSet(new ExerciseSetItem(id));
-                List<ExerciseSetItem> items = mNewWorkoutViewModel.getSetsByExercisePosition(id);
-                viewHolder.setsRecyclerView.setAdapter(exerciseSetsAdapter);
-                exerciseSetsAdapter.setSets(items);
-            }
+        viewHolder.addSetButton.setOnClickListener(v -> {
+            int id = viewHolder.getAdapterPosition();
+            mNewWorkoutViewModel.addSet(new ExerciseSetItem(id));
+            List<ExerciseSetItem> items = mNewWorkoutViewModel.getSetsByExercisePosition(id);
+            viewHolder.setsRecyclerView.setAdapter(exerciseSetsAdapter);
+            exerciseSetsAdapter.setSets(items);
         });
 
-        viewHolder.removeExerciseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ExerciseItem exercise = mNewWorkoutViewModel.getExerciseByPosition(exercisePosition);
-                mNewWorkoutViewModel.removeExercise(exercise);
-            }
+        viewHolder.removeExerciseButton.setOnClickListener(v -> {
+            ExerciseItem exercise = mNewWorkoutViewModel.getExerciseByPosition(exercisePosition);
+            mNewWorkoutViewModel.removeExercise(exercise);
         });
 
         if (mExercises != null) {

@@ -1,6 +1,5 @@
 package com.corrot.room.utils;
 
-import com.corrot.room.BodyWeightItem;
 import com.corrot.room.db.entity.Workout;
 
 import java.util.List;

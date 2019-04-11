@@ -1,6 +1,5 @@
 package com.corrot.room;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -31,38 +30,27 @@ public class NewExerciseNameDialog extends AppCompatDialogFragment {
                 .setTitle("Add new exercise")
                 .setPositiveButton("Add", null)
                 .setNegativeButton("Cancel", null)
-                .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                .setNegativeButton("Dismiss", (dialog, which) -> dialog.dismiss());
 
         final AlertDialog dialog = builder.create();
 
         // This code is needed to override positive button listener to don't close dialog.
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface d) {
-                Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                b.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String exercise = exerciseEditText.getText().toString();
-                        if (exercise.isEmpty()) {
-                            exerciseEditText.requestFocus();
-                            exerciseEditText.setError("Please put exercise name first!");
+        dialog.setOnShowListener(d-> {
+            Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            b.setOnClickListener(v -> {
+                String exercise = exerciseEditText.getText().toString();
+                if (exercise.isEmpty()) {
+                    exerciseEditText.requestFocus();
+                    exerciseEditText.setError("Please put exercise name first!");
 
-                        } else {
-                            pm.addExercise(exercise);
-                            Toast.makeText(getContext(),
-                                    "Exercise added",
-                                    Toast.LENGTH_SHORT).show();
-                            dismiss();
-                        }
-                    }
-                });
-            }
+                } else {
+                    pm.addExercise(exercise);
+                    Toast.makeText(getContext(),
+                            "Exercise added",
+                            Toast.LENGTH_SHORT).show();
+                    dismiss();
+                }
+            });
         });
         return dialog;
     }

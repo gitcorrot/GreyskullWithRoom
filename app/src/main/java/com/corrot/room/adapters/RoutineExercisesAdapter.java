@@ -2,15 +2,14 @@ package com.corrot.room.adapters;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.R;
+import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.viewmodel.NewRoutineViewModel;
 import com.google.android.material.button.MaterialButton;
@@ -69,44 +68,30 @@ public class RoutineExercisesAdapter
         for (int i = 0; i < exercisesNames.length; i++) {
             popup.getMenu().add(Menu.NONE, i, Menu.NONE, exercisesNames[i]);
         }
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                int pos = item.getItemId();
-                RoutineExerciseItem e = mExercises.get(vh.getAdapterPosition());
-                if(e == null) {
-                    e = new RoutineExerciseItem("", 0,0);
-                }
-                e.name = exercisesNames[pos];
+        popup.setOnMenuItemClickListener(item -> {
+            int pos = item.getItemId();
+            RoutineExerciseItem e = mExercises.get(vh.getAdapterPosition());
+            if(e == null) {
+                e = new RoutineExerciseItem("", 0,0);
+            }
+            e.name = exercisesNames[pos];
+            mNewRoutineViewModel.updateExercise(e);
+            return true;
+        });
+
+        vh.dropDownButton.setOnClickListener(v -> popup.show());
+
+        vh.incrementButton.setOnClickListener(v -> {
+            RoutineExerciseItem e = mExercises.get(vh.getAdapterPosition());
+            e.sets++;
+            mNewRoutineViewModel.updateExercise(e);
+        });
+
+        vh.decrementButton.setOnClickListener(v -> {
+            RoutineExerciseItem e = mExercises.get(vh.getAdapterPosition());
+            if (e.sets > 0) {
+                e.sets--;
                 mNewRoutineViewModel.updateExercise(e);
-                return true;
-            }
-        });
-
-        vh.dropDownButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popup.show();
-            }
-        });
-
-        vh.incrementButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RoutineExerciseItem e = mExercises.get(vh.getAdapterPosition());
-                e.sets++;
-                mNewRoutineViewModel.updateExercise(e);
-            }
-        });
-
-        vh.decrementButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RoutineExerciseItem e = mExercises.get(vh.getAdapterPosition());
-                if (e.sets > 0) {
-                    e.sets--;
-                    mNewRoutineViewModel.updateExercise(e);
-                }
             }
         });
         return vh;

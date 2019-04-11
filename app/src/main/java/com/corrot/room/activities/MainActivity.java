@@ -1,14 +1,11 @@
 package com.corrot.room.activities;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.corrot.room.NewExerciseNameDialog;
@@ -34,7 +31,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,9 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment currentFragment = homeFragment;
 
     private WorkoutViewModel mWorkoutViewModel;
-    private RoutineViewModel mRoutineViewModel;
 
-    private PreferencesManager pm;
     private List<Routine> routinesList;
     private Toolbar toolbar;
     FloatingActionButton floatingButton;
@@ -66,17 +60,13 @@ public class MainActivity extends AppCompatActivity {
         routinesList = new ArrayList<>();
 
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
-        mRoutineViewModel = ViewModelProviders.of(this).get(RoutineViewModel.class);
+        RoutineViewModel mRoutineViewModel = ViewModelProviders.of(this).get(RoutineViewModel.class);
 
-        mRoutineViewModel.getAllRoutines().observe(this, new Observer<List<Routine>>() {
-            @Override
-            public void onChanged(List<Routine> routines) {
-                routinesList = routines;
-            }
-        });
+        mRoutineViewModel.getAllRoutines().observe(this, routines ->
+                routinesList = routines);
 
         PreferencesManager.init(getApplicationContext());
-        pm = PreferencesManager.getInstance();
+        PreferencesManager pm = PreferencesManager.getInstance();
 
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("SIMPLE TRAINING LOG");
@@ -103,12 +93,9 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
 
         // Start NewWorkoutActivity on floatingButton click
-        floatingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Choose between routines and normal training
-                showExercisesDialog(mActivity).show(); //??
-            }
+        floatingButton.setOnClickListener(v -> {
+            // Choose between routines and normal training
+            showExercisesDialog(mActivity).show(); //??
         });
     }
 
@@ -271,17 +258,14 @@ public class MainActivity extends AppCompatActivity {
         }
         final String[] routinesArray = new String[routines.size()];
         routines.toArray(routinesArray);
-        builder.setItems(routinesArray, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (routinesArray.length >= which) {
-                    String routine = routinesArray[which];
-                    Intent newWorkoutIntent =
-                            new Intent(MainActivity.this, NewWorkoutActivity.class);
-                    newWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_ADD_WORKOUT);
-                    newWorkoutIntent.putExtra("routine", routine);
-                    MainActivity.this.startActivity(newWorkoutIntent);
-                }
+        builder.setItems(routinesArray, (dialog, which) -> {
+            if (routinesArray.length >= which) {
+                String routine = routinesArray[which];
+                Intent newWorkoutIntent =
+                        new Intent(MainActivity.this, NewWorkoutActivity.class);
+                newWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_ADD_WORKOUT);
+                newWorkoutIntent.putExtra("routine", routine);
+                MainActivity.this.startActivity(newWorkoutIntent);
             }
         });
         return builder.create();

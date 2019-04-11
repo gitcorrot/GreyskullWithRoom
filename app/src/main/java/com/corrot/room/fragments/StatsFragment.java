@@ -37,7 +37,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 public class StatsFragment extends Fragment
@@ -68,12 +67,9 @@ public class StatsFragment extends Fragment
         mWorkoutViewModel =
                 ViewModelProviders.of(this).get(WorkoutViewModel.class);
 
-        mExerciseViewModel.getAllExercises().observe(this, new Observer<List<Exercise>>() {
-            @Override
-            public void onChanged(List<Exercise> exercises) {
-                mExercises = exercises;
-                showChart();
-            }
+        mExerciseViewModel.getAllExercises().observe(this, exercises -> {
+            mExercises = exercises;
+            showChart();
         });
         return inflater.inflate(R.layout.fragment_stats, container, false);
     }
@@ -110,7 +106,7 @@ public class StatsFragment extends Fragment
         List<Entry> entries = new ArrayList<>();
         try {
             for (Exercise e : mExercises) {
-                if(e.name.equals(name)) {
+                if (e.name.equals(name)) {
                     Date date = mWorkoutViewModel.getWorkoutById(e.workoutId).workoutDate;
                     float max = Collections.max(e.weights);
                     entries.add(new Entry(date.getTime(), max));

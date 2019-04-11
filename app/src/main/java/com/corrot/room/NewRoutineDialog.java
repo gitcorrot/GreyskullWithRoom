@@ -1,6 +1,5 @@
 package com.corrot.room;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -93,69 +91,49 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
         }).attachToRecyclerView(recyclerView);
 
         mNewRoutineViewModel.getAllExerciseItems().observe(mActivity,
-                new Observer<List<RoutineExerciseItem>>() {
-                    @Override
-                    public void onChanged(List<RoutineExerciseItem> routineExerciseItems) {
-                        workoutListAdapter.setExercises(routineExerciseItems);
-                    }
-                });
+                routineExerciseItems -> workoutListAdapter.setExercises(routineExerciseItems));
 
 
-        addExerciseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mNewRoutineViewModel.addExercise(new RoutineExerciseItem());
-            }
-        });
+        addExerciseButton.setOnClickListener(v ->
+                mNewRoutineViewModel.addExercise(new RoutineExerciseItem()));
 
         builder.setView(view)
                 .setPositiveButton("Add", null)
-                .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                .setNegativeButton("Dismiss", (dialog, which) -> dialog.dismiss());
 
         final AlertDialog dialog = builder.create();
 
         // This code is needed to override positive button listener to don't close dialog.
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface d) {
-                Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                b.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String name = workoutNameEditText.getText().toString();
-                        // What if name is empty?
-                        if (name.isEmpty()) {
-                            workoutNameEditText.requestFocus();
-                            workoutNameEditText.setError("Please add routine name!");
-                        } else {
-                            Routine routine = getRoutineFromViewModel(name);//new Routine(name, exercises);
-                            RoutineViewModel routineViewModel =
-                                    ViewModelProviders.of(mActivity).get(RoutineViewModel.class);
-                            switch (mTag) {
-                                case "Add":
-                                    routineViewModel.insertSingleRoutine(routine);
-                                    Toast.makeText(getContext(),
-                                            "Workout added",
-                                            Toast.LENGTH_SHORT).show();
-                                    break;
-                                case "Edit":
-                                    routine.id = mWorkoutId;
-                                    routineViewModel.updateRoutine(routine);
-                                    Toast.makeText(getContext(),
-                                            "Workout updated",
-                                            Toast.LENGTH_SHORT).show();
-                                    break;
-                            }
-                            dismiss();
-                        }
+        dialog.setOnShowListener(d -> {
+            Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            b.setOnClickListener(v -> {
+                String name = workoutNameEditText.getText().toString();
+                // What if name is empty?
+                if (name.isEmpty()) {
+                    workoutNameEditText.requestFocus();
+                    workoutNameEditText.setError("Please add routine name!");
+                } else {
+                    Routine routine = getRoutineFromViewModel(name);
+                    RoutineViewModel routineViewModel =
+                            ViewModelProviders.of(mActivity).get(RoutineViewModel.class);
+                    switch (mTag) {
+                        case "Add":
+                            routineViewModel.insertSingleRoutine(routine);
+                            Toast.makeText(getContext(),
+                                    "Workout added",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case "Edit":
+                            routine.id = mWorkoutId;
+                            routineViewModel.updateRoutine(routine);
+                            Toast.makeText(getContext(),
+                                    "Workout updated",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
                     }
-                });
-            }
+                    dismiss();
+                }
+            });
         });
         return dialog;
     }

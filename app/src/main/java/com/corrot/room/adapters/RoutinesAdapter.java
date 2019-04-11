@@ -2,9 +2,7 @@ package com.corrot.room.adapters;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.corrot.room.NewRoutineDialog;
-import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.R;
+import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.db.entity.Routine;
 import com.corrot.room.utils.EntityUtils;
 import com.corrot.room.utils.RoutinesDiffUtilCallback;
-import com.corrot.room.viewmodel.RoutineViewModel;
 import com.corrot.room.viewmodel.NewRoutineViewModel;
+import com.corrot.room.viewmodel.RoutineViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,41 +64,32 @@ public class RoutinesAdapter extends RecyclerView.Adapter<RoutinesAdapter.Routin
         View itemView = mInflater.inflate(R.layout.recyclerview_routine_item, viewGroup, false);
         final RoutineViewHolder viewHolder = new RoutineViewHolder(itemView);
 
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Routine workout = mRoutines.get(viewHolder.getAdapterPosition());
-                workout.expanded = !workout.expanded;
-                notifyItemChanged(viewHolder.getAdapterPosition());
-            }
+        viewHolder.itemView.setOnClickListener(v -> {
+            final Routine workout = mRoutines.get(viewHolder.getAdapterPosition());
+            workout.expanded = !workout.expanded;
+            notifyItemChanged(viewHolder.getAdapterPosition());
         });
 
-        viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Routine workout = mRoutines.get(viewHolder.getAdapterPosition());
-                showDeleteDialog(mActivity, workout).show();
-            }
+        viewHolder.deleteButton.setOnClickListener(v -> {
+            final Routine workout = mRoutines.get(viewHolder.getAdapterPosition());
+            showDeleteDialog(mActivity, workout).show();
         });
 
-        viewHolder.editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Routine workout = mRoutines.get(viewHolder.getAdapterPosition());
-                List<RoutineExerciseItem> exerciseItems = EntityUtils.getRoutineExercises(workout);
+        viewHolder.editButton.setOnClickListener(v -> {
+            final Routine workout = mRoutines.get(viewHolder.getAdapterPosition());
+            List<RoutineExerciseItem> exerciseItems = EntityUtils.getRoutineExercises(workout);
 
-                NewRoutineViewModel mNewRoutineViewModel =
-                        ViewModelProviders.of(mActivity).get(NewRoutineViewModel.class);
-                mNewRoutineViewModel.init();
-                mNewRoutineViewModel.setExercises(exerciseItems);
+            NewRoutineViewModel mNewRoutineViewModel =
+                    ViewModelProviders.of(mActivity).get(NewRoutineViewModel.class);
+            mNewRoutineViewModel.init();
+            mNewRoutineViewModel.setExercises(exerciseItems);
 
-                NewRoutineDialog dialog = new NewRoutineDialog();
-                Bundle args = new Bundle();
-                args.putInt("id", workout.id);
-                args.putString("label", workout.label);
-                dialog.setArguments(args);
-                dialog.show(mActivity.getSupportFragmentManager(), "Edit");
-            }
+            NewRoutineDialog dialog = new NewRoutineDialog();
+            Bundle args = new Bundle();
+            args.putInt("id", workout.id);
+            args.putString("label", workout.label);
+            dialog.setArguments(args);
+            dialog.show(mActivity.getSupportFragmentManager(), "Edit");
         });
         return viewHolder;
     }
@@ -144,21 +133,12 @@ public class RoutinesAdapter extends RecyclerView.Adapter<RoutinesAdapter.Routin
     }
 
     private AlertDialog showDeleteDialog(FragmentActivity fragmentActivity, final Routine workout) {
-        return new AlertDialog.Builder(fragmentActivity.getThemedContext())
+        return new AlertDialog.Builder(fragmentActivity)
                 .setTitle("Are you sure you want delete this routine?")
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mRoutineViewModel.deleteRoutine(workout);
-                    }
-                })
+                .setNegativeButton("No", (dialog, which) ->
+                        dialog.dismiss())
+                .setPositiveButton("Yes", (dialog, which) ->
+                        mRoutineViewModel.deleteRoutine(workout))
                 .create();
     }
-
 }

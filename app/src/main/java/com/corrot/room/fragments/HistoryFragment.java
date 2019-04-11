@@ -1,29 +1,31 @@
 package com.corrot.room.fragments;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.corrot.room.db.entity.Workout;
 import com.corrot.room.R;
-import com.corrot.room.viewmodel.WorkoutViewModel;
 import com.corrot.room.adapters.WorkoutsListAdapter;
+import com.corrot.room.db.entity.Workout;
+import com.corrot.room.viewmodel.WorkoutViewModel;
+import com.marcohc.robotocalendar.RobotoCalendarView;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class HistoryFragment extends Fragment {
 
     private WorkoutViewModel mWorkoutViewModel;
+    private RobotoCalendarView calendarView;
 
     @Nullable
     @Override
@@ -34,17 +36,17 @@ public class HistoryFragment extends Fragment {
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
 
         final RecyclerView recyclerView = view.findViewById(R.id.fragment_history_recycler_view);
+        calendarView = view.findViewById(R.id.fragment_history_calendar_view);
+
         final WorkoutsListAdapter workoutListAdapter =
                 new WorkoutsListAdapter(this.getContext(), this.getActivity());
 
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-        mWorkoutViewModel.getAllWorkouts().observe(this, new Observer<List<Workout>>() {
-            @Override
-            public void onChanged(List<Workout> workouts) {
-                workoutListAdapter.setWorkouts(workouts);
-            }
+        mWorkoutViewModel.getAllWorkouts().observe(this, workouts -> {
+            setCalendarEvents(workouts);
+            workoutListAdapter.setWorkouts(workouts);
         });
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT) {
@@ -64,5 +66,12 @@ public class HistoryFragment extends Fragment {
             }
         }).attachToRecyclerView(recyclerView);
         return view;
+    }
+
+    private void setCalendarEvents(List<Workout> workouts) {
+        calendarView.clearSelectedDay();
+        for(Workout w : workouts) {
+            calendarView.markCircleImage1(w.workoutDate);
+        }
     }
 }
