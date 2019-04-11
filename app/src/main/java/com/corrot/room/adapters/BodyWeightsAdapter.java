@@ -97,3 +97,5 @@ public class BodyWeightsAdapter extends RecyclerView.Adapter<BodyWeightsAdapter.
         return mBodyWeights != null ? mBodyWeights.size() : 0;
     }
 }
+
+

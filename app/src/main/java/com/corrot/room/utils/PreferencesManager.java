@@ -75,7 +75,7 @@ public class PreferencesManager {
 
     /*public void saveExercises(String[] exercises) {
         if (exercises != null) {
-            Set<String> set = new LinkedHashSet<>(Arrays.asList(exercises));
+            Set<String> set = new HashSet<>(Arrays.asList(exercises));
             //Collections.addAll(set, exercises);
 
             mPreferences.edit()
@@ -118,10 +118,22 @@ public class PreferencesManager {
     private Set<String> getBodyWeightsSet() {
         Set<String> bodyWeights = mPreferences.getStringSet(PREFS_BODY_WEIGHTS_KEY, null);
         if (bodyWeights != null) {
-            Set<String> bodyWeightsCopy = new LinkedHashSet<>(bodyWeights); // !!!
-            return sortBodyWeightsSet(bodyWeightsCopy);
+            return new LinkedHashSet<>(sortBodyWeightsSet(bodyWeights)); // Important to make copy!
         } else {
             return new LinkedHashSet<>();
+        }
+    }
+
+    public List<BodyWeightItem> getBodyWeightsList() {
+        Set<String> bodyWeights = getBodyWeightsSet();
+        if (!bodyWeights.isEmpty()) {
+            List<BodyWeightItem> list = new ArrayList<>();
+            for (String s : bodyWeights) {
+                list.add(new BodyWeightItem(s));
+            }
+            return list; // It is already sorted.
+        } else {
+            return new ArrayList<>();
         }
     }
 
@@ -130,6 +142,7 @@ public class PreferencesManager {
         for (String s : bodyWeights) {
             weightsList.add(new BodyWeightItem(s));
         }
+        // Sort by date.
         Collections.sort(weightsList);
         Set<String> sorted = new LinkedHashSet<>();
 
@@ -137,24 +150,6 @@ public class PreferencesManager {
             sorted.add(i.itemToString());
         }
         return sorted;
-    }
-
-    public List<BodyWeightItem> getBodyWeightsList() {
-        Set<String> bodyWeights = getBodyWeightsSet();
-        if (bodyWeights != null) {
-            return sortBodyWeightsList(bodyWeights);
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    private List<BodyWeightItem> sortBodyWeightsList(Set<String> bodyWeights) {
-        List<BodyWeightItem> weightsList = new ArrayList<>();
-        for (String s : bodyWeights) {
-            weightsList.add(new BodyWeightItem(s));
-        }
-        Collections.sort(weightsList);
-        return weightsList;
     }
 
     public void addBodyWeight(String bodyWeight, String date) {
@@ -166,15 +161,16 @@ public class PreferencesManager {
 
     public void removeBodyWeight(BodyWeightItem itemToRemove) {
         List<BodyWeightItem> list = getBodyWeightsList();
-        Set<String> newSet = new HashSet<>();
-
-        // TODO: Sometimes it deletes two objects.
+        Set<String> set = new LinkedHashSet<>();
         for (BodyWeightItem item : list) {
-            if (!item.date.equals(itemToRemove.date)
-                    && item.weight != itemToRemove.weight) {
-                newSet.add(item.itemToString());
+            if(item.date.getTime() == itemToRemove.date.getTime()) {
+                if(item.weight != itemToRemove.weight) {
+                    set.add(item.itemToString());
+                }
+            } else {
+                set.add(item.itemToString());
             }
         }
-        saveBodyWeights(newSet);
+        saveBodyWeights(set);
     }
 }

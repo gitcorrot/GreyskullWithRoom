@@ -27,9 +27,9 @@ public class ExercisesRepository {
         return mAllExercises;
     }
 
-    public List<Exercise> getAllExercises(String name)
+    public List<Exercise> getAllExercisesWithName(String name)
             throws ExecutionException, InterruptedException {
-        return new getAllExercisesAsync(mExerciseDao).execute(name).get();
+        return new getAllExercisesWithNameAsync(mExerciseDao).execute(name).get();
     }
 
     public void insertSingleExercise(Exercise exercise) {
@@ -108,17 +108,17 @@ public class ExercisesRepository {
         }
     }
 
-    private static class getAllExercisesAsync extends AsyncTask<String, Void, List<Exercise>> {
+    private static class getAllExercisesWithNameAsync extends AsyncTask<String, Void, List<Exercise>> {
 
         private final ExerciseDAO exerciseDAO;
 
-        getAllExercisesAsync(ExerciseDAO dao) {
+        getAllExercisesWithNameAsync(ExerciseDAO dao) {
             this.exerciseDAO = dao;
         }
 
         @Override
         protected  List<Exercise> doInBackground(final String... params) {
-            return exerciseDAO.getAllExercises(params[0]);
+            return exerciseDAO.getAllExercisesWithName(params[0]);
         }
     }
 

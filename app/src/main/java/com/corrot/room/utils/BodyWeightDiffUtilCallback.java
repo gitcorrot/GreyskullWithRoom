@@ -29,18 +29,12 @@ public class BodyWeightDiffUtilCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return (oldList.get(oldItemPosition).weight == newList.get(newItemPosition).weight)
-                && (oldList.get(oldItemPosition).date == newList.get(newItemPosition).date);
+        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
     }
 
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
-    }
-
-    @Nullable
-    @Override
-    public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-        return super.getChangePayload(oldItemPosition, newItemPosition);
+        return (oldList.get(oldItemPosition).weight == newList.get(newItemPosition).weight)
+                && (oldList.get(oldItemPosition).date == newList.get(newItemPosition).date);
     }
 }

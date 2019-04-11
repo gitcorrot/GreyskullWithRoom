@@ -35,16 +35,17 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class BodyFragment extends Fragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private LineChart bodyWeightLineChart;
     private PreferencesManager pm;
-
     private BodyWeightsAdapter bodyWeightsAdapter; // it should be final
 
     @Nullable
@@ -65,6 +66,7 @@ public class BodyFragment extends Fragment
 
         bodyWeightsAdapter = new BodyWeightsAdapter(this.getContext());
         bodyWeightRecyclerView.setAdapter(bodyWeightsAdapter);
+        bodyWeightRecyclerView.setItemAnimator(null);
         bodyWeightRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         bodyWeightsAdapter.setBodyWeights(pm.getBodyWeightsList());
 

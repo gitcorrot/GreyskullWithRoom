@@ -25,9 +25,9 @@ public class ExerciseViewModel extends AndroidViewModel {
         return mAllExercises;
     }
 
-    public List<Exercise> getAllExercises(String name)
+    public List<Exercise> getAllExercisesWithName(String name)
             throws ExecutionException, InterruptedException {
-        return mExercisesRepository.getAllExercises(name);
+        return mExercisesRepository.getAllExercisesWithName(name);
     }
 
     public void insertSingleExercise(Exercise exercise) {

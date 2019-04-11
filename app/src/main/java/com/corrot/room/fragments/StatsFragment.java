@@ -110,9 +110,11 @@ public class StatsFragment extends Fragment
         List<Entry> entries = new ArrayList<>();
         try {
             for (Exercise e : mExercises) {
-                Date date = mWorkoutViewModel.getWorkoutById(e.workoutId).workoutDate;
-                float max = Collections.max(e.weights);
-                entries.add(new Entry(date.getTime(), max));
+                if(e.name.equals(name)) {
+                    Date date = mWorkoutViewModel.getWorkoutById(e.workoutId).workoutDate;
+                    float max = Collections.max(e.weights);
+                    entries.add(new Entry(date.getTime(), max));
+                }
             }
             Collections.sort(entries, new EntryXComparator());
         } catch (ExecutionException e) {
