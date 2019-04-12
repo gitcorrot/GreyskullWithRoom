@@ -35,16 +35,14 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class BodyFragment extends Fragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private LineChart bodyWeightLineChart;
+    private LineChart mLineChart;
     private PreferencesManager pm;
     private BodyWeightsAdapter bodyWeightsAdapter; // it should be final
 
@@ -60,7 +58,7 @@ public class BodyFragment extends Fragment
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        bodyWeightLineChart = view.findViewById(R.id.fragment_body_chart);
+        mLineChart = view.findViewById(R.id.fragment_body_chart);
         RecyclerView bodyWeightRecyclerView = view.findViewById(R.id.fragment_body_recycler_view);
         MaterialButton addWeightButton = view.findViewById(R.id.fragment_body_add_button);
 
@@ -85,12 +83,8 @@ public class BodyFragment extends Fragment
             }
         }).attachToRecyclerView(bodyWeightRecyclerView);
 
-        addWeightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showNewBodyWeightDialog(v.getContext(), getFragmentManager());
-            }
-        });
+        addWeightButton.setOnClickListener(v ->
+                showNewBodyWeightDialog(v.getContext(), getFragmentManager()));
     }
 
     private void showNewBodyWeightDialog(Context context, FragmentManager fragmentManager) {
@@ -137,7 +131,7 @@ public class BodyFragment extends Fragment
             if (getContext() != null) {
                 colorAccent = ContextCompat.getColor(getContext(), R.color.colorAccent);
             }
-            XAxis x = bodyWeightLineChart.getXAxis();
+            XAxis x = mLineChart.getXAxis();
             x.setAvoidFirstLastClipping(true);
             x.setDrawGridLines(true);
             x.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -145,15 +139,15 @@ public class BodyFragment extends Fragment
             x.setLabelCount(5, true);
             x.setTextSize(8f);
 
-            YAxis yLeft = bodyWeightLineChart.getAxisLeft();
+            YAxis yLeft = mLineChart.getAxisLeft();
             yLeft.setDrawGridLines(true);
             yLeft.setDrawAxisLine(true);
 
-            YAxis yRight = bodyWeightLineChart.getAxisRight();
+            YAxis yRight = mLineChart.getAxisRight();
             yRight.setDrawGridLines(false);
             yRight.setDrawLabels(false);
 
-            Legend legend = bodyWeightLineChart.getLegend();
+            Legend legend = mLineChart.getLegend();
             legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
             legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
             legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
@@ -174,18 +168,18 @@ public class BodyFragment extends Fragment
             lineData.setHighlightEnabled(false);
             lineData.setDrawValues(false);
 
-            bodyWeightLineChart.setData(lineData);
-            bodyWeightLineChart.setTouchEnabled(true);
-            bodyWeightLineChart.setDragEnabled(true);
-            bodyWeightLineChart.setScaleEnabled(false);
-            bodyWeightLineChart.setHighlightPerTapEnabled(false);
-            bodyWeightLineChart.animateY(750, Easing.EaseOutCubic);
-            bodyWeightLineChart.setDescription(null);
-            bodyWeightLineChart.invalidate();
+            mLineChart.setData(lineData);
+            mLineChart.setTouchEnabled(true);
+            mLineChart.setDragEnabled(true);
+            mLineChart.setScaleEnabled(false);
+            mLineChart.setHighlightPerTapEnabled(false);
+            mLineChart.animateY(750, Easing.EaseOutCubic);
+            mLineChart.setDescription(null);
+            mLineChart.invalidate();
         } else {
-            bodyWeightLineChart.setNoDataText("Add body weight to see chart");
-            bodyWeightLineChart.setData(null);
-            bodyWeightLineChart.invalidate();
+            mLineChart.setNoDataText("Add body weight to see chart");
+            mLineChart.setData(null);
+            mLineChart.invalidate();
         }
     }
 }

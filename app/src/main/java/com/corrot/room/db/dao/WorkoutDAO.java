@@ -5,10 +5,13 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.TypeConverters;
 import androidx.room.Update;
 
+import com.corrot.room.db.converters.DateConverter;
 import com.corrot.room.db.entity.Workout;
 
+import java.util.Date;
 import java.util.List;
 
 @Dao
@@ -27,9 +30,10 @@ public interface WorkoutDAO {
 
     //SELECT * FROM Workout ORDER BY Date <-- returns
 
-    //SELECT datetime(1553426734, 'unixepoch', 'localtime')
-
-    //SELECT * FROM Workout WHERE Date > strftime('%s','2004-01-01 02:34:56')
+    @TypeConverters(DateConverter.class)
+    @Query("SELECT * FROM Workout WHERE strftime('%Y-%m-%d', Date / 1000, 'unixepoch', 'localtime') " +
+            "= strftime('%Y-%m-%d', :date / 1000, 'unixepoch', 'localtime')")
+    List<Workout> getWorkoutsByDate(Date date);
 
     @Update
     void updateWorkout(Workout workout);

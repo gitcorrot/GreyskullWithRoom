@@ -1,16 +1,17 @@
 package com.corrot.room.repository;
 
 import android.app.Application;
-import androidx.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.corrot.room.db.WorkoutsDatabase;
-import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.dao.ExerciseDAO;
+import com.corrot.room.db.entity.Exercise;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import androidx.lifecycle.LiveData;
 
 public class ExercisesRepository {
 
@@ -58,8 +59,8 @@ public class ExercisesRepository {
     }
 
     /***********************************************************************************************
-    *                                       ASYNC FUNCTIONS
-    ***********************************************************************************************/
+     *                                       ASYNC FUNCTIONS
+     ***********************************************************************************************/
 
 
     private static class insertSingleExerciseAsync extends AsyncTask<Exercise, Void, Void> {
@@ -86,6 +87,7 @@ public class ExercisesRepository {
             this.exerciseDAO = dao;
         }
 
+        // TODO : Handle it in onPostExecute
         @Override
         protected Void doInBackground(List<Exercise>... params) {
             exerciseDAO.insertMultipleExercises(params[0]);
@@ -103,7 +105,7 @@ public class ExercisesRepository {
         }
 
         @Override
-        protected  List<Exercise> doInBackground(final String... params) {
+        protected List<Exercise> doInBackground(final String... params) {
             return exerciseDAO.getAllExercisesByWorkoutId(params[0]);
         }
     }
@@ -117,7 +119,7 @@ public class ExercisesRepository {
         }
 
         @Override
-        protected  List<Exercise> doInBackground(final String... params) {
+        protected List<Exercise> doInBackground(final String... params) {
             return exerciseDAO.getAllExercisesWithName(params[0]);
         }
     }
@@ -131,7 +133,7 @@ public class ExercisesRepository {
         }
 
         @Override
-        protected  Void doInBackground(final String... params) {
+        protected Void doInBackground(final String... params) {
             exerciseDAO.deleteAllExercisesByWorkoutId(params[0]);
             return null;
         }

@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import com.corrot.room.repository.WorkoutsRepository;
 import com.corrot.room.db.entity.Workout;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -28,6 +29,11 @@ public class WorkoutViewModel extends AndroidViewModel {
     public Workout getWorkoutById(String id)
         throws ExecutionException, InterruptedException {
         return mWorkoutsRepository.getWorkoutById(id);
+    }
+
+    public List<Workout> getWorkoutsByDate(Date date)
+            throws ExecutionException, InterruptedException {
+        return mWorkoutsRepository.getWorkoutsByDate(date);
     }
 
     public void insertSingleWorkout(Workout workout) {

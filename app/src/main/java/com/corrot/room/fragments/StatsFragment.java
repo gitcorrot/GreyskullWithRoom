@@ -42,16 +42,14 @@ import androidx.lifecycle.ViewModelProviders;
 public class StatsFragment extends Fragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private LineChart lineChart;
-    private Spinner nameSpinner;
-    private String name;
-    private String[] exercisesNames;
+    private LineChart mLineChart;
+    private Spinner mNameSpinner;
+    private String mName;
+    private String[] mExercisesNames;
     private List<Exercise> mExercises;
 
     private WorkoutViewModel mWorkoutViewModel;
     private PreferencesManager pm;
-
-    // TODO: bind charts to liveData
 
     @Nullable
     @Override
@@ -60,7 +58,7 @@ public class StatsFragment extends Fragment
                              @Nullable Bundle savedInstanceState) {
         mExercises = new ArrayList<>();
         pm = PreferencesManager.getInstance();
-        exercisesNames = pm.getExercises();
+        mExercisesNames = pm.getExercises();
 
         ExerciseViewModel mExerciseViewModel =
                 ViewModelProviders.of(this).get(ExerciseViewModel.class);
@@ -69,7 +67,7 @@ public class StatsFragment extends Fragment
 
         mExerciseViewModel.getAllExercises().observe(this, exercises -> {
             mExercises = exercises;
-            showChart();
+            updateChart();
         });
         return inflater.inflate(R.layout.fragment_stats, container, false);
     }
@@ -78,35 +76,35 @@ public class StatsFragment extends Fragment
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        lineChart = view.findViewById(R.id.fragment_statistics_line_chart);
-        nameSpinner = view.findViewById(R.id.fragment_statistics_name_spinner);
+        mLineChart = view.findViewById(R.id.fragment_statistics_line_chart);
+        mNameSpinner = view.findViewById(R.id.fragment_statistics_name_spinner);
 
         updateSpinnerAdapter();
 
-        nameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mNameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (exercisesNames != null) {
-                    name = exercisesNames[position];
-                    showChart();
+                if (mExercisesNames != null) {
+                    mName = mExercisesNames[position];
+                    updateChart();
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                if (exercisesNames != null) {
-                    name = exercisesNames[0];
-                    showChart();
+                if (mExercisesNames != null) {
+                    mName = mExercisesNames[0];
+                    updateChart();
                 }
             }
         });
     }
 
-    private void showChart() {
+    private void updateChart() {
         List<Entry> entries = new ArrayList<>();
         try {
             for (Exercise e : mExercises) {
-                if (e.name.equals(name)) {
+                if (e.name.equals(mName)) {
                     Date date = mWorkoutViewModel.getWorkoutById(e.workoutId).workoutDate;
                     float max = Collections.max(e.weights);
                     entries.add(new Entry(date.getTime(), max));
@@ -124,7 +122,7 @@ public class StatsFragment extends Fragment
             if (getContext() != null) {
                 colorAccent = ContextCompat.getColor(getContext(), R.color.colorAccent);
             }
-            XAxis x = lineChart.getXAxis();
+            XAxis x = mLineChart.getXAxis();
             x.setAvoidFirstLastClipping(true);
             x.setDrawGridLines(true);
             x.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -132,22 +130,22 @@ public class StatsFragment extends Fragment
             x.setLabelCount(5, true);
             x.setTextSize(8f);
 
-            YAxis yLeft = lineChart.getAxisLeft();
+            YAxis yLeft = mLineChart.getAxisLeft();
             yLeft.setDrawGridLines(true);
             yLeft.setDrawAxisLine(true);
 
-            YAxis yRight = lineChart.getAxisRight();
+            YAxis yRight = mLineChart.getAxisRight();
             yRight.setDrawGridLines(false);
             yRight.setDrawLabels(false);
 
-            Legend legend = lineChart.getLegend();
+            Legend legend = mLineChart.getLegend();
             legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
             legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
             legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
             legend.setDrawInside(false);
             legend.setForm(Legend.LegendForm.LINE);
 
-            LineDataSet lineDataSet = new LineDataSet(entries, name);
+            LineDataSet lineDataSet = new LineDataSet(entries, mName);
             lineDataSet.setColor(colorAccent);   // color accent
             lineDataSet.setValueTextColor(Color.BLACK);
             lineDataSet.setLineWidth(2.5f);
@@ -161,58 +159,53 @@ public class StatsFragment extends Fragment
             lineData.setHighlightEnabled(false);
             lineData.setDrawValues(false);
 
-            lineChart.setData(lineData);
-            lineChart.setTouchEnabled(true);
-            lineChart.setDragEnabled(true);
-            lineChart.setScaleEnabled(false);
-            lineChart.setHighlightPerTapEnabled(false);
-            lineChart.animateY(750, Easing.EaseOutCubic);
-            lineChart.setDescription(null);
-            lineChart.invalidate();
+            mLineChart.setData(lineData);
+            mLineChart.setTouchEnabled(true);
+            mLineChart.setDragEnabled(true);
+            mLineChart.setScaleEnabled(false);
+            mLineChart.setHighlightPerTapEnabled(false);
+            mLineChart.animateY(750, Easing.EaseOutCubic);
+            mLineChart.setDescription(null);
+            mLineChart.invalidate();
         } else {
-            lineChart.setNoDataText("No data for " + name);
-            lineChart.setData(null);
-            lineChart.invalidate();
+            mLineChart.setNoDataText("No data for " + mName);
+            mLineChart.setData(null);
+            mLineChart.invalidate();
         }
     }
 
     private void updateSpinnerAdapter() {
-        if (getContext() != null && exercisesNames != null) {
+        if (getContext() != null && mExercisesNames != null) {
             ArrayAdapter namesAdapter = new ArrayAdapter<>(
                     getContext(),
                     R.layout.spinner_item,
                     R.id.spinner_text_view,
-                    exercisesNames
+                    mExercisesNames
             );
             namesAdapter.setDropDownViewResource(R.layout.spinner_item);
-            nameSpinner.setAdapter(namesAdapter);
+            mNameSpinner.setAdapter(namesAdapter);
         }
     }
 
-    // TODO: Learn how to use saveInstanceState
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d("asdasd", "onSaveInstanceState");
-        outState.putInt("saved spinner item", nameSpinner.getSelectedItemPosition());
+        outState.putInt("saved spinner item", mNameSpinner.getSelectedItemPosition());
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-
-        Log.d("asdasd", "onViewStateRestored");
-
         if (savedInstanceState != null) {
-            int savedPosition = savedInstanceState.getInt("saved spinner item", -1);
-            nameSpinner.setSelection(savedPosition);
+            int savedPosition = savedInstanceState.getInt("saved spinner item", 0);
+            mNameSpinner.setSelection(savedPosition);
         }
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals(PreferencesManager.PREFS_EXERCISES_KEY)) {
-            exercisesNames = pm.getExercises();
+            mExercisesNames = pm.getExercises();
             updateSpinnerAdapter();
         }
     }
@@ -221,7 +214,7 @@ public class StatsFragment extends Fragment
     public void onResume() {
         super.onResume();
         pm.registerListener(this);
-        showChart();
+        updateChart();
     }
 
     @Override

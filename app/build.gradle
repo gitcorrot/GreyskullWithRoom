@@ -53,10 +53,6 @@ dependencies {
     // MPAndroidCharts
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
-    // Applandeo Material Calendar
-    //implementation'com.applandeo:material-calendar-view:1.5.1'
-
-    // robotocalendarview
-    implementation 'com.github.marcohc:robotocalendarview:3.6.1'
-    implementation 'io.github.inflationx:calligraphy3:3.1.0'
+    // Material Calendar View
+    implementation 'com.github.prolificinteractive:material-calendarview:2.0.1'
 }

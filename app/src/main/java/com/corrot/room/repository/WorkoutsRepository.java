@@ -8,6 +8,7 @@ import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.dao.WorkoutDAO;
 import com.corrot.room.db.entity.Workout;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -19,7 +20,7 @@ public class WorkoutsRepository {
     private LiveData<List<Workout>> mAllWorkouts;
 
     public WorkoutsRepository(Application application) {
-        WorkoutsDatabase db = WorkoutsDatabase.getInstance(application);    // Not sure if it's ok
+        WorkoutsDatabase db = WorkoutsDatabase.getInstance(application);
         mWorkoutDAO = db.workoutDAO();
         mAllWorkouts = mWorkoutDAO.getAllWorkouts();
     }
@@ -31,6 +32,11 @@ public class WorkoutsRepository {
     public Workout getWorkoutById(String id)
             throws ExecutionException, InterruptedException {
         return new getWorkoutByIdAsync(mWorkoutDAO).execute(id).get();
+    }
+
+    public List<Workout> getWorkoutsByDate(Date date)
+            throws ExecutionException, InterruptedException {
+        return new getWorkoutByDateAsync(mWorkoutDAO).execute(date).get();
     }
 
     public void deleteAll() {
@@ -79,6 +85,20 @@ public class WorkoutsRepository {
         @Override
         protected Workout doInBackground(String... params) {
             return workoutDAO.getWorkoutById(params[0]);
+        }
+    }
+
+    private static class getWorkoutByDateAsync extends AsyncTask<Date, Void, List<Workout>> {
+
+        private final WorkoutDAO workoutDAO;
+
+        getWorkoutByDateAsync(WorkoutDAO dao) {
+            this.workoutDAO = dao;
+        }
+
+        @Override
+        protected List<Workout> doInBackground(Date... params) {
+            return workoutDAO.getWorkoutsByDate(params[0]);
         }
     }
 
