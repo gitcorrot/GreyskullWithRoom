@@ -82,6 +82,8 @@ public class EntityUtils {
     }
 
     public static List<ExerciseItem> getRoutineWorkoutExerciseItems(Routine routine) {
+        if (routine == null) return null;
+
         List<ExerciseItem> exerciseItems = new ArrayList<>();
 
         for (int i = 0; i < routine.exercises.size(); i++) {

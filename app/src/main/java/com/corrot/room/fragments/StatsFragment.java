@@ -111,9 +111,7 @@ public class StatsFragment extends Fragment
                 }
             }
             Collections.sort(entries, new EntryXComparator());
-        } catch (ExecutionException e) {
-            Log.e("StatsFragment", e.getMessage());
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             Log.e("StatsFragment", e.getMessage());
         }
 

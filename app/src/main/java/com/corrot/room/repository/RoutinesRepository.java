@@ -4,14 +4,14 @@ import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.dao.RoutineDAO;
 import com.corrot.room.db.entity.Routine;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import androidx.lifecycle.LiveData;
 
 public class RoutinesRepository {
 
@@ -31,14 +31,14 @@ public class RoutinesRepository {
         return mAllRoutines;
     }
 
+    /*public void deleteAll() {
+        new deleteAllAsync(mRoutineDAO).execute();
+}*/
+
     public Routine getRoutineByName(String name)
             throws ExecutionException, InterruptedException {
         return new getRoutineByNameAsync(mRoutineDAO).execute(name).get();
     }
-
-    /*public void deleteAll() {
-        new deleteAllAsync(mRoutineDAO).execute();
-    }*/
 
     public void insertSingleRoutine(Routine routine) {
         new insertSingleRoutineAsync(mRoutineDAO).execute(routine);

@@ -2,14 +2,16 @@ package com.corrot.room.viewmodel;
 
 import android.app.Application;
 
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Observer;
+
 import com.corrot.room.db.entity.Routine;
 import com.corrot.room.repository.RoutinesRepository;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 
 public class RoutineViewModel extends AndroidViewModel {
 
@@ -30,6 +32,7 @@ public class RoutineViewModel extends AndroidViewModel {
     }
 
     public Routine getRoutineByName(String name)
+        // get it from DB or from LiveData<List<Routine>> ?
             throws ExecutionException, InterruptedException {
         return mRoutinesRepository.getRoutineByName(name);
     }

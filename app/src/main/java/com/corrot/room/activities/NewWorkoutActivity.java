@@ -14,6 +14,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.corrot.room.ExerciseItem;
 import com.corrot.room.ExerciseSetItem;
 import com.corrot.room.R;
@@ -26,7 +32,6 @@ import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.viewmodel.ExerciseViewModel;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
-import com.corrot.room.viewmodel.RoutineViewModel;
 import com.corrot.room.viewmodel.WorkoutViewModel;
 
 import java.util.ArrayList;
@@ -35,12 +40,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class NewWorkoutActivity extends AppCompatActivity {
 
@@ -97,20 +96,12 @@ public class NewWorkoutActivity extends AppCompatActivity {
                     date = Calendar.getInstance().getTime();
                     dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
 
-                    String routine = extras.getString("routine", "Normal workout");
-                    if (!routine.equals("Normal workout")) {
-                        RoutineViewModel routineViewModel =
-                                ViewModelProviders.of(mActivity).get(RoutineViewModel.class);
-                        try {
-                            Routine r = routineViewModel.getRoutineByName(routine);
-                            List<ExerciseItem> exercises = EntityUtils.getRoutineWorkoutExerciseItems(r);
-                            if (exercises != null) {
-                                mNewWorkoutViewModel.setExercises(exercises);
-                            }
-                        } catch (ExecutionException e) {
-                            Log.e("NewWorkoutActivity", e.getMessage());
-                        } catch (InterruptedException e) {
-                            Log.e("NewWorkoutActivity", e.getMessage());
+                    Routine routine = (Routine) extras.getSerializable("routine");
+
+                    if (routine != null) {
+                        List<ExerciseItem> exercises = EntityUtils.getRoutineWorkoutExerciseItems(routine);
+                        if (exercises != null) {
+                            mNewWorkoutViewModel.setExercises(exercises);
                         }
                     }
                     break;
@@ -121,9 +112,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                         mWorkout = mWorkoutViewModel.getWorkoutById(workoutId);
                         date = mWorkout.workoutDate;
                         dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
-                    } catch (InterruptedException e) {
-                        Log.d("NewWorkoutActivity", e.getMessage());
-                    } catch (ExecutionException e) {
+                    } catch (InterruptedException | ExecutionException e) {
                         Log.d("NewWorkoutActivity", e.getMessage());
                     }
 
@@ -137,9 +126,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                                 mNewWorkoutViewModel
                                         .setSets(EntityUtils.getExerciseSetItems(exercises));
                             }
-                        } catch (InterruptedException e) {
-                            Log.d("NewWorkoutActivity", e.getMessage());
-                        } catch (ExecutionException e) {
+                        } catch (InterruptedException | ExecutionException e) {
                             Log.d("NewWorkoutActivity", e.getMessage());
                         }
                     }

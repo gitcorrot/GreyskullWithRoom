@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.corrot.room.NewRoutineDialog;
+import com.corrot.room.dialogs.NewRoutineDialog;
 import com.corrot.room.R;
 import com.corrot.room.adapters.RoutinesAdapter;
 import com.corrot.room.viewmodel.RoutineViewModel;

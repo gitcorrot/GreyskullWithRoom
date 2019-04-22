@@ -7,6 +7,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.corrot.room.R;
 import com.corrot.room.adapters.WorkoutsListAdapter;
 import com.corrot.room.db.entity.Workout;
@@ -24,15 +33,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class HistoryFragment extends Fragment implements OnDateSelectedListener {
 
@@ -102,9 +102,7 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
         try {
             List<Workout> workouts = mWorkoutViewModel.getWorkoutsByDate(d);
             mWorkoutListAdapter.setWorkouts(workouts);
-        } catch (InterruptedException e) {
-            Log.e("HistoryFragment", e.getMessage());
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             Log.e("HistoryFragment", e.getMessage());
         }
     }

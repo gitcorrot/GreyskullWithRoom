@@ -2,6 +2,7 @@ package com.corrot.room.db.entity;
 
 import com.corrot.room.db.converters.ExercisesConverter;
 
+import java.io.Serializable;
 import java.util.List;
 
 import androidx.room.ColumnInfo;
@@ -12,7 +13,7 @@ import androidx.room.TypeConverters;
 
 @Entity(tableName = "Routine")
 @TypeConverters({ExercisesConverter.class})
-public class Routine {
+public class Routine implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     public int id;

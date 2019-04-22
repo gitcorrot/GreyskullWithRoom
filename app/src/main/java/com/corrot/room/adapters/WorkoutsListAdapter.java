@@ -8,6 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.corrot.room.R;
 import com.corrot.room.activities.NewWorkoutActivity;
 import com.corrot.room.db.entity.Exercise;
@@ -19,13 +26,6 @@ import com.corrot.room.viewmodel.ExerciseViewModel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapter.WorkoutViewHolder> {
 
@@ -98,10 +98,8 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
                     exercisesText += rxw;
                 }
                 workoutViewHolder.setsTextView.setText(exercisesText);
-            } catch (InterruptedException ie) {
-                Log.e("asdasd", ie.getMessage());
-            } catch (ExecutionException ee) {
-                Log.e("asdasd", ee.getMessage());
+            } catch (InterruptedException | ExecutionException e) {
+                Log.e("asdasd", e.getMessage());
             }
         } else {
             workoutViewHolder.workoutIdTextView.setText("Workout ID");

@@ -2,7 +2,8 @@ package com.corrot.room.repository;
 
 import android.app.Application;
 import android.os.AsyncTask;
-import android.util.Log;
+
+import androidx.lifecycle.LiveData;
 
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.dao.ExerciseDAO;
@@ -10,8 +11,6 @@ import com.corrot.room.db.entity.Exercise;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import androidx.lifecycle.LiveData;
 
 public class ExercisesRepository {
 
@@ -74,7 +73,6 @@ public class ExercisesRepository {
         @Override
         protected Void doInBackground(final Exercise... params) {
             exerciseDAO.insertSingleExercise(params[0]);
-            Log.d("asdasd", "Exercise inserted!");
             return null;
         }
     }

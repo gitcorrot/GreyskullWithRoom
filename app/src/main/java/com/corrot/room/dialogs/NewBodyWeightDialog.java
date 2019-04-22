@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.dialogs;
 
 import android.app.DatePickerDialog;
 import android.os.Build;
@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.corrot.room.R;
 import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.utils.PreferencesManager;
 

@@ -9,7 +9,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.corrot.room.NewExerciseNameDialog;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.corrot.room.dialogs.NewExerciseNameDialog;
 import com.corrot.room.R;
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.entity.Routine;
@@ -26,14 +34,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -273,16 +273,18 @@ public class MainActivity extends AppCompatActivity {
                 routines.add(r.label);
             }
         }
-        final String[] routinesArray = new String[routines.size()];
+
+        String[] routinesArray = new String[routines.size()];
         routines.toArray(routinesArray);
+
         builder.setItems(routinesArray, (dialog, which) -> {
             if (routinesArray.length >= which) {
-                String routine = routinesArray[which];
-                Intent newWorkoutIntent =
-                        new Intent(MainActivity.this, NewWorkoutActivity.class);
-                newWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_ADD_WORKOUT);
-                newWorkoutIntent.putExtra("routine", routine);
-                MainActivity.this.startActivity(newWorkoutIntent);
+                Intent newWorkoutIntent = new Intent(this, NewWorkoutActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("flags", NewWorkoutActivity.FLAG_ADD_WORKOUT);
+                bundle.putSerializable("routine", routinesList.get(which - 1));
+                newWorkoutIntent.putExtras(bundle);
+                startActivity(newWorkoutIntent);
             }
         });
         return builder.create();

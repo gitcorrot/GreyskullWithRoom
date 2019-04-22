@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.dialogs;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.corrot.room.R;
+import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.adapters.RoutineExercisesAdapter;
 import com.corrot.room.db.entity.Routine;
 import com.corrot.room.viewmodel.NewRoutineViewModel;
@@ -58,7 +60,7 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
                 }
                 if (mWorkoutLabel != null && mWorkoutLabel.equals("")) {
                     Log.e("NewRoutineDialog", "Can't find workout label!");
-                } else if (mWorkoutLabel != null && !mWorkoutLabel.equals("")) {
+                } else if (mWorkoutLabel != null) {
                     workoutNameEditText.setText(mWorkoutLabel);
                 }
             }
@@ -141,8 +143,7 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
     private Routine getRoutineFromViewModel(String name) {
         List<String> exercises = new ArrayList<>();
         // TODO: EXCEPTIONS
-        List<RoutineExerciseItem> items
-                = mNewRoutineViewModel.getAllExerciseItems().getValue();
+        List<RoutineExerciseItem> items = mNewRoutineViewModel.getAllExerciseItems().getValue();
         if (items != null) {
             for (RoutineExerciseItem i : items) {
                 String s = i.name + " - " + i.sets + " sets.";

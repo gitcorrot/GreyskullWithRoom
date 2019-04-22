@@ -10,7 +10,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.corrot.room.NewRoutineDialog;
+import com.corrot.room.dialogs.NewRoutineDialog;
 import com.corrot.room.R;
 import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.db.entity.Routine;

@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.dialogs;
 
 import android.os.Bundle;
 import android.view.View;
@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.corrot.room.R;
 import com.corrot.room.utils.PreferencesManager;
 
 import androidx.annotation.NonNull;

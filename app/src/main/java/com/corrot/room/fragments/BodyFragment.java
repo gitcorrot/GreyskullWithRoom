@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.corrot.room.BodyWeightItem;
-import com.corrot.room.NewBodyWeightDialog;
+import com.corrot.room.dialogs.NewBodyWeightDialog;
 import com.corrot.room.R;
 import com.corrot.room.adapters.BodyWeightsAdapter;
 import com.corrot.room.utils.ChartUtils;
