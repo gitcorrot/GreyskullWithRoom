@@ -1,9 +1,11 @@
 package com.corrot.room.viewmodel;
 
 import android.app.Application;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.corrot.room.WorkoutsCallback;
 import com.corrot.room.repository.WorkoutsRepository;
 import com.corrot.room.db.entity.Workout;
 
@@ -26,14 +28,12 @@ public class WorkoutViewModel extends AndroidViewModel {
         return mAllWorkouts;
     }
 
-    public Workout getWorkoutById(String id)
-        throws ExecutionException, InterruptedException {
-        return mWorkoutsRepository.getWorkoutById(id);
+    public void getWorkoutById(String id, WorkoutsCallback callback) {
+        mWorkoutsRepository.getWorkoutById(id, callback);
     }
 
-    public List<Workout> getWorkoutsByDate(Date date)
-            throws ExecutionException, InterruptedException {
-        return mWorkoutsRepository.getWorkoutsByDate(date);
+    public void getWorkoutsByDate(Date date, WorkoutsCallback callback) {
+        mWorkoutsRepository.getWorkoutsByDate(date, callback);
     }
 
     public void insertSingleWorkout(Workout workout) {

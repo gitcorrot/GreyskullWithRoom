@@ -12,7 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.corrot.room.R;
+import com.corrot.room.WorkoutsCallback;
 import com.corrot.room.db.entity.Exercise;
+import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.ChartUtils;
 import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.viewmodel.ExerciseViewModel;
@@ -62,8 +64,7 @@ public class StatsFragment extends Fragment
 
         ExerciseViewModel mExerciseViewModel =
                 ViewModelProviders.of(this).get(ExerciseViewModel.class);
-        mWorkoutViewModel =
-                ViewModelProviders.of(this).get(WorkoutViewModel.class);
+        mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
 
         mExerciseViewModel.getAllExercises().observe(this, exercises -> {
             mExercises = exercises;
@@ -102,18 +103,22 @@ public class StatsFragment extends Fragment
 
     private void updateChart() {
         List<Entry> entries = new ArrayList<>();
-        try {
-            for (Exercise e : mExercises) {
-                if (e.name.equals(mName)) {
-                    Date date = mWorkoutViewModel.getWorkoutById(e.workoutId).workoutDate;
-                    float max = Collections.max(e.weights);
-                    entries.add(new Entry(date.getTime(), max));
-                }
+
+        for (Exercise e : mExercises) {
+            if (e.name.equals(mName)) {
+                mWorkoutViewModel.getWorkoutById(e.workoutId, new WorkoutsCallback() {
+                    @Override
+                    public void onSuccess(List<Workout> workouts) { }
+                    @Override
+                    public void onSuccess(Workout workout) {
+                        Date date = workout.workoutDate;
+                        float max = Collections.max(e.weights);
+                        entries.add(new Entry(date.getTime(), max));
+                    }
+                });
             }
-            Collections.sort(entries, new EntryXComparator());
-        } catch (ExecutionException | InterruptedException e) {
-            Log.e("StatsFragment", e.getMessage());
         }
+        Collections.sort(entries, new EntryXComparator());
 
         if (!entries.isEmpty()) {
             int colorAccent = 0;

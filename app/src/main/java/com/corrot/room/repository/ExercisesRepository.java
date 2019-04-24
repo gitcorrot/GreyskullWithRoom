@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
+import com.corrot.room.ExercisesCallback;
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.dao.ExerciseDAO;
 import com.corrot.room.db.entity.Exercise;
@@ -40,9 +41,8 @@ public class ExercisesRepository {
         new insertMultipleExercisesAsync(mExerciseDao).execute(exercises);
     }
 
-    public List<Exercise> getExercisesByWorkoutId(String id)
-            throws ExecutionException, InterruptedException {
-        return new getExercisesByWorkoutIdAsync(mExerciseDao).execute(id).get();
+    public void getExercisesByWorkoutId(String id, ExercisesCallback callback) {
+        new getExercisesByWorkoutIdAsync(mExerciseDao, callback).execute(id);
     }
 
     public void deleteAllExercisesByWorkoutId(String id) {
@@ -85,7 +85,7 @@ public class ExercisesRepository {
             this.exerciseDAO = dao;
         }
 
-        // TODO : Handle it in onPostExecute
+        // TODO : Handle it
         @Override
         protected Void doInBackground(List<Exercise>... params) {
             exerciseDAO.insertMultipleExercises(params[0]);
@@ -97,14 +97,21 @@ public class ExercisesRepository {
     private static class getExercisesByWorkoutIdAsync extends AsyncTask<String, Void, List<Exercise>> {
 
         private final ExerciseDAO exerciseDAO;
+        private final ExercisesCallback callback;
 
-        getExercisesByWorkoutIdAsync(ExerciseDAO dao) {
+        getExercisesByWorkoutIdAsync(ExerciseDAO dao, ExercisesCallback callback) {
             this.exerciseDAO = dao;
+            this.callback = callback;
         }
 
         @Override
         protected List<Exercise> doInBackground(final String... params) {
             return exerciseDAO.getAllExercisesByWorkoutId(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Exercise> exercises) {
+            callback.onSuccess(exercises);
         }
     }
 

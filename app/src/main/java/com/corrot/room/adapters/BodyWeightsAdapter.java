@@ -6,6 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.corrot.room.BodyWeightItem;
 import com.corrot.room.R;
 import com.corrot.room.utils.BodyWeightDiffUtilCallback;
@@ -13,10 +17,6 @@ import com.corrot.room.utils.MyTimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class BodyWeightsAdapter extends RecyclerView.Adapter<BodyWeightsAdapter.BodyWeightViewHolder> {
 
@@ -51,7 +51,7 @@ public class BodyWeightsAdapter extends RecyclerView.Adapter<BodyWeightsAdapter.
     public void onBindViewHolder(@NonNull final BodyWeightsAdapter.BodyWeightViewHolder bodyWeightViewHolder, int i) {
         if (mBodyWeights != null) {
             String diff;
-            String weight = String.valueOf(mBodyWeights.get(i).weight) + "kg";
+            String weight = mBodyWeights.get(i).weight + "kg";
             String date = MyTimeUtils.parseDate(mBodyWeights.get(i).date, MyTimeUtils.MAIN_FORMAT);
 
             if (i < mBodyWeights.size() - 1) {
@@ -59,9 +59,9 @@ public class BodyWeightsAdapter extends RecyclerView.Adapter<BodyWeightsAdapter.
                 float currentWeight = mBodyWeights.get(i + 1).weight;
                 float diffWeight = lastWeight - currentWeight;
                 if (diffWeight <= 0)
-                    diff = String.valueOf(lastWeight - currentWeight) + "kg";
+                    diff = (lastWeight - currentWeight) + "kg";
                 else
-                    diff = "+" + String.valueOf(lastWeight - currentWeight) + "kg";
+                    diff = "+" + (lastWeight - currentWeight) + "kg";
 
             } else {
                 diff = "---";

@@ -66,13 +66,10 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
             }
         }
 
-        mNewRoutineViewModel =
-                ViewModelProviders.of(this).get(NewRoutineViewModel.class);
-        mNewRoutineViewModel.init(); // ?
+        mNewRoutineViewModel = ViewModelProviders.of(this).get(NewRoutineViewModel.class);
+        mNewRoutineViewModel.init();
 
-
-        final RoutineExercisesAdapter workoutListAdapter =
-                new RoutineExercisesAdapter(mActivity);
+        final RoutineExercisesAdapter workoutListAdapter = new RoutineExercisesAdapter(mActivity);
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
@@ -92,9 +89,9 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
             }
         }).attachToRecyclerView(recyclerView);
 
-        mNewRoutineViewModel.getAllExerciseItems().observe(mActivity,
-                routineExerciseItems -> workoutListAdapter.setExercises(routineExerciseItems));
-
+        // TODO: Pass it when fragment opens this dialog.
+        mNewRoutineViewModel.getAllExerciseItems().observe(mActivity, routineExerciseItems ->
+                workoutListAdapter.setExercises(routineExerciseItems));
 
         addExerciseButton.setOnClickListener(v ->
                 mNewRoutineViewModel.addExercise(new RoutineExerciseItem()));
@@ -110,7 +107,6 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
             Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             b.setOnClickListener(v -> {
                 String name = workoutNameEditText.getText().toString();
-                // What if name is empty?
                 if (name.isEmpty()) {
                     workoutNameEditText.requestFocus();
                     workoutNameEditText.setError("Please add routine name!");

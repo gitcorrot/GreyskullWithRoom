@@ -39,8 +39,10 @@ public class NewWorkoutRepository {
     }
 
     public void setExercises(List<ExerciseItem> exercises) {
-        mNewExercises = new MutableLiveData<>();
-        mNewExercises.postValue(exercises);
+        if (mNewExercises == null) {
+            mNewExercises = new MutableLiveData<>();
+        }
+        mNewExercises.setValue(exercises);
     }
 
     public ExerciseItem getExerciseByPosition(int position) {
@@ -111,8 +113,10 @@ public class NewWorkoutRepository {
     }
 
     public void setSets(List<ExerciseSetItem> sets) {
-        mNewSets = new MutableLiveData<>();
-        mNewSets.postValue(sets);
+        if (mNewSets == null) {
+            mNewSets = new MutableLiveData<>();
+        }
+        mNewSets.setValue(sets);
     }
 
     public List<ExerciseSetItem> getSetsByExercisePosition(int position) {

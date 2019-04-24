@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.corrot.room.WorkoutsCallback;
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.dao.WorkoutDAO;
 import com.corrot.room.db.entity.Workout;
@@ -29,14 +30,12 @@ public class WorkoutsRepository {
         return mAllWorkouts;
     }
 
-    public Workout getWorkoutById(String id)
-            throws ExecutionException, InterruptedException {
-        return new getWorkoutByIdAsync(mWorkoutDAO).execute(id).get();
+    public void getWorkoutById(String id, WorkoutsCallback callback) {
+        new getWorkoutByIdAsync(mWorkoutDAO, callback).execute(id);
     }
 
-    public List<Workout> getWorkoutsByDate(Date date)
-            throws ExecutionException, InterruptedException {
-        return new getWorkoutByDateAsync(mWorkoutDAO).execute(date).get();
+    public void getWorkoutsByDate(Date date, WorkoutsCallback callback){
+        new getWorkoutByDateAsync(mWorkoutDAO, callback).execute(date);
     }
 
     public void deleteAll() {
@@ -77,28 +76,42 @@ public class WorkoutsRepository {
     private static class getWorkoutByIdAsync extends AsyncTask<String, Void, Workout> {
 
         private final WorkoutDAO workoutDAO;
+        private final WorkoutsCallback callback;
 
-        getWorkoutByIdAsync(WorkoutDAO dao) {
+        getWorkoutByIdAsync(WorkoutDAO dao, WorkoutsCallback callback) {
             this.workoutDAO = dao;
+            this.callback = callback;
         }
 
         @Override
         protected Workout doInBackground(String... params) {
             return workoutDAO.getWorkoutById(params[0]);
         }
+
+        @Override
+        protected void onPostExecute(Workout workout) {
+            callback.onSuccess(workout);
+        }
     }
 
     private static class getWorkoutByDateAsync extends AsyncTask<Date, Void, List<Workout>> {
 
         private final WorkoutDAO workoutDAO;
+        private final WorkoutsCallback callback;
 
-        getWorkoutByDateAsync(WorkoutDAO dao) {
+        getWorkoutByDateAsync(WorkoutDAO dao, WorkoutsCallback callback) {
             this.workoutDAO = dao;
+            this.callback = callback;
         }
 
         @Override
         protected List<Workout> doInBackground(Date... params) {
             return workoutDAO.getWorkoutsByDate(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Workout> workouts) {
+            callback.onSuccess(workouts);
         }
     }
 
@@ -113,7 +126,6 @@ public class WorkoutsRepository {
         @Override
         protected Void doInBackground(final Workout... params) {
             workoutDAO.insertSingleWorkout(params[0]);
-            Log.d("asdasd", "Workout inserted!");
             return null;
         }
     }

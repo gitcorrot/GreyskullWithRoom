@@ -1,7 +1,6 @@
 package com.corrot.room.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.corrot.room.R;
+import com.corrot.room.WorkoutsCallback;
 import com.corrot.room.adapters.WorkoutsListAdapter;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.EventDecorator;
@@ -32,7 +32,6 @@ import org.threeten.bp.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class HistoryFragment extends Fragment implements OnDateSelectedListener {
 
@@ -99,11 +98,14 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
         Date d = new Date(date.getDate().atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000);
-        try {
-            List<Workout> workouts = mWorkoutViewModel.getWorkoutsByDate(d);
-            mWorkoutListAdapter.setWorkouts(workouts);
-        } catch (InterruptedException | ExecutionException e) {
-            Log.e("HistoryFragment", e.getMessage());
-        }
+        mWorkoutViewModel.getWorkoutsByDate(d, new WorkoutsCallback() {
+            @Override
+            public void onSuccess(List<Workout> workouts) {
+                mWorkoutListAdapter.setWorkouts(workouts);
+            }
+
+            @Override
+            public void onSuccess(Workout workout) { }
+        });
     }
 }

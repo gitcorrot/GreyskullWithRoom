@@ -4,6 +4,7 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.corrot.room.ExercisesCallback;
 import com.corrot.room.repository.ExercisesRepository;
 import com.corrot.room.db.entity.Exercise;
 
@@ -38,9 +39,8 @@ public class ExerciseViewModel extends AndroidViewModel {
         mExercisesRepository.insertMultipleExercises(exercises);
     }
 
-    public List<Exercise> getExercisesByWorkoutId(String id)
-            throws ExecutionException, InterruptedException {
-        return mExercisesRepository.getExercisesByWorkoutId(id);
+    public void getExercisesByWorkoutId(String id, ExercisesCallback callback) {
+        mExercisesRepository.getExercisesByWorkoutId(id, callback);
     }
 
     public void deleteAllExercisesByWorkoutId(String id) {

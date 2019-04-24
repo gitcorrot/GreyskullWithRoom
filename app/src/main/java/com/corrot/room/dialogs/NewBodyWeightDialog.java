@@ -56,7 +56,7 @@ public class NewBodyWeightDialog extends AppCompatDialogFragment {
                         Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
                 );
                 datePickerDialog.show();
-            }
+            } // TODO: else?
         });
 
         dateListener = (datePicker, year, month, dayOfMonth) -> {

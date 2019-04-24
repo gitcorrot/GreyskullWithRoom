@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.corrot.room.ExerciseItem;
 import com.corrot.room.ExerciseSetItem;
 import com.corrot.room.R;
+import com.corrot.room.WorkoutsCallback;
 import com.corrot.room.adapters.ExercisesListAdapter;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Routine;
@@ -39,7 +40,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class NewWorkoutActivity extends AppCompatActivity {
 
@@ -56,7 +56,6 @@ public class NewWorkoutActivity extends AppCompatActivity {
     private WorkoutViewModel mWorkoutViewModel;
     private ExerciseViewModel mExerciseViewModel;
 
-    private AppCompatActivity mActivity;
     private Workout mWorkout;
     private Date date;
     private Calendar calendar;
@@ -70,7 +69,6 @@ public class NewWorkoutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new);
 
-        mActivity = this;
         pm = PreferencesManager.getInstance();
 
         dateTextView = findViewById(R.id.new_workout_date_text_view);
@@ -78,9 +76,9 @@ public class NewWorkoutActivity extends AppCompatActivity {
         addExerciseButton = findViewById(R.id.new_exercise_button);
         saveWorkoutButton = findViewById(R.id.new_workout_save_button);
 
-        mNewWorkoutViewModel = ViewModelProviders.of(mActivity).get(NewWorkoutViewModel.class);
-        mWorkoutViewModel = ViewModelProviders.of(mActivity).get(WorkoutViewModel.class);
-        mExerciseViewModel = ViewModelProviders.of(mActivity).get(ExerciseViewModel.class);
+        mNewWorkoutViewModel = ViewModelProviders.of(this).get(NewWorkoutViewModel.class);
+        mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
+        mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
 
         mNewWorkoutViewModel.init();
 
@@ -97,7 +95,6 @@ public class NewWorkoutActivity extends AppCompatActivity {
                     dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
 
                     Routine routine = (Routine) extras.getSerializable("routine");
-
                     if (routine != null) {
                         List<ExerciseItem> exercises = EntityUtils.getRoutineWorkoutExerciseItems(routine);
                         if (exercises != null) {
@@ -108,28 +105,26 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 }
                 case FLAG_UPDATE_WORKOUT: {
                     String workoutId = extras.getString("workoutId", "no workout");
-                    try {
-                        mWorkout = mWorkoutViewModel.getWorkoutById(workoutId);
-                        date = mWorkout.workoutDate;
-                        dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
-                    } catch (InterruptedException | ExecutionException e) {
-                        Log.d("NewWorkoutActivity", e.getMessage());
-                    }
+                    mWorkoutViewModel.getWorkoutById(workoutId, new WorkoutsCallback() {
+                        @Override
+                        public void onSuccess(List<Workout> workouts) { }
 
-                    if (!workoutId.equals("no workout")) {
-                        try {
-                            List<Exercise> exercises =
-                                    mExerciseViewModel.getExercisesByWorkoutId(workoutId);
-                            if (exercises != null) {
-                                mNewWorkoutViewModel
-                                        .setExercises(EntityUtils.getExerciseItems(exercises));
-                                mNewWorkoutViewModel
-                                        .setSets(EntityUtils.getExerciseSetItems(exercises));
+                        @Override
+                        public void onSuccess(Workout workout) {
+                            mWorkout = workout;
+                            date = mWorkout.workoutDate;
+                            dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
+
+                            if (!workoutId.equals("no workout")) {
+                                mExerciseViewModel.getExercisesByWorkoutId(workoutId, exercises -> {
+                                    if (exercises != null) {
+                                        mNewWorkoutViewModel.setExercises(EntityUtils.getExerciseItems(exercises));
+                                        mNewWorkoutViewModel.setSets(EntityUtils.getExerciseSetItems(exercises));
+                                    }
+                                });
                             }
-                        } catch (InterruptedException | ExecutionException e) {
-                            Log.d("NewWorkoutActivity", e.getMessage());
                         }
-                    }
+                    });
                     break;
                 }
             }
@@ -139,13 +134,12 @@ public class NewWorkoutActivity extends AppCompatActivity {
         exercisesRecyclerView.setAdapter(exercisesListAdapter);
         exercisesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        mNewWorkoutViewModel.getAllExerciseItems().observe(this, exerciseItems ->
-                exercisesListAdapter.setExercises(exerciseItems));
+        mNewWorkoutViewModel.getAllExerciseItems().observe(this, exercisesListAdapter::setExercises);
 
         dateTextView.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT > 23) {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(
-                        mActivity,
+                        this,
                         dateListener,
                         Calendar.getInstance().get(Calendar.YEAR),
                         Calendar.getInstance().get(Calendar.MONTH),
@@ -162,7 +156,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                     datePicker.getDayOfMonth()
             );
             TimePickerDialog timePickerDialog = new TimePickerDialog(
-                    mActivity,
+                    this,
                     timeListener,
                     Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
                     Calendar.getInstance().get(Calendar.MINUTE),
@@ -193,7 +187,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
             v.setFocusableInTouchMode(true);
             v.requestFocus();
             saveWorkout();
-            mActivity.finishAndRemoveTask();
+            this.finishAndRemoveTask();
         });
     }
 
@@ -208,14 +202,14 @@ public class NewWorkoutActivity extends AppCompatActivity {
             builder.setTitle("Do you want to save this workout?");
             builder.setPositiveButton("Yes", (dialog, which) -> {
                 saveWorkout();
-                mActivity.finishAndRemoveTask();
+                this.finishAndRemoveTask();
             });
             builder.setNegativeButton("No", (dialog, which) ->
-                    mActivity.finishAndRemoveTask());
+                    this.finishAndRemoveTask());
             builder.setNeutralButton("Cancel", null);
             builder.create().show();
         } else {
-            mActivity.finishAndRemoveTask();
+            this.finishAndRemoveTask();
         }
     }
 
@@ -292,7 +286,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         }
 
         String action = currentFlag == FLAG_ADD_WORKOUT ? "added" : "updated";
-        Toast.makeText(mActivity, "Exercise " + action + " successfully!",
+        Toast.makeText(this, "Exercise " + action + " successfully!",
                 Toast.LENGTH_SHORT).show();
     }
 }

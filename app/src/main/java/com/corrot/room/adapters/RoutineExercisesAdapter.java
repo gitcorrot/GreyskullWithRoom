@@ -53,8 +53,8 @@ public class RoutineExercisesAdapter
     public RoutineExercisesAdapter(FragmentActivity activity) {
         mInflater = LayoutInflater.from(activity);
         exercisesNames = PreferencesManager.getInstance().getExercises();
-        mNewRoutineViewModel =
-                ViewModelProviders.of(activity).get(NewRoutineViewModel.class);
+
+        mNewRoutineViewModel = ViewModelProviders.of(activity).get(NewRoutineViewModel.class);
         mNewRoutineViewModel.init();
     }
 
