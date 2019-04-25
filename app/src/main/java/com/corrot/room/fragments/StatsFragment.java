@@ -3,7 +3,6 @@ package com.corrot.room.fragments;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +10,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.corrot.room.R;
-import com.corrot.room.WorkoutsCallback;
+import com.corrot.room.WorkoutCallback;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.ChartUtils;
@@ -33,16 +38,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
 public class StatsFragment extends Fragment
-        implements SharedPreferences.OnSharedPreferenceChangeListener {
+        implements SharedPreferences.OnSharedPreferenceChangeListener, WorkoutCallback{
 
     private LineChart mLineChart;
     private Spinner mNameSpinner;
@@ -68,7 +66,7 @@ public class StatsFragment extends Fragment
 
         mExerciseViewModel.getAllExercises().observe(this, exercises -> {
             mExercises = exercises;
-            updateChart();
+            updateEntries();
         });
         return inflater.inflate(R.layout.fragment_stats, container, false);
     }
@@ -87,7 +85,7 @@ public class StatsFragment extends Fragment
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (mExercisesNames != null) {
                     mName = mExercisesNames[position];
-                    updateChart();
+                    updateEntries();
                 }
             }
 
@@ -95,30 +93,27 @@ public class StatsFragment extends Fragment
             public void onNothingSelected(AdapterView<?> parent) {
                 if (mExercisesNames != null) {
                     mName = mExercisesNames[0];
-                    updateChart();
+                    updateEntries();
                 }
             }
         });
     }
-
-    private void updateChart() {
+    private void updateEntries() {
+        // TODO: write function in viewModel to get all exercises by name
         List<Entry> entries = new ArrayList<>();
-
         for (Exercise e : mExercises) {
             if (e.name.equals(mName)) {
-                mWorkoutViewModel.getWorkoutById(e.workoutId, new WorkoutsCallback() {
-                    @Override
-                    public void onSuccess(List<Workout> workouts) { }
-                    @Override
-                    public void onSuccess(Workout workout) {
-                        Date date = workout.workoutDate;
-                        float max = Collections.max(e.weights);
-                        entries.add(new Entry(date.getTime(), max));
-                    }
+                mWorkoutViewModel.getWorkoutById(e.workoutId, workout -> {
+                    Date date = workout.workoutDate;
+                    float max = Collections.max(e.weights);
+                    entries.add(new Entry(date.getTime(), max));
                 });
             }
         }
-        Collections.sort(entries, new EntryXComparator());
+        updateChart(entries);
+    }
+
+    private void updateChart(List<Entry> entries) {
 
         if (!entries.isEmpty()) {
             int colorAccent = 0;
@@ -217,12 +212,17 @@ public class StatsFragment extends Fragment
     public void onResume() {
         super.onResume();
         pm.registerListener(this);
-        updateChart();
+        updateEntries();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         pm.unregisterListener(this);
+    }
+
+    @Override
+    public void onSuccess(Workout workout) {
+
     }
 }

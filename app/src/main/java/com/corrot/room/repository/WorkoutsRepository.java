@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.corrot.room.WorkoutCallback;
 import com.corrot.room.WorkoutsCallback;
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.dao.WorkoutDAO;
@@ -30,7 +31,7 @@ public class WorkoutsRepository {
         return mAllWorkouts;
     }
 
-    public void getWorkoutById(String id, WorkoutsCallback callback) {
+    public void getWorkoutById(String id, WorkoutCallback callback) {
         new getWorkoutByIdAsync(mWorkoutDAO, callback).execute(id);
     }
 
@@ -76,9 +77,9 @@ public class WorkoutsRepository {
     private static class getWorkoutByIdAsync extends AsyncTask<String, Void, Workout> {
 
         private final WorkoutDAO workoutDAO;
-        private final WorkoutsCallback callback;
+        private final WorkoutCallback callback;
 
-        getWorkoutByIdAsync(WorkoutDAO dao, WorkoutsCallback callback) {
+        getWorkoutByIdAsync(WorkoutDAO dao, WorkoutCallback callback) {
             this.workoutDAO = dao;
             this.callback = callback;
         }

@@ -14,9 +14,11 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".activities.NewWorkoutActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleInstance">
         </activity>
         <activity android:name=".activities.MainActivity"
+            android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

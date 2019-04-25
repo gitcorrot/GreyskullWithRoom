@@ -1,8 +1,6 @@
 package com.corrot.room.activities;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -10,30 +8,23 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.corrot.room.dialogs.NewExerciseNameDialog;
 import com.corrot.room.R;
 import com.corrot.room.db.WorkoutsDatabase;
-import com.corrot.room.db.entity.Routine;
+import com.corrot.room.dialogs.NewExerciseNameDialog;
 import com.corrot.room.fragments.BodyFragment;
 import com.corrot.room.fragments.HistoryFragment;
 import com.corrot.room.fragments.HomeFragment;
 import com.corrot.room.fragments.RoutinesFragment;
 import com.corrot.room.fragments.StatsFragment;
 import com.corrot.room.utils.PreferencesManager;
-import com.corrot.room.viewmodel.RoutineViewModel;
 import com.corrot.room.viewmodel.WorkoutViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,25 +38,15 @@ public class MainActivity extends AppCompatActivity {
     private Fragment currentFragment = homeFragment;
 
     private WorkoutViewModel mWorkoutViewModel;
-
-    private List<Routine> routinesList;
     private Toolbar toolbar;
-    FloatingActionButton floatingButton;
-    private AppCompatActivity mActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mActivity = this;
-        routinesList = new ArrayList<>();
-
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
-        RoutineViewModel mRoutineViewModel = ViewModelProviders.of(this).get(RoutineViewModel.class);
 
-        mRoutineViewModel.getAllRoutines().observe(this, routines ->
-                routinesList = routines);
 
         PreferencesManager.init(getApplicationContext());
         PreferencesManager pm = PreferencesManager.getInstance();
@@ -78,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
             firstStartInit();
         }
 
-        floatingButton = findViewById(R.id.floating_button);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(navItemListener);
 
@@ -93,63 +73,48 @@ public class MainActivity extends AppCompatActivity {
                 .hide(statsFragment)
                 .hide(bodyFragment)
                 .commit();
-
-        // Start NewWorkoutActivity on floatingButton click
-        floatingButton.setOnClickListener(v -> {
-            // Choose between routines and normal training
-            showExercisesDialog(mActivity).show(); //??
-        });
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navItemListener =
-            new BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch (item.getItemId()) {
-                        case R.id.navigation_bar_home:
-                            getSupportFragmentManager().beginTransaction()
-                                    .hide(currentFragment)
-                                    .show(homeFragment)
-                                    .commit();
-                            currentFragment = homeFragment;
-                            floatingButton.show();
-                            return true;
-                        case R.id.navigation_bar_routines:
-                            getSupportFragmentManager().beginTransaction()
-                                    .hide(currentFragment)
-                                    .show(routinesFragment)
-                                    .commit();
-                            currentFragment = routinesFragment;
-                            floatingButton.show();
-                            return true;
-                        case R.id.navigation_bar_history:
-                            getSupportFragmentManager().beginTransaction()
-                                    .hide(currentFragment)
-                                    .show(historyFragment)
-                                    .commit();
-                            currentFragment = historyFragment;
-                            floatingButton.show();
-                            return true;
-                        case R.id.navigation_bar_stats:
-                            getSupportFragmentManager().beginTransaction()
-                                    .hide(currentFragment)
-                                    .show(statsFragment)
-                                    .commit();
-                            currentFragment = statsFragment;
-                            floatingButton.show();
-                            return true;
-                        case R.id.navigation_bar_body:
-                            getSupportFragmentManager().beginTransaction()
-                                    .hide(currentFragment)
-                                    .show(bodyFragment)
-                                    .commit();
-                            currentFragment = bodyFragment;
-                            floatingButton.hide();
-                            return true;
-                    }
-                    return false;
-                }
-            };
+    private BottomNavigationView.OnNavigationItemSelectedListener navItemListener = item -> {
+        switch (item.getItemId()) {
+            case R.id.navigation_bar_home:
+                getSupportFragmentManager().beginTransaction()
+                        .hide(currentFragment)
+                        .show(homeFragment)
+                        .commit();
+                currentFragment = homeFragment;
+                return true;
+            case R.id.navigation_bar_routines:
+                getSupportFragmentManager().beginTransaction()
+                        .hide(currentFragment)
+                        .show(routinesFragment)
+                        .commit();
+                currentFragment = routinesFragment;
+                return true;
+            case R.id.navigation_bar_history:
+                getSupportFragmentManager().beginTransaction()
+                        .hide(currentFragment)
+                        .show(historyFragment)
+                        .commit();
+                currentFragment = historyFragment;
+                return true;
+            case R.id.navigation_bar_stats:
+                getSupportFragmentManager().beginTransaction()
+                        .hide(currentFragment)
+                        .show(statsFragment)
+                        .commit();
+                currentFragment = statsFragment;
+                return true;
+            case R.id.navigation_bar_body:
+                getSupportFragmentManager().beginTransaction()
+                        .hide(currentFragment)
+                        .show(bodyFragment)
+                        .commit();
+                currentFragment = bodyFragment;
+                return true;
+        }
+        return false;
+    };
 
     private void firstStartInit() {
         // TODO: if it is first applications start add example routines
@@ -255,39 +220,10 @@ public class MainActivity extends AppCompatActivity {
                             .hide(statsFragment)
                             .show(bodyFragment)
                             .commit();
-                    floatingButton.hide();
                     toolbar.setTitle("Body");
             }
         }
         super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    private AlertDialog showExercisesDialog(Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Choose workout");
-
-        List<String> routines = new ArrayList<>();
-        routines.add("Normal workout");
-        if (routinesList != null) {
-            for (Routine r : routinesList) {
-                routines.add(r.label);
-            }
-        }
-
-        String[] routinesArray = new String[routines.size()];
-        routines.toArray(routinesArray);
-
-        builder.setItems(routinesArray, (dialog, which) -> {
-            if (routinesArray.length >= which) {
-                Intent newWorkoutIntent = new Intent(this, NewWorkoutActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("flags", NewWorkoutActivity.FLAG_ADD_WORKOUT);
-                bundle.putSerializable("routine", routinesList.get(which - 1));
-                newWorkoutIntent.putExtras(bundle);
-                startActivity(newWorkoutIntent);
-            }
-        });
-        return builder.create();
     }
 
     @Override

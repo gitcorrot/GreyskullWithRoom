@@ -10,10 +10,16 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.corrot.room.dialogs.NewRoutineDialog;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.corrot.room.R;
 import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.db.entity.Routine;
+import com.corrot.room.dialogs.NewRoutineDialog;
 import com.corrot.room.utils.EntityUtils;
 import com.corrot.room.utils.RoutinesDiffUtilCallback;
 import com.corrot.room.viewmodel.NewRoutineViewModel;
@@ -21,12 +27,6 @@ import com.corrot.room.viewmodel.RoutineViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class RoutinesAdapter extends RecyclerView.Adapter<RoutinesAdapter.RoutineViewHolder> {
 
@@ -106,7 +106,6 @@ public class RoutinesAdapter extends RecyclerView.Adapter<RoutinesAdapter.Routin
                 exercises.append("\n");
             }
             viewHolder.exercisesTextView.setText(exercises.toString());
-
             viewHolder.subItem.setVisibility(workout.expanded ? View.VISIBLE : View.GONE);
         }
     }

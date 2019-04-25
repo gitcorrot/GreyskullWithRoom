@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.corrot.room.WorkoutCallback;
 import com.corrot.room.WorkoutsCallback;
 import com.corrot.room.repository.WorkoutsRepository;
 import com.corrot.room.db.entity.Workout;
@@ -28,7 +29,7 @@ public class WorkoutViewModel extends AndroidViewModel {
         return mAllWorkouts;
     }
 
-    public void getWorkoutById(String id, WorkoutsCallback callback) {
+    public void getWorkoutById(String id, WorkoutCallback callback) {
         mWorkoutsRepository.getWorkoutById(id, callback);
     }
 

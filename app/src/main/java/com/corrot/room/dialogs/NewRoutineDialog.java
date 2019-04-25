@@ -7,6 +7,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.corrot.room.R;
 import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.adapters.RoutineExercisesAdapter;
@@ -18,15 +26,6 @@ import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 public class NewRoutineDialog extends AppCompatDialogFragment {
 
     private EditText workoutNameEditText;
@@ -34,12 +33,10 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
 
     private String mTag;
     private int mWorkoutId;
-    private FragmentActivity mActivity;
 
     @NonNull
     @Override
     public AlertDialog onCreateDialog(Bundle savedInstanceState) {
-        mActivity = getActivity();
         mTag = getTag();
         String mWorkoutLabel;
 
@@ -69,7 +66,7 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
         mNewRoutineViewModel = ViewModelProviders.of(this).get(NewRoutineViewModel.class);
         mNewRoutineViewModel.init();
 
-        final RoutineExercisesAdapter workoutListAdapter = new RoutineExercisesAdapter(mActivity);
+        final RoutineExercisesAdapter workoutListAdapter = new RoutineExercisesAdapter(getActivity());
         recyclerView.setAdapter(workoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
@@ -90,8 +87,7 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
         }).attachToRecyclerView(recyclerView);
 
         // TODO: Pass it when fragment opens this dialog.
-        mNewRoutineViewModel.getAllExerciseItems().observe(mActivity, routineExerciseItems ->
-                workoutListAdapter.setExercises(routineExerciseItems));
+        mNewRoutineViewModel.getAllExerciseItems().observe(this, workoutListAdapter::setExercises);
 
         addExerciseButton.setOnClickListener(v ->
                 mNewRoutineViewModel.addExercise(new RoutineExerciseItem()));
@@ -112,20 +108,21 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
                     workoutNameEditText.setError("Please add routine name!");
                 } else {
                     Routine routine = getRoutineFromViewModel(name);
+                    // TODO: this shouldn't be there.
                     RoutineViewModel routineViewModel =
-                            ViewModelProviders.of(mActivity).get(RoutineViewModel.class);
+                            ViewModelProviders.of(this).get(RoutineViewModel.class);
                     switch (mTag) {
                         case "Add":
                             routineViewModel.insertSingleRoutine(routine);
                             Toast.makeText(getContext(),
-                                    "Workout added",
+                                    "Routine added",
                                     Toast.LENGTH_SHORT).show();
                             break;
                         case "Edit":
                             routine.id = mWorkoutId;
                             routineViewModel.updateRoutine(routine);
                             Toast.makeText(getContext(),
-                                    "Workout updated",
+                                    "Routine updated",
                                     Toast.LENGTH_SHORT).show();
                             break;
                     }

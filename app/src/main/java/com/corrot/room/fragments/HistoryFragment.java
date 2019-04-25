@@ -1,5 +1,7 @@
 package com.corrot.room.fragments;
 
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +17,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.corrot.room.CalendarCallback;
 import com.corrot.room.R;
-import com.corrot.room.WorkoutsCallback;
 import com.corrot.room.adapters.WorkoutsListAdapter;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.EventDecorator;
@@ -82,30 +84,50 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
     private void setCalendarEvents(List<Workout> workouts) {
         // TODO: Optimize it to get only part of all workouts (Maybe only workouts from this month?)
         mCalendarView.removeDecorators();
-        List<CalendarDay> days = new ArrayList<>();
-        for (Workout w : workouts) {
-            LocalDate date = Instant.ofEpochMilli(w.workoutDate.getTime())
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
-            days.add(CalendarDay.from(date));
-        }
-        EventDecorator decorator = new EventDecorator(ContextCompat.getColor(getContext(),
+        new setCalendarEventsAsync(workouts, days -> {
+            EventDecorator decorator = new EventDecorator(ContextCompat.getColor(getContext(),
                 R.color.colorAccent), days);
-        mCalendarView.addDecorator(decorator);
-        mCalendarView.invalidateDecorators();
+            mCalendarView.addDecorator(decorator);
+            mCalendarView.invalidateDecorators();
+        }).execute();
     }
 
     @Override
-    public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-        Date d = new Date(date.getDate().atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000);
-        mWorkoutViewModel.getWorkoutsByDate(d, new WorkoutsCallback() {
-            @Override
-            public void onSuccess(List<Workout> workouts) {
-                mWorkoutListAdapter.setWorkouts(workouts);
-            }
+    public void onDateSelected(@NonNull MaterialCalendarView widget,
+                               @NonNull CalendarDay date, boolean selected) {
 
-            @Override
-            public void onSuccess(Workout workout) { }
-        });
+        Date d = new Date(date.getDate().atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000);
+
+        mWorkoutViewModel.getWorkoutsByDate(d, workouts ->
+                mWorkoutListAdapter.setWorkouts(workouts));
+    }
+
+
+    private static class setCalendarEventsAsync extends AsyncTask<Void, Void, List<CalendarDay>> {
+
+        private final List<Workout> workouts;
+        private final CalendarCallback callback;
+
+        setCalendarEventsAsync(List<Workout> workouts, CalendarCallback callback) {
+            this.workouts = workouts;
+            this.callback = callback;
+        }
+
+        @Override
+        protected List<CalendarDay> doInBackground(Void... voids) {
+            List<CalendarDay> days = new ArrayList<>();
+            for (Workout w : workouts) {
+                LocalDate date = Instant.ofEpochMilli(w.workoutDate.getTime())
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
+                days.add(CalendarDay.from(date));
+            }
+            return days;
+        }
+
+        @Override
+        protected void onPostExecute(List<CalendarDay> calendarDays) {
+            callback.onSuccess(calendarDays);
+        }
     }
 }

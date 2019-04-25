@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.corrot.room.ExerciseItem;
 import com.corrot.room.ExerciseSetItem;
 import com.corrot.room.R;
-import com.corrot.room.WorkoutsCallback;
 import com.corrot.room.adapters.ExercisesListAdapter;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Routine;
@@ -96,7 +95,8 @@ public class NewWorkoutActivity extends AppCompatActivity {
 
                     Routine routine = (Routine) extras.getSerializable("routine");
                     if (routine != null) {
-                        List<ExerciseItem> exercises = EntityUtils.getRoutineWorkoutExerciseItems(routine);
+                        List<ExerciseItem> exercises =
+                                EntityUtils.getRoutineWorkoutExerciseItems(routine);
                         if (exercises != null) {
                             mNewWorkoutViewModel.setExercises(exercises);
                         }
@@ -105,24 +105,16 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 }
                 case FLAG_UPDATE_WORKOUT: {
                     String workoutId = extras.getString("workoutId", "no workout");
-                    mWorkoutViewModel.getWorkoutById(workoutId, new WorkoutsCallback() {
-                        @Override
-                        public void onSuccess(List<Workout> workouts) { }
+                    mWorkoutViewModel.getWorkoutById(workoutId, workout -> {
+                        mWorkout = workout;
+                        date = mWorkout.workoutDate;
+                        dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
 
-                        @Override
-                        public void onSuccess(Workout workout) {
-                            mWorkout = workout;
-                            date = mWorkout.workoutDate;
-                            dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
-
-                            if (!workoutId.equals("no workout")) {
-                                mExerciseViewModel.getExercisesByWorkoutId(workoutId, exercises -> {
-                                    if (exercises != null) {
-                                        mNewWorkoutViewModel.setExercises(EntityUtils.getExerciseItems(exercises));
-                                        mNewWorkoutViewModel.setSets(EntityUtils.getExerciseSetItems(exercises));
-                                    }
-                                });
-                            }
+                        if (!workoutId.equals("no workout")) {
+                            mExerciseViewModel.getExercisesByWorkoutId(workoutId, exercises -> {
+                                mNewWorkoutViewModel.setExercises(EntityUtils.getExerciseItems(exercises));
+                                mNewWorkoutViewModel.setSets(EntityUtils.getExerciseSetItems(exercises));
+                            });
                         }
                     });
                     break;
