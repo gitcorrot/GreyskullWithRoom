@@ -2,7 +2,8 @@ package com.corrot.room.repository;
 
 import android.app.Application;
 import android.os.AsyncTask;
-import android.util.Log;
+
+import androidx.lifecycle.LiveData;
 
 import com.corrot.room.WorkoutCallback;
 import com.corrot.room.WorkoutsCallback;
@@ -12,9 +13,6 @@ import com.corrot.room.db.entity.Workout;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import androidx.lifecycle.LiveData;
 
 public class WorkoutsRepository {
 
@@ -35,7 +33,7 @@ public class WorkoutsRepository {
         new getWorkoutByIdAsync(mWorkoutDAO, callback).execute(id);
     }
 
-    public void getWorkoutsByDate(Date date, WorkoutsCallback callback){
+    public void getWorkoutsByDate(Date date, WorkoutsCallback callback) {
         new getWorkoutByDateAsync(mWorkoutDAO, callback).execute(date);
     }
 

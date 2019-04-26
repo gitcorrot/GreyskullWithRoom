@@ -7,12 +7,11 @@ import androidx.lifecycle.LiveData;
 
 import com.corrot.room.WorkoutCallback;
 import com.corrot.room.WorkoutsCallback;
-import com.corrot.room.repository.WorkoutsRepository;
 import com.corrot.room.db.entity.Workout;
+import com.corrot.room.repository.WorkoutsRepository;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class WorkoutViewModel extends AndroidViewModel {
 

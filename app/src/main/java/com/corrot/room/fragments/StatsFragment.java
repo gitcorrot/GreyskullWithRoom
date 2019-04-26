@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.corrot.room.R;
-import com.corrot.room.WorkoutCallback;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.ChartUtils;
@@ -40,15 +39,16 @@ import java.util.Date;
 import java.util.List;
 
 public class StatsFragment extends Fragment
-        implements SharedPreferences.OnSharedPreferenceChangeListener, WorkoutCallback{
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private LineChart mLineChart;
     private Spinner mNameSpinner;
     private String mName;
     private String[] mExercisesNames;
-    private List<Exercise> mExercises;
+    private List<Exercise> mFilteredExercises;
+    private List<Workout> mAllWorkouts;
 
-    private WorkoutViewModel mWorkoutViewModel;
+    private ExerciseViewModel mExerciseViewModel;
     private PreferencesManager pm;
 
     @Nullable
@@ -56,18 +56,26 @@ public class StatsFragment extends Fragment
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        mExercises = new ArrayList<>();
         pm = PreferencesManager.getInstance();
         mExercisesNames = pm.getExercises();
 
-        ExerciseViewModel mExerciseViewModel =
-                ViewModelProviders.of(this).get(ExerciseViewModel.class);
-        mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
+        mFilteredExercises = new ArrayList<>();
+        mAllWorkouts = new ArrayList<>();
 
-        mExerciseViewModel.getAllExercises().observe(this, exercises -> {
-            mExercises = exercises;
+        mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
+        WorkoutViewModel mWorkoutViewModel =
+                ViewModelProviders.of(this).get(WorkoutViewModel.class);
+
+        // Observe all workouts for having access to dates
+        mWorkoutViewModel.getAllWorkouts().observe(this, workouts ->
+                mAllWorkouts = workouts);
+
+        // Observed exercises change when mName changes.
+        mExerciseViewModel.getAllExercisesWithName().observe(this, exercises -> {
+            mFilteredExercises = exercises;
             updateEntries();
         });
+
         return inflater.inflate(R.layout.fragment_stats, container, false);
     }
 
@@ -85,6 +93,7 @@ public class StatsFragment extends Fragment
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (mExercisesNames != null) {
                     mName = mExercisesNames[position];
+                    mExerciseViewModel.setName(mName);
                     updateEntries();
                 }
             }
@@ -93,29 +102,30 @@ public class StatsFragment extends Fragment
             public void onNothingSelected(AdapterView<?> parent) {
                 if (mExercisesNames != null) {
                     mName = mExercisesNames[0];
+                    mExerciseViewModel.setName(mName);
                     updateEntries();
                 }
             }
         });
     }
+
     private void updateEntries() {
-        // TODO: write function in viewModel to get all exercises by name
         List<Entry> entries = new ArrayList<>();
-        for (Exercise e : mExercises) {
-            if (e.name.equals(mName)) {
-                mWorkoutViewModel.getWorkoutById(e.workoutId, workout -> {
-                    Date date = workout.workoutDate;
+        for (Exercise e : mFilteredExercises) {
+            for (Workout w : mAllWorkouts) {
+                if (w.id.equals(e.workoutId)) {
+                    Date date = w.workoutDate;
                     float max = Collections.max(e.weights);
                     entries.add(new Entry(date.getTime(), max));
-                });
+                }
             }
         }
         updateChart(entries);
     }
 
     private void updateChart(List<Entry> entries) {
-
         if (!entries.isEmpty()) {
+            Collections.sort(entries, new EntryXComparator());
             int colorAccent = 0;
             if (getContext() != null) {
                 colorAccent = ContextCompat.getColor(getContext(), R.color.colorAccent);
@@ -144,7 +154,7 @@ public class StatsFragment extends Fragment
             legend.setForm(Legend.LegendForm.LINE);
 
             LineDataSet lineDataSet = new LineDataSet(entries, mName);
-            lineDataSet.setColor(colorAccent);   // color accent
+            lineDataSet.setColor(colorAccent);
             lineDataSet.setValueTextColor(Color.BLACK);
             lineDataSet.setLineWidth(2.5f);
             lineDataSet.setCircleColor(colorAccent);
@@ -219,10 +229,5 @@ public class StatsFragment extends Fragment
     public void onPause() {
         super.onPause();
         pm.unregisterListener(this);
-    }
-
-    @Override
-    public void onSuccess(Workout workout) {
-
     }
 }

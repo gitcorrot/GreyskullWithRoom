@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.corrot.room.R;
+import com.corrot.room.activities.MainActivity;
 import com.corrot.room.activities.NewWorkoutActivity;
 import com.corrot.room.db.entity.Routine;
 import com.corrot.room.viewmodel.RoutineViewModel;
@@ -41,7 +42,11 @@ public class HomeFragment extends Fragment {
 
         FloatingActionButton floatingButton = view.findViewById(R.id.floating_button);
         // Start NewWorkoutActivity on floatingButton click
-        floatingButton.setOnClickListener(v -> showExercisesDialog(getContext()).show());
+        floatingButton.setOnClickListener(v -> {
+            if(!getActivity().isFinishing()) {
+                showExercisesDialog(getContext()).show();
+            }
+        });
 
         return view;
     }
@@ -66,9 +71,13 @@ public class HomeFragment extends Fragment {
                 Intent newWorkoutIntent = new Intent(getContext(), NewWorkoutActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt("flags", NewWorkoutActivity.FLAG_ADD_WORKOUT);
-                bundle.putSerializable("routine", routinesList.get(which - 1));
+                // 0 is "Normal workout"
+                if (which > 0) {
+                    bundle.putSerializable("routine", routinesList.get(which-1));
+                }
                 newWorkoutIntent.putExtras(bundle);
                 startActivity(newWorkoutIntent);
+                dialog.dismiss();
             }
         });
         return builder.create();

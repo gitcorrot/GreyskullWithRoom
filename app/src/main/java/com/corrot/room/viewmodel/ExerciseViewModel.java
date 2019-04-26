@@ -1,35 +1,49 @@
 package com.corrot.room.viewmodel;
 
 import android.app.Application;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 import com.corrot.room.ExercisesCallback;
-import com.corrot.room.repository.ExercisesRepository;
 import com.corrot.room.db.entity.Exercise;
+import com.corrot.room.repository.ExercisesRepository;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class ExerciseViewModel extends AndroidViewModel {
 
     private ExercisesRepository mExercisesRepository;
     private LiveData<List<Exercise>> mAllExercises;
+    private LiveData<List<Exercise>> mAllFilteredExercises;
+    private MutableLiveData<String> exerciseNameFilter = new MutableLiveData<>();
 
     public ExerciseViewModel(Application application) {
         super(application);
         mExercisesRepository = new ExercisesRepository(application);
         mAllExercises = mExercisesRepository.getAllExercises();
+        mAllFilteredExercises = Transformations.switchMap(exerciseNameFilter, name ->
+                mExercisesRepository.getAllExercisesWithName(name)
+        );
+    }
+
+    public void setName(String name) {
+        exerciseNameFilter.setValue(name);
     }
 
     public LiveData<List<Exercise>> getAllExercises() {
         return mAllExercises;
     }
 
-    public List<Exercise> getAllExercisesWithName(String name)
-            throws ExecutionException, InterruptedException {
-        return mExercisesRepository.getAllExercisesWithName(name);
+    // TODO: Use Transformations.switchMap.
+    public LiveData<List<Exercise>> getAllExercisesWithName() {
+        return mAllFilteredExercises;
     }
+    /*public void getAllExercisesWithName(String name, ExercisesCallback callback) {
+        mExercisesRepository.getAllExercisesWithName(name, callback);
+    }*/
 
     public void insertSingleExercise(Exercise exercise) {
         mExercisesRepository.insertSingleExercise(exercise);

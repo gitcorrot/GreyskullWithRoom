@@ -11,7 +11,6 @@ import com.corrot.room.db.dao.ExerciseDAO;
 import com.corrot.room.db.entity.Exercise;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class ExercisesRepository {
 
@@ -28,9 +27,8 @@ public class ExercisesRepository {
         return mAllExercises;
     }
 
-    public List<Exercise> getAllExercisesWithName(String name)
-            throws ExecutionException, InterruptedException {
-        return new getAllExercisesWithNameAsync(mExerciseDao).execute(name).get();
+    public LiveData<List<Exercise>> getAllExercisesWithName(String name) {
+        return mExerciseDao.getAllExercisesWithName(name);
     }
 
     public void insertSingleExercise(Exercise exercise) {
@@ -112,20 +110,6 @@ public class ExercisesRepository {
         @Override
         protected void onPostExecute(List<Exercise> exercises) {
             callback.onSuccess(exercises);
-        }
-    }
-
-    private static class getAllExercisesWithNameAsync extends AsyncTask<String, Void, List<Exercise>> {
-
-        private final ExerciseDAO exerciseDAO;
-
-        getAllExercisesWithNameAsync(ExerciseDAO dao) {
-            this.exerciseDAO = dao;
-        }
-
-        @Override
-        protected List<Exercise> doInBackground(final String... params) {
-            return exerciseDAO.getAllExercisesWithName(params[0]);
         }
     }
 

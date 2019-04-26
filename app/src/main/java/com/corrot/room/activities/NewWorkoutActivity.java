@@ -93,13 +93,17 @@ public class NewWorkoutActivity extends AppCompatActivity {
                     date = Calendar.getInstance().getTime();
                     dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
 
-                    Routine routine = (Routine) extras.getSerializable("routine");
-                    if (routine != null) {
-                        List<ExerciseItem> exercises =
-                                EntityUtils.getRoutineWorkoutExerciseItems(routine);
-                        if (exercises != null) {
-                            mNewWorkoutViewModel.setExercises(exercises);
+                    try {
+                        Routine routine = (Routine) extras.getSerializable("routine");
+                        if (routine != null) {
+                            List<ExerciseItem> exercises =
+                                    EntityUtils.getRoutineWorkoutExerciseItems(routine);
+                            if (exercises != null) {
+                                mNewWorkoutViewModel.setExercises(exercises);
+                            }
                         }
+                    } catch (ClassCastException e) {
+                        Log.d("NewWorkoutActivity", e.getLocalizedMessage());
                     }
                     break;
                 }

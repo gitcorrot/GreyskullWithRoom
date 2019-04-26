@@ -23,10 +23,10 @@ public interface ExerciseDAO {
     List<Exercise> getAllExercisesByWorkoutId(String workoutId);
 
     @Query("SELECT * FROM Exercise")
-    LiveData<List<Exercise>> getAllExercises();    // For future diagrams :)
+    LiveData<List<Exercise>> getAllExercises();
 
     @Query("SELECT * FROM Exercise WHERE Name=:name")
-    List<Exercise> getAllExercisesWithName(String name);
+    LiveData<List<Exercise>> getAllExercisesWithName(String name);
 
     @Query("DELETE FROM Exercise WHERE workoutId=:workoutId")
     void deleteAllExercisesByWorkoutId(String workoutId);
