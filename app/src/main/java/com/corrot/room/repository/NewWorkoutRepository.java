@@ -134,11 +134,11 @@ public class NewWorkoutRepository {
         List<ExerciseSetItem> items = getAllSets().getValue();
         if (items != null) {
             items.add(setItem);
-            mNewSets.postValue(items);
+            mNewSets.setValue(items);
         } else {
             items = new ArrayList<>();
             items.add(setItem);
-            mNewSets.postValue(items);
+            mNewSets.setValue(items);
         }
     }
 

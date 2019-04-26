@@ -135,15 +135,17 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
 
     private Routine getRoutineFromViewModel(String name) {
         List<String> exercises = new ArrayList<>();
+        List<Integer> sets = new ArrayList<>();
         // TODO: EXCEPTIONS
         List<RoutineExerciseItem> items = mNewRoutineViewModel.getAllExerciseItems().getValue();
         if (items != null) {
             for (RoutineExerciseItem i : items) {
                 String s = i.name + " - " + i.sets + " sets.";
                 exercises.add(s);
+                sets.add(i.sets);
             }
         }
-        return new Routine(name, exercises);
+        return new Routine(name, exercises, sets);
     }
 
     @Override

@@ -46,6 +46,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
     public final static int FLAG_ADD_WORKOUT = 0;
     public final static int FLAG_UPDATE_WORKOUT = 1;
 
+    TextView labelEditText;
     TextView dateTextView;
     RecyclerView exercisesRecyclerView;
     Button addExerciseButton;
@@ -71,6 +72,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         pm = PreferencesManager.getInstance();
 
         dateTextView = findViewById(R.id.new_workout_date_text_view);
+        labelEditText = findViewById(R.id.new_workout_label_text_view);
         exercisesRecyclerView = findViewById(R.id.exercises_recycler_view);
         addExerciseButton = findViewById(R.id.new_exercise_button);
         saveWorkoutButton = findViewById(R.id.new_workout_save_button);
@@ -96,10 +98,17 @@ public class NewWorkoutActivity extends AppCompatActivity {
                     try {
                         Routine routine = (Routine) extras.getSerializable("routine");
                         if (routine != null) {
+                            labelEditText.setText(routine.label);
                             List<ExerciseItem> exercises =
                                     EntityUtils.getRoutineWorkoutExerciseItems(routine);
                             if (exercises != null) {
                                 mNewWorkoutViewModel.setExercises(exercises);
+
+                                for (int pos = 0; pos < exercises.size(); pos++) {
+                                    for (int i = 0; i < routine.sets.get(pos); i++) {
+                                        mNewWorkoutViewModel.addSet(new ExerciseSetItem(pos));
+                                    }
+                                }
                             }
                         }
                     } catch (ClassCastException e) {
@@ -109,10 +118,17 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 }
                 case FLAG_UPDATE_WORKOUT: {
                     String workoutId = extras.getString("workoutId", "no workout");
+                    String workoutLabel = extras.getString("label", "Normal workout");
+
                     mWorkoutViewModel.getWorkoutById(workoutId, workout -> {
                         mWorkout = workout;
                         date = mWorkout.workoutDate;
+                        labelEditText.setText(mWorkout.label);
                         dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
+
+                        if (!workoutLabel.equals("Normal workout")) {
+                            labelEditText.setText(workoutLabel);
+                        }
 
                         if (!workoutId.equals("no workout")) {
                             mExerciseViewModel.getExercisesByWorkoutId(workoutId, exercises -> {
@@ -233,14 +249,15 @@ public class NewWorkoutActivity extends AppCompatActivity {
     private void saveWorkout() {
         List<ExerciseItem> exercises = mNewWorkoutViewModel.getAllExerciseItems().getValue();
         if (exercises != null) {
-
+            String label = labelEditText.getText().toString();
             switch (currentFlag) {
                 case FLAG_ADD_WORKOUT:
-                    mWorkout = new Workout(date);
+                    mWorkout = new Workout(date, label);
                     mWorkoutViewModel.insertSingleWorkout(mWorkout);
                     break;
                 case FLAG_UPDATE_WORKOUT:
                     mWorkout.workoutDate = date;
+                    mWorkout.label = label;
                     mWorkoutViewModel.updateWorkout(mWorkout);
                     mExerciseViewModel.deleteAllExercisesByWorkoutId(mWorkout.id);
                     break;

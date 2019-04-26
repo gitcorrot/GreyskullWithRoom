@@ -6,8 +6,8 @@ public class ExerciseSetItem {
     public int reps;
     public float weight;
 
-    public ExerciseSetItem(int exerciseId) {
-        this.exercisePosition = exerciseId;
+    public ExerciseSetItem(int exercisePosition) {
+        this.exercisePosition = exercisePosition;
     }
 
     public ExerciseSetItem(int exercisePosition, float weight, int reps) {
