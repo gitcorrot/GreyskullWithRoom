@@ -40,9 +40,9 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
         mTag = getTag();
         String mWorkoutLabel;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(),
+                R.style.ThemeOverlay_MaterialComponents_Dialog_Alert);
         View view = View.inflate(getContext(), R.layout.dialog_add_routine, null);
-
         workoutNameEditText = view.findViewById(R.id.dialog_add_routine_workout_name);
         MaterialButton addExerciseButton = view.findViewById(R.id.dialog_add_routine_add_exercise);
         RecyclerView recyclerView = view.findViewById(R.id.dialog_add_routine_recycler_view);

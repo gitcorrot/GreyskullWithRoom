@@ -3,18 +3,22 @@
 
     <item
         android:id="@+id/toolbar_settings_add_new"
+        android:icon="@drawable/ic_add_black_24dp"
         android:title="Add new exercise" />
 
     <item
         android:id="@+id/toolbar_settings_delete_all"
+        android:icon="@drawable/ic_delete_black_24dp"
         android:title="Delete all workouts" />
 
     <item
         android:id="@+id/toolbar_settings_backup"
+        android:icon="@drawable/ic_backup_black_24dp"
         android:title="Backup" />
 
     <item
         android:id="@+id/toolbar_settings_restore"
+        android:icon="@drawable/ic_settings_backup_restore_black_24dp"
         android:title="Restore" />
 
 </menu>

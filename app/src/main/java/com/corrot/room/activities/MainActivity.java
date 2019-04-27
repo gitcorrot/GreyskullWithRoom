@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -123,6 +124,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
+
+        // Below code is to show icons
+        MenuBuilder menuBuilder = (MenuBuilder)menu;
+        menuBuilder.setOptionalIconsVisible(true);
+
         menuInflater.inflate(R.menu.toolbar_menu, menu);
         return true;
     }

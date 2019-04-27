@@ -2,6 +2,10 @@ package com.corrot.room.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,28 +84,33 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
 
             // exercises and sets
             mExerciseViewModel.getExercisesByWorkoutId(w.id, exercises -> {
-                StringBuilder exercisesBuilder = new StringBuilder();
+                SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
                 StringBuilder rxwBuilder = new StringBuilder();
                 for (Exercise e : exercises) {
-                    exercisesBuilder
+                    spannableStringBuilder
                             .append("\n")
-                            .append(e.name)
+                            .append(e.name, new StyleSpan(Typeface.BOLD),
+                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                             .append("\n");
+
                     if (e.weights.size() == e.reps.size()) {
+                        rxwBuilder.setLength(0);
                         for (int j = 0; j < e.weights.size(); j++) {
-                            rxwBuilder.append(e.reps.get(j))
+                            rxwBuilder
+                                    .append(e.reps.get(j))
                                     .append("x")
                                     .append(e.weights.get(j))
                                     .append("kg, ");
                         }
                     }
-                    exercisesBuilder.append(rxwBuilder.toString());
+                    spannableStringBuilder.append(rxwBuilder.toString());
                 }
-                workoutViewHolder.setsTextView.setText(exercisesBuilder.toString());
+                workoutViewHolder.setsTextView
+                        .setText(spannableStringBuilder, TextView.BufferType.SPANNABLE);
             });
 
         } else {
-            workoutViewHolder.workoutIdTextView.setText("Workout ID");
+            workoutViewHolder.workoutIdTextView.setText("Workout label");
             workoutViewHolder.workoutDateTextView.setText("Date");
         }
     }
