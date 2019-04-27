@@ -72,7 +72,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         pm = PreferencesManager.getInstance();
 
         dateTextView = findViewById(R.id.new_workout_date_text_view);
-        labelEditText = findViewById(R.id.new_workout_label_text_view);
+        labelEditText = findViewById(R.id.new_workout_label_edit_text);
         exercisesRecyclerView = findViewById(R.id.exercises_recycler_view);
         addExerciseButton = findViewById(R.id.new_exercise_button);
         saveWorkoutButton = findViewById(R.id.new_workout_save_button);

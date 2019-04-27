@@ -11,8 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="0.25"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp"
         android:textAlignment="gravity"
         android:gravity="center"/>
 
@@ -22,9 +21,8 @@
         android:layout_height="fill_parent"
         android:layout_weight="1.5"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="2dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp"
         android:hint="weight"
         android:inputType="numberDecimal"
         android:textAlignment="center" />
@@ -35,8 +33,7 @@
         android:layout_height="fill_parent"
         android:layout_weight="0.25"
         android:text="kg"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp"
         android:textAlignment="gravity"
         android:gravity="center"/>
 
@@ -46,9 +43,8 @@
         android:layout_height="fill_parent"
         android:layout_weight="1.5"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp"
         android:hint="reps"
         android:inputType="number"
         android:textAlignment="center" />

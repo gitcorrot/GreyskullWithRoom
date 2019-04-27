@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="4dp"
     android:elevation="4dp">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -15,40 +15,54 @@
             android:id="@+id/exercise_remove_image_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@id/exercise_name_text_view"
-            android:background="@color/transparent"
             android:layout_margin="4dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/transparent"
             android:elevation="1dp"
-            android:src="@drawable/ic_delete_black_24dp" />
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_delete_black_24dp"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/sets_recycler_view"
+            app:layout_constraintEnd_toEndOf="@+id/exercise_name_text_view"
+            app:layout_constraintTop_toTopOf="@+id/exercise_name_text_view" />
 
         <TextView
             android:id="@+id/exercise_name_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryLight"
             android:padding="8dp"
             android:text="Exercise name"
-            android:textColor="@color/white"
             android:textAlignment="center"
-            android:textSize="18sp" />
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/sets_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_below="@id/exercise_name_text_view"
-            android:minHeight="100dp" />
+            android:minHeight="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/exercise_name_text_view" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/add_set_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/sets_recycler_view"
+            android:layout_height="40dp"
             android:layout_centerHorizontal="true"
-            android:background="@color/transparent"
-            android:text="Add set"/>
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Add set"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sets_recycler_view"
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

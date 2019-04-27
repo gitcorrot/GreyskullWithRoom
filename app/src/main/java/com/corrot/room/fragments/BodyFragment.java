@@ -129,7 +129,7 @@ public class BodyFragment extends Fragment
         if (!entries.isEmpty()) {
             int colorAccent = 0;
             if (getContext() != null) {
-                colorAccent = ContextCompat.getColor(getContext(), R.color.colorAccent);
+                colorAccent = ContextCompat.getColor(getContext(), R.color.colorSecondary);
             }
             XAxis x = mLineChart.getXAxis();
             x.setAvoidFirstLastClipping(true);

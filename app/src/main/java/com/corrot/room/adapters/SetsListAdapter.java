@@ -75,7 +75,7 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
 
         if (mSets != null) {
             ExerciseSetItem item = mSets.get(viewHolder.getAdapterPosition());
-            viewHolder.setTextView.setText(String.valueOf(viewHolder.getAdapterPosition()));
+            viewHolder.setTextView.setText(String.valueOf(viewHolder.getAdapterPosition() + 1));
             if (item.weight != 0) viewHolder.weightEditText.setText(String.valueOf(item.weight));
             if (item.reps != 0) viewHolder.repsEditText.setText(String.valueOf(item.reps));
         }

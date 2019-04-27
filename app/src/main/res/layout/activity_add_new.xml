@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".activities.NewWorkoutActivity">
 
     <com.google.android.material.card.MaterialCardView
@@ -20,35 +19,51 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/new_workout_label_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="8dp"
+                android:id="@+id/new_workout_label_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
+                android:inputType="textCapSentences"
                 android:text="Normal workout"
                 android:textAlignment="center"
-                android:textSize="21sp" />
+                android:textSize="19sp"
+                app:layout_constraintEnd_toStartOf="@id/new_workout_date_text_view"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/new_workout_date_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="4dp"
                 android:textAlignment="center"
-                android:textSize="24sp" />
+                android:text="XX/XX/XX"
+                android:textSize="19sp"
+                app:layout_constraintBottom_toBottomOf="@id/new_workout_label_edit_text"
+                app:layout_constraintEnd_toStartOf="@id/new_workout_date_image"
+                app:layout_constraintTop_toTopOf="@id/new_workout_label_edit_text" />
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/new_workout_date_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:src="@drawable/ic_date_range_black_24dp"
+                app:layout_constraintBottom_toBottomOf="@id/new_workout_date_text_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/new_workout_date_text_view" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -59,21 +74,21 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/new_workout_save_button"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/new_exercise_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
 
     <com.google.android.material.button.MaterialButton
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:id="@+id/new_exercise_button"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
         android:layout_marginEnd="64dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/colorTransparentButton"
-        android:text="ADD EXERCISE"
+        android:text="Add exercise"
+        app:backgroundTint="@color/colorSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/exercises_recycler_view"
         app:layout_constraintStart_toStartOf="@+id/exercises_recycler_view"
@@ -84,13 +99,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:background="@color/colorTransparentButton"
+        android:background="@color/transparent"
         android:scaleX="1.5"
         android:scaleY="1.5"
         android:src="@drawable/ic_save_black_24dp"
-        android:text="SAVE"
         app:layout_constraintBottom_toBottomOf="@id/new_exercise_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/new_exercise_button" />
+        app:layout_constraintTop_toTopOf="@id/new_exercise_button"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

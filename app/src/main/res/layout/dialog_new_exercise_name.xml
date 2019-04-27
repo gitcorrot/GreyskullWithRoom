@@ -12,7 +12,8 @@
         android:layout_alignParentStart="true"
         android:layout_margin="8dp"
         android:hint="New exercise name"
-        android:inputType="textShortMessage"
+        android:inputType="textCapSentences"
+        android:maxLength="30"
         android:singleLine="true" />
 
 </RelativeLayout>

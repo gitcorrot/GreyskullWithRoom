@@ -34,7 +34,7 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
 
         private WorkoutViewHolder(View itemView) {
             super(itemView);
-            workoutIdTextView = itemView.findViewById(R.id.recyclerview_workout_item_id);
+            workoutIdTextView = itemView.findViewById(R.id.recyclerview_workout_item_label);
             workoutDateTextView = itemView.findViewById(R.id.recyclerview_workout_item_date);
             setsTextView = itemView.findViewById(R.id.recyclerview_workout_sets);
         }
@@ -74,7 +74,7 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
     public void onBindViewHolder(@NonNull final WorkoutsListAdapter.WorkoutViewHolder workoutViewHolder, int i) {
         if (mWorkouts != null) {
             Workout w = mWorkouts.get(i);
-            workoutViewHolder.workoutIdTextView.setText("Daily workout");
+            workoutViewHolder.workoutIdTextView.setText(w.label);
             String date = MyTimeUtils.parseDate(w.workoutDate, MyTimeUtils.MAIN_FORMAT);
             workoutViewHolder.workoutDateTextView.setText(date);
 

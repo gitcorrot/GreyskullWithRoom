@@ -60,6 +60,7 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerView.setItemAnimator(null);
 
+        // TODO: Refresh adapter too
         mWorkoutViewModel.getAllWorkouts().observe(this, this::setCalendarEvents);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -86,7 +87,7 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
         mCalendarView.removeDecorators();
         new setCalendarEventsAsync(workouts, days -> {
             EventDecorator decorator = new EventDecorator(ContextCompat.getColor(getContext(),
-                R.color.colorAccent), days);
+                R.color.colorSecondary), days);
             mCalendarView.addDecorator(decorator);
             mCalendarView.invalidateDecorators();
         }).execute();
