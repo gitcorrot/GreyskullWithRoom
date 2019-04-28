@@ -50,7 +50,6 @@ public class StatsFragment extends Fragment
     private ChartWeightsAdapter chartWeightsAdapter;
     private String mName;
     private String[] mExercisesNames;
-    private List<Exercise> mFilteredExercises;
     private List<Workout> mAllWorkouts;
 
     private ExerciseViewModel mExerciseViewModel;
@@ -63,8 +62,6 @@ public class StatsFragment extends Fragment
                              @Nullable Bundle savedInstanceState) {
         pm = PreferencesManager.getInstance();
         mExercisesNames = pm.getExercises();
-
-        mFilteredExercises = new ArrayList<>();
         mAllWorkouts = new ArrayList<>();
 
         mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
@@ -76,10 +73,7 @@ public class StatsFragment extends Fragment
                 mAllWorkouts = workouts);
 
         // Observed exercises change when mName changes.
-        mExerciseViewModel.getAllExercisesWithName().observe(this, exercises -> {
-            mFilteredExercises = exercises;
-            updateData();
-        });
+        mExerciseViewModel.getAllExercisesWithName().observe(this, this::updateData);
 
         return inflater.inflate(R.layout.fragment_stats, container, false);
     }
@@ -105,7 +99,6 @@ public class StatsFragment extends Fragment
                 if (mExercisesNames != null) {
                     mName = mExercisesNames[position];
                     mExerciseViewModel.setName(mName);
-                    updateData();
                 }
             }
 
@@ -114,17 +107,16 @@ public class StatsFragment extends Fragment
                 if (mExercisesNames != null) {
                     mName = mExercisesNames[0];
                     mExerciseViewModel.setName(mName);
-                    updateData();
                 }
             }
         });
     }
 
-    private void updateData() {
+    private void updateData(List<Exercise> exercises) {
         List<Entry> entries = new ArrayList<>();
         List<ChartItem> chartListItems = new ArrayList<>();
 
-        for (Exercise e : mFilteredExercises) {
+        for (Exercise e : exercises) {
             for (Workout w : mAllWorkouts) {
                 if (w.id.equals(e.workoutId)) {
                     Date date = w.workoutDate;
@@ -242,7 +234,6 @@ public class StatsFragment extends Fragment
     public void onResume() {
         super.onResume();
         pm.registerListener(this);
-        updateData();
     }
 
     @Override

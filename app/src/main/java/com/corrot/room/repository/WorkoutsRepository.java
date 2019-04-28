@@ -18,15 +18,27 @@ public class WorkoutsRepository {
 
     private WorkoutDAO mWorkoutDAO;
     private LiveData<List<Workout>> mAllWorkouts;
+    private LiveData<Workout> mLastWorkout;
+    private LiveData<Integer> mTotalCount;
 
     public WorkoutsRepository(Application application) {
         WorkoutsDatabase db = WorkoutsDatabase.getInstance(application);
         mWorkoutDAO = db.workoutDAO();
         mAllWorkouts = mWorkoutDAO.getAllWorkouts();
+        mLastWorkout = mWorkoutDAO.getLastWorkout();
+        mTotalCount = mWorkoutDAO.getTotalCount();
     }
 
     public LiveData<List<Workout>> getAllWorkouts() {
         return mAllWorkouts;
+    }
+
+    public LiveData<Workout> getLastWorkout() {
+        return mLastWorkout;
+    }
+
+    public LiveData<Integer> getTotalCount() {
+        return mTotalCount;
     }
 
     public void getWorkoutById(String id, WorkoutCallback callback) {

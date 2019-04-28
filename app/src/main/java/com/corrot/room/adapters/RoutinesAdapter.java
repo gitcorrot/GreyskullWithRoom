@@ -132,7 +132,8 @@ public class RoutinesAdapter extends RecyclerView.Adapter<RoutinesAdapter.Routin
     }
 
     private AlertDialog showDeleteDialog(FragmentActivity fragmentActivity, final Routine workout) {
-        return new AlertDialog.Builder(fragmentActivity)
+        return new AlertDialog.Builder(fragmentActivity,
+                R.style.ThemeOverlay_MaterialComponents_Dialog)
                 .setTitle("Are you sure you want delete this routine?")
                 .setNegativeButton("No", (dialog, which) ->
                         dialog.dismiss())

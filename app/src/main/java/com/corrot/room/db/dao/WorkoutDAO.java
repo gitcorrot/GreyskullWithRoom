@@ -28,7 +28,11 @@ public interface WorkoutDAO {
     @Query("DELETE FROM Workout")
     void deleteAll();
 
-    //SELECT * FROM Workout ORDER BY Date <-- returns
+    @Query("SELECT COUNT(*) FROM Workout")
+    LiveData<Integer> getTotalCount();
+
+    @Query("SELECT * FROM Workout ORDER BY date DESC LIMIT 1;")
+    LiveData<Workout> getLastWorkout();
 
     @TypeConverters(DateConverter.class)
     @Query("SELECT * FROM Workout WHERE strftime('%Y-%m-%d', Date / 1000, 'unixepoch', 'localtime') " +

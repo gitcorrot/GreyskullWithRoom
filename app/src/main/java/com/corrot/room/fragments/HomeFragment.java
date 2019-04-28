@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,10 +15,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.corrot.room.R;
-import com.corrot.room.activities.MainActivity;
 import com.corrot.room.activities.NewWorkoutActivity;
 import com.corrot.room.db.entity.Routine;
+import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.viewmodel.RoutineViewModel;
+import com.corrot.room.viewmodel.WorkoutViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -37,13 +39,30 @@ public class HomeFragment extends Fragment {
         RoutineViewModel mRoutineViewModel =
                 ViewModelProviders.of(this).get(RoutineViewModel.class);
 
-        mRoutineViewModel.getAllRoutines().observe(this, routines -> routinesList = routines);
+        WorkoutViewModel mWorkoutViewModel =
+                ViewModelProviders.of(this).get(WorkoutViewModel.class);
+
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         FloatingActionButton floatingButton = view.findViewById(R.id.floating_button);
+        TextView lastWorkoutTextView = view.findViewById(R.id.fragment_home_last_workout_text_view);
+        TextView workoutsCountTextVIew = view.findViewById(R.id.fragment_home_workouts_count_text_view);
+
+        mRoutineViewModel.getAllRoutines().observe(this, routines -> routinesList = routines);
+        mWorkoutViewModel.getLastWorkout().observe(this, lastWorkout -> {
+            String date = MyTimeUtils.parseDate(lastWorkout.workoutDate, MyTimeUtils.MAIN_FORMAT);
+            String sb = "Your last workout: " + date;
+            lastWorkoutTextView.setText(sb);
+        });
+        mWorkoutViewModel.getTotalCount().observe(this, count -> {
+            String sb = "Total number of workouts: " + count;
+            workoutsCountTextVIew.setText(sb);
+        });
+
+
         // Start NewWorkoutActivity on floatingButton click
         floatingButton.setOnClickListener(v -> {
-            if(!getActivity().isFinishing()) {
+            if (!getActivity().isFinishing()) {
                 showExercisesDialog(getContext()).show();
             }
         });
@@ -73,7 +92,7 @@ public class HomeFragment extends Fragment {
                 bundle.putInt("flags", NewWorkoutActivity.FLAG_ADD_WORKOUT);
                 // 0 is "Normal workout"
                 if (which > 0) {
-                    bundle.putSerializable("routine", routinesList.get(which-1));
+                    bundle.putSerializable("routine", routinesList.get(which - 1));
                 }
                 newWorkoutIntent.putExtras(bundle);
                 startActivity(newWorkoutIntent);
