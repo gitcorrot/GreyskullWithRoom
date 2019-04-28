@@ -100,7 +100,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                         if (routine != null) {
                             labelEditText.setText(routine.label);
                             List<ExerciseItem> exercises =
-                                    EntityUtils.getRoutineWorkoutExerciseItems(routine);
+                                    EntityUtils.getExerciseItemsFromRoutine(routine);
                             if (exercises != null) {
                                 mNewWorkoutViewModel.setExercises(exercises);
 

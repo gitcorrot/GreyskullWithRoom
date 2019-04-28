@@ -97,17 +97,25 @@ public class RoutinesAdapter extends RecyclerView.Adapter<RoutinesAdapter.Routin
     @Override
     public void onBindViewHolder(@NonNull final RoutineViewHolder viewHolder, int i) {
         if (mRoutines != null) {
-            final Routine workout = mRoutines.get(i);
-            viewHolder.labelTextView.setText(workout.label);
+            final Routine routine = mRoutines.get(i);
+            viewHolder.labelTextView.setText(routine.label);
 
             StringBuilder exercises = new StringBuilder();
-            for (String s : workout.exercises) {
-                exercises.append(s);
-                exercises.append("\n");
+            if (routine.exercises.size() == routine.sets.size()) {
+                for (int j = 0; j < routine.exercises.size(); j++) {
+                    if (exercises.length() > 1) exercises.append("\n");
+                    exercises.append(routine.exercises.get(j))
+                            .append(", ")
+                            .append(routine.sets.get(j))
+                            .append(" sets");
+                }
+            } else {
+                // TODO: exercises size != sets size
             }
             viewHolder.exercisesTextView.setText(exercises.toString());
-            viewHolder.subItem.setVisibility(workout.expanded ? View.VISIBLE : View.GONE);
+            viewHolder.subItem.setVisibility(routine.expanded ? View.VISIBLE : View.GONE);
         }
+
     }
 
     public void setRoutines(List<Routine> newRoutines) {
@@ -135,8 +143,7 @@ public class RoutinesAdapter extends RecyclerView.Adapter<RoutinesAdapter.Routin
         return new AlertDialog.Builder(fragmentActivity,
                 R.style.ThemeOverlay_MaterialComponents_Dialog)
                 .setTitle("Are you sure you want delete this routine?")
-                .setNegativeButton("No", (dialog, which) ->
-                        dialog.dismiss())
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                 .setPositiveButton("Yes", (dialog, which) ->
                         mRoutineViewModel.deleteRoutine(workout))
                 .create();

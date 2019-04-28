@@ -68,6 +68,7 @@ public class PreferencesManager {
         exercises.add("Bench Press");
         exercises.add("Barbell Row");
         exercises.add("Pull-ups");
+        exercises.add("Overhead Press");
         saveExercises(exercises);
     }
 

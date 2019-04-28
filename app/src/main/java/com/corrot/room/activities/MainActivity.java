@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.corrot.room.R;
 import com.corrot.room.db.WorkoutsDatabase;
+import com.corrot.room.db.entity.Routine;
 import com.corrot.room.dialogs.NewExerciseNameDialog;
 import com.corrot.room.fragments.BodyFragment;
 import com.corrot.room.fragments.HistoryFragment;
@@ -24,8 +25,12 @@ import com.corrot.room.fragments.HomeFragment;
 import com.corrot.room.fragments.RoutinesFragment;
 import com.corrot.room.fragments.StatsFragment;
 import com.corrot.room.utils.PreferencesManager;
+import com.corrot.room.viewmodel.RoutineViewModel;
 import com.corrot.room.viewmodel.WorkoutViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment currentFragment = homeFragment;
 
     private WorkoutViewModel mWorkoutViewModel;
+    private RoutineViewModel mRoutineViewModel;
     private Toolbar toolbar;
 
     @Override
@@ -47,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
+        mRoutineViewModel = ViewModelProviders.of(this).get(RoutineViewModel.class);
 
         PreferencesManager.init(getApplicationContext());
         PreferencesManager pm = PreferencesManager.getInstance();
@@ -117,7 +124,26 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void firstStartInit() {
-        // TODO: if it is first application start add example routines
+        List<String> exercises = new ArrayList<>();
+        exercises.add("Squat");
+        exercises.add("Bench Press");
+        exercises.add("Barbell Row");
+        List<Integer> sets = new ArrayList<>();
+        sets.add(5);
+        sets.add(5);
+        sets.add(5);
+        Routine r1 = new Routine("Stronglifts 5x5, A", exercises, sets);
+        exercises.clear();
+        exercises.add("Squat");
+        exercises.add("Overhead Press");
+        exercises.add("Deadlift");
+        sets.clear();
+        sets.add(5);
+        sets.add(5);
+        sets.add(1);
+        Routine r2 = new Routine("Stronglifts 5x5, B", exercises, sets);
+        mRoutineViewModel.insertSingleRoutine(r1);
+        mRoutineViewModel.insertSingleRoutine(r2);
     }
 
     @Override

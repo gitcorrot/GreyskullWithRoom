@@ -36,7 +36,9 @@ public class NewRoutineRepository {
     }
 
     public void setExercises(List<RoutineExerciseItem> exercises) {
-        mNewExercises = new MutableLiveData<>();
+        if (mNewExercises == null) {
+            mNewExercises = new MutableLiveData<>();
+        }
         mNewExercises.postValue(exercises);
     }
 

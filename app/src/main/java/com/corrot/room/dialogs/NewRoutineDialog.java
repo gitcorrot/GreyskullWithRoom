@@ -140,8 +140,7 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
         List<RoutineExerciseItem> items = mNewRoutineViewModel.getAllExerciseItems().getValue();
         if (items != null) {
             for (RoutineExerciseItem i : items) {
-                String s = i.name + " - " + i.sets + " sets.";
-                exercises.add(s);
+                exercises.add(i.name);
                 sets.add(i.sets);
             }
         }

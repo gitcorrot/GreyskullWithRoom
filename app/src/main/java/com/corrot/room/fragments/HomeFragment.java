@@ -50,12 +50,19 @@ public class HomeFragment extends Fragment {
 
         mRoutineViewModel.getAllRoutines().observe(this, routines -> routinesList = routines);
         mWorkoutViewModel.getLastWorkout().observe(this, lastWorkout -> {
-            String date = MyTimeUtils.parseDate(lastWorkout.workoutDate, MyTimeUtils.MAIN_FORMAT);
-            String sb = "Your last workout: " + date;
-            lastWorkoutTextView.setText(sb);
+            if (lastWorkout != null) {
+                String date = MyTimeUtils.parseDate(lastWorkout.workoutDate, MyTimeUtils.MAIN_FORMAT);
+                String sb = "Your last workout: " + date;
+                lastWorkoutTextView.setText(sb);
+            } else {
+                String sb = "Add your first workout!";
+                lastWorkoutTextView.setText(sb);
+            }
         });
         mWorkoutViewModel.getTotalCount().observe(this, count -> {
-            String sb = "Total number of workouts: " + count;
+            String sb;
+            if (count != null) sb = "Total number of workouts: " + count;
+            else sb = "Total number of workouts: 0";
             workoutsCountTextVIew.setText(sb);
         });
 
