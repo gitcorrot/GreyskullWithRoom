@@ -1,4 +1,7 @@
+
 package com.corrot.room.utils;
+
+import android.text.style.StyleSpan;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -7,6 +10,8 @@ import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 
 import java.util.Collection;
 import java.util.HashSet;
+
+import static android.graphics.Typeface.BOLD;
 
 public class EventDecorator implements DayViewDecorator {
 
@@ -25,6 +30,7 @@ public class EventDecorator implements DayViewDecorator {
 
     @Override
     public void decorate(DayViewFacade view) {
+        view.addSpan(new StyleSpan(BOLD));
         view.addSpan(new DotSpan(8, color));
     }
 }

@@ -15,8 +15,12 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.corrot.room.ChartItem;
 import com.corrot.room.R;
+import com.corrot.room.adapters.ChartWeightsAdapter;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.ChartUtils;
@@ -43,6 +47,7 @@ public class StatsFragment extends Fragment
 
     private LineChart mLineChart;
     private Spinner mNameSpinner;
+    private ChartWeightsAdapter chartWeightsAdapter;
     private String mName;
     private String[] mExercisesNames;
     private List<Exercise> mFilteredExercises;
@@ -73,7 +78,7 @@ public class StatsFragment extends Fragment
         // Observed exercises change when mName changes.
         mExerciseViewModel.getAllExercisesWithName().observe(this, exercises -> {
             mFilteredExercises = exercises;
-            updateEntries();
+            updateData();
         });
 
         return inflater.inflate(R.layout.fragment_stats, container, false);
@@ -85,6 +90,12 @@ public class StatsFragment extends Fragment
 
         mLineChart = view.findViewById(R.id.fragment_statistics_line_chart);
         mNameSpinner = view.findViewById(R.id.fragment_statistics_name_spinner);
+        RecyclerView chartItemsRecyclerView = view.findViewById(R.id.fragment_stats_recycler_view);
+
+        chartWeightsAdapter = new ChartWeightsAdapter(this.getContext());
+        chartItemsRecyclerView.setAdapter(chartWeightsAdapter);
+        chartItemsRecyclerView.setItemAnimator(null);
+        chartItemsRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         updateSpinnerAdapter();
 
@@ -94,7 +105,7 @@ public class StatsFragment extends Fragment
                 if (mExercisesNames != null) {
                     mName = mExercisesNames[position];
                     mExerciseViewModel.setName(mName);
-                    updateEntries();
+                    updateData();
                 }
             }
 
@@ -103,24 +114,33 @@ public class StatsFragment extends Fragment
                 if (mExercisesNames != null) {
                     mName = mExercisesNames[0];
                     mExerciseViewModel.setName(mName);
-                    updateEntries();
+                    updateData();
                 }
             }
         });
     }
 
-    private void updateEntries() {
+    private void updateData() {
         List<Entry> entries = new ArrayList<>();
+        List<ChartItem> chartListItems = new ArrayList<>();
+
         for (Exercise e : mFilteredExercises) {
             for (Workout w : mAllWorkouts) {
                 if (w.id.equals(e.workoutId)) {
                     Date date = w.workoutDate;
                     float max = Collections.max(e.weights);
                     entries.add(new Entry(date.getTime(), max));
+                    chartListItems.add(new ChartItem(max, date, w.label));
                 }
             }
         }
         updateChart(entries);
+        updateAdapter(chartListItems);
+    }
+
+    private void updateAdapter(List<ChartItem> chartListItems) {
+        Collections.sort(chartListItems);
+        chartWeightsAdapter.setChartItems(chartListItems);
     }
 
     private void updateChart(List<Entry> entries) {
@@ -222,7 +242,7 @@ public class StatsFragment extends Fragment
     public void onResume() {
         super.onResume();
         pm.registerListener(this);
-        updateEntries();
+        updateData();
     }
 
     @Override

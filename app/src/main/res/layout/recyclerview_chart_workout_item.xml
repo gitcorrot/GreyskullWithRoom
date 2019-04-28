@@ -18,10 +18,11 @@
             android:layout_weight="0.05"/>
 
         <TextView
-            android:id="@+id/new_body_weight_weight"
+            android:id="@+id/new_chart_workout_weight"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
+            android:layout_weight="0.75"
+            android:layout_marginEnd="4dp"
             android:text="WEIGHT"
             android:textAlignment="viewStart"
             android:layout_margin="2dp"/>
@@ -33,7 +34,7 @@
             android:layout_weight="0.05"/>
 
         <TextView
-            android:id="@+id/new_body_weight_date"
+            android:id="@+id/new_chart_workout_date"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
@@ -41,13 +42,19 @@
             android:textAlignment="viewStart"
             android:layout_margin="2dp"/>
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_dumbbell"
+            android:layout_weight="0.05"/>
+
         <TextView
-            android:id="@+id/new_body_weight_diff"
+            android:id="@+id/new_chart_workout_label"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:text="DIFFERENCE"
-            android:textAlignment="center"
+            android:layout_weight="1.5"
+            android:text="Workout label"
+            android:textAlignment="viewStart"
             android:layout_margin="2dp"/>
 
     </LinearLayout>
