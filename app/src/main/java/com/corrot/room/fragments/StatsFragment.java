@@ -82,7 +82,7 @@ public class StatsFragment extends Fragment
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mLineChart = view.findViewById(R.id.fragment_statistics_line_chart);
+        mLineChart = view.findViewById(R.id.fragment_stats_line_chart);
         mNameSpinner = view.findViewById(R.id.fragment_statistics_name_spinner);
         RecyclerView chartItemsRecyclerView = view.findViewById(R.id.fragment_stats_recycler_view);
 

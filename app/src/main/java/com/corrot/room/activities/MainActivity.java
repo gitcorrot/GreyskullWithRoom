@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
         mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
 
-
         PreferencesManager.init(getApplicationContext());
         PreferencesManager pm = PreferencesManager.getInstance();
 
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void firstStartInit() {
-        // TODO: if it is first applications start add example routines
+        // TODO: if it is first application start add example routines
     }
 
     @Override

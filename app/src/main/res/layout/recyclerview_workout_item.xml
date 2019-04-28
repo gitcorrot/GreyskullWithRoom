@@ -2,12 +2,11 @@
 
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
-    android:orientation="vertical">
+    android:layout_margin="2dp"
+    android:elevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,8 +18,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:text="Normal workout"
             android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -29,33 +30,53 @@
             android:id="@+id/recyclerview_workout_item_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
             android:text="Date"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toStartOf="@+id/recyclerview_workout_date_image"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textAlignment="textStart"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/recyclerview_workout_date_image"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerview_workout_item_label" />
 
         <TextView
             android:id="@+id/recyclerview_workout_sets"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:text="Weights and sets"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/recyclerview_workout_item_date" />
+            app:layout_constraintTop_toBottomOf="@+id/recyclerview_workout_date_image" />
 
         <ImageView
             android:id="@+id/recyclerview_workout_date_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:scaleX=".8"
+            android:scaleY=".8"
             android:src="@drawable/ic_date_range_black_24dp"
             app:layout_constraintBottom_toBottomOf="@+id/recyclerview_workout_item_date"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/recyclerview_workout_item_date" />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/recyclerview_workout_options_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:src="@drawable/ic_more_vert_black_24dp"
+            android:background="@color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

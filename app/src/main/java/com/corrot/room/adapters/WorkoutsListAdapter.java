@@ -9,10 +9,12 @@ import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DiffUtil;
@@ -25,6 +27,7 @@ import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.utils.WorkoutsDiffUtilCallback;
 import com.corrot.room.viewmodel.ExerciseViewModel;
+import com.corrot.room.viewmodel.WorkoutViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,26 +38,29 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
         private final TextView workoutIdTextView;
         private final TextView workoutDateTextView;
         private TextView setsTextView;
+        private ImageButton moreButton;
 
-        private WorkoutViewHolder(View itemView) {
-            super(itemView);
-            workoutIdTextView = itemView.findViewById(R.id.recyclerview_workout_item_label);
-            workoutDateTextView = itemView.findViewById(R.id.recyclerview_workout_item_date);
-            setsTextView = itemView.findViewById(R.id.recyclerview_workout_sets);
+        private WorkoutViewHolder(View view) {
+            super(view);
+            workoutIdTextView = view.findViewById(R.id.recyclerview_workout_item_label);
+            workoutDateTextView = view.findViewById(R.id.recyclerview_workout_item_date);
+            setsTextView = view.findViewById(R.id.recyclerview_workout_sets);
+            moreButton = view.findViewById(R.id.recyclerview_workout_options_button);
         }
     }
 
     private final LayoutInflater mInflater;
     private List<Workout> mWorkouts;
     private ExerciseViewModel mExerciseViewModel;
+    private WorkoutViewModel mWorkoutViewModel;
     private FragmentActivity mActivity;
 
     public WorkoutsListAdapter(Context context, FragmentActivity activity) {
         mInflater = LayoutInflater.from(context);
         mActivity = activity;
 
-        mExerciseViewModel =            // wrong context?
-                ViewModelProviders.of((AppCompatActivity) context).get(ExerciseViewModel.class);
+        mExerciseViewModel = ViewModelProviders.of(activity).get(ExerciseViewModel.class);
+        mWorkoutViewModel = ViewModelProviders.of(activity).get(WorkoutViewModel.class);
     }
 
     @NonNull
@@ -63,12 +69,34 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
         View view = mInflater.inflate(R.layout.recyclerview_workout_item, viewGroup, false);
         final WorkoutViewHolder vh = new WorkoutViewHolder(view);
 
-        // OPEN WORKOUT IN EDITOR
-        vh.setsTextView.setOnClickListener(v -> {
-            Intent updateWorkoutIntent = new Intent(mActivity, NewWorkoutActivity.class);
-            updateWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_UPDATE_WORKOUT);
-            updateWorkoutIntent.putExtra("workoutId", mWorkouts.get(vh.getAdapterPosition()).id);
-            mActivity.startActivity(updateWorkoutIntent);
+        vh.moreButton.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(mActivity, vh.moreButton);
+            popupMenu.getMenuInflater().inflate(R.menu.workout_menu, popupMenu.getMenu());
+            popupMenu.show();
+
+            popupMenu.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.workout_menu_edit: {
+                        Intent updateWorkoutIntent = new Intent(mActivity, NewWorkoutActivity.class);
+                        updateWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_UPDATE_WORKOUT);
+                        updateWorkoutIntent.putExtra("workoutId", mWorkouts.get(vh.getAdapterPosition()).id);
+                        mActivity.startActivity(updateWorkoutIntent);
+                        return true;
+                    }
+                    case R.id.workout_menu_delete: {
+                        Workout w = getWorkoutAt(vh.getAdapterPosition());
+                        mWorkoutViewModel.deleteWorkout(w);
+                        Toast.makeText(view.getContext(),
+                                "Workout deleted!", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    case R.id.workout_menu_share: {
+                        // TODO: Share workout.
+                        return true;
+                    }
+                }
+                return false;
+            });
         });
 
         return vh;
@@ -87,8 +115,10 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
                 SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
                 StringBuilder rxwBuilder = new StringBuilder();
                 for (Exercise e : exercises) {
+                    if (spannableStringBuilder.length() > 1) {
+                        spannableStringBuilder.append("\n");
+                    }
                     spannableStringBuilder
-                            .append("\n")
                             .append(e.name, new StyleSpan(Typeface.BOLD),
                                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                             .append("\n");
@@ -99,8 +129,9 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
                             rxwBuilder
                                     .append(e.reps.get(j))
                                     .append("x")
-                                    .append(e.weights.get(j))
-                                    .append("kg, ");
+                                    .append(e.weights.get(j));
+                            if (j < e.weights.size() - 1) rxwBuilder.append("kg, ");
+                            else rxwBuilder.append("kg");
                         }
                     }
                     spannableStringBuilder.append(rxwBuilder.toString());

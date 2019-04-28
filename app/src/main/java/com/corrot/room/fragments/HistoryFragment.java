@@ -1,19 +1,16 @@
 package com.corrot.room.fragments;
 
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,6 +38,8 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
     private MaterialCalendarView mCalendarView;
     private WorkoutsListAdapter mWorkoutListAdapter;
 
+    private Date mSelectedDate;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater,
@@ -60,25 +59,11 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerView.setItemAnimator(null);
 
-        // TODO: Refresh adapter too
-        mWorkoutViewModel.getAllWorkouts().observe(this, this::setCalendarEvents);
+        mWorkoutViewModel.getAllWorkouts().observe(this, workouts -> {
+            setCalendarEvents(workouts);
+            updateAdapter();
+        });
 
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView,
-                                  @NonNull RecyclerView.ViewHolder viewHolder,
-                                  @NonNull RecyclerView.ViewHolder viewHolder1) {
-                return false;
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                Workout w = mWorkoutListAdapter.getWorkoutAt(viewHolder.getAdapterPosition());
-                mWorkoutViewModel.deleteWorkout(w);
-                Toast.makeText(view.getContext(),
-                        "Workout deleted!", Toast.LENGTH_SHORT).show();
-            }
-        }).attachToRecyclerView(recyclerView);
         return view;
     }
 
@@ -87,22 +72,24 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
         mCalendarView.removeDecorators();
         new setCalendarEventsAsync(workouts, days -> {
             EventDecorator decorator = new EventDecorator(ContextCompat.getColor(getContext(),
-                R.color.colorSecondary), days);
+                    R.color.colorSecondary), days);
             mCalendarView.addDecorator(decorator);
             mCalendarView.invalidateDecorators();
         }).execute();
+    }
+
+    private void updateAdapter() {
+        mWorkoutViewModel.getWorkoutsByDate(mSelectedDate, workouts ->
+                mWorkoutListAdapter.setWorkouts(workouts));
     }
 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget,
                                @NonNull CalendarDay date, boolean selected) {
 
-        Date d = new Date(date.getDate().atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000);
-
-        mWorkoutViewModel.getWorkoutsByDate(d, workouts ->
-                mWorkoutListAdapter.setWorkouts(workouts));
+        mSelectedDate = new Date(date.getDate().atStartOfDay(ZoneId.systemDefault()).toEpochSecond() * 1000);
+        updateAdapter();
     }
-
 
     private static class setCalendarEventsAsync extends AsyncTask<Void, Void, List<CalendarDay>> {
 
