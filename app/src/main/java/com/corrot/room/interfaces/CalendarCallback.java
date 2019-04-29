@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.interfaces;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 

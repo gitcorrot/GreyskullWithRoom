@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 
-import com.corrot.room.ExercisesCallback;
+import com.corrot.room.interfaces.ExercisesCallback;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.repository.ExercisesRepository;
 
@@ -37,13 +37,9 @@ public class ExerciseViewModel extends AndroidViewModel {
         return mAllExercises;
     }
 
-    // TODO: Use Transformations.switchMap.
     public LiveData<List<Exercise>> getAllExercisesWithName() {
         return mAllFilteredExercises;
     }
-    /*public void getAllExercisesWithName(String name, ExercisesCallback callback) {
-        mExercisesRepository.getAllExercisesWithName(name, callback);
-    }*/
 
     public void insertSingleExercise(Exercise exercise) {
         mExercisesRepository.insertSingleExercise(exercise);

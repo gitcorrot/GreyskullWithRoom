@@ -127,9 +127,9 @@ public class BodyFragment extends Fragment
         Collections.sort(entries, new EntryXComparator());
 
         if (!entries.isEmpty()) {
-            int colorAccent = 0;
+            int colorSecondary = 0;
             if (getContext() != null) {
-                colorAccent = ContextCompat.getColor(getContext(), R.color.colorSecondary);
+                colorSecondary = ContextCompat.getColor(getContext(), R.color.colorSecondary);
             }
             XAxis x = mLineChart.getXAxis();
             x.setAvoidFirstLastClipping(true);
@@ -144,7 +144,7 @@ public class BodyFragment extends Fragment
             yLeft.setDrawAxisLine(true);
 
             YAxis yRight = mLineChart.getAxisRight();
-            yRight.setDrawGridLines(false);
+            yRight.setDrawGridLines(true);
             yRight.setDrawLabels(false);
 
             Legend legend = mLineChart.getLegend();
@@ -155,24 +155,23 @@ public class BodyFragment extends Fragment
             legend.setForm(Legend.LegendForm.LINE);
 
             LineDataSet lineDataSet = new LineDataSet(entries, "Body weight history");
-            lineDataSet.setColor(colorAccent);   // color accent
+            lineDataSet.setColor(colorSecondary);
             lineDataSet.setValueTextColor(Color.BLACK);
             lineDataSet.setLineWidth(2.5f);
-            lineDataSet.setCircleColor(colorAccent);
+            lineDataSet.setCircleColor(colorSecondary);
             lineDataSet.setCircleRadius(5);
             lineDataSet.setDrawCircleHole(true);
             lineDataSet.setCircleHoleRadius(3.0f);
             lineDataSet.setMode(LineDataSet.Mode.LINEAR);
 
             LineData lineData = new LineData(lineDataSet);
-            lineData.setHighlightEnabled(false);
             lineData.setDrawValues(false);
 
             mLineChart.setData(lineData);
-            mLineChart.setTouchEnabled(true);
-            mLineChart.setDragEnabled(true);
-            mLineChart.setScaleEnabled(false);
-            mLineChart.setHighlightPerTapEnabled(false);
+            mLineChart.setDrawBorders(true);
+            mLineChart.setBorderWidth(1.25f);
+            mLineChart.setBorderColor(colorSecondary);
+            mLineChart.setTouchEnabled(false);
             mLineChart.animateY(750, Easing.EaseOutCubic);
             mLineChart.setDescription(null);
             mLineChart.invalidate();

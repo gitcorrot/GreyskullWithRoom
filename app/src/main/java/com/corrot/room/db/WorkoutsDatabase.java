@@ -25,18 +25,13 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 @Database(entities = {Workout.class, Exercise.class, Routine.class},
-        version = 1,
-        exportSchema = false)
+        version = 1, exportSchema = false)
 public abstract class WorkoutsDatabase extends RoomDatabase {
 
     public static final String DATABASE_NAME = "db_workouts";
-
     public abstract WorkoutDAO workoutDAO();
-
     public abstract ExerciseDAO exerciseDAO();
-
     public abstract RoutineDAO routineDAO();
-
     private static WorkoutsDatabase INSTANCE;
 
     public static WorkoutsDatabase getInstance(final Context context) {

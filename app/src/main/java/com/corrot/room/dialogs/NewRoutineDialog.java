@@ -25,11 +25,13 @@ import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class NewRoutineDialog extends AppCompatDialogFragment {
 
     private EditText workoutNameEditText;
     private NewRoutineViewModel mNewRoutineViewModel;
+    RoutineViewModel routineViewModel;
 
     private String mTag;
     private int mWorkoutId;
@@ -63,6 +65,7 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
             }
         }
 
+        routineViewModel = ViewModelProviders.of(this).get(RoutineViewModel.class);
         mNewRoutineViewModel = ViewModelProviders.of(this).get(NewRoutineViewModel.class);
         mNewRoutineViewModel.init();
 
@@ -107,39 +110,61 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
                     workoutNameEditText.requestFocus();
                     workoutNameEditText.setError("Please add routine name!");
                 } else {
-                    Routine routine = getRoutineFromViewModel(name);
-                    // TODO: this shouldn't be there.
-                    RoutineViewModel routineViewModel =
-                            ViewModelProviders.of(this).get(RoutineViewModel.class);
-                    switch (mTag) {
-                        case "Add":
-                            routineViewModel.insertSingleRoutine(routine);
-                            Toast.makeText(getContext(),
-                                    "Routine added",
-                                    Toast.LENGTH_SHORT).show();
-                            break;
-                        case "Edit":
-                            routine.id = mWorkoutId;
-                            routineViewModel.updateRoutine(routine);
-                            Toast.makeText(getContext(),
-                                    "Routine updated",
-                                    Toast.LENGTH_SHORT).show();
-                            break;
+                    try {
+                        Routine routine = getRoutineFromViewModel(name);
+
+                        switch (mTag) {
+                            case "Add":
+                                if (!isRoutineInDatabase(routine.label)) {
+                                    routineViewModel.insertSingleRoutine(routine);
+                                    Toast.makeText(getContext(),
+                                            "Routine added",
+                                            Toast.LENGTH_SHORT).show();
+                                    break;
+                                } else {
+                                    workoutNameEditText.requestFocus();
+                                    workoutNameEditText.setError("Routine with this name exists!");
+                                    return;
+                                }
+                            case "Edit":
+                                routine.id = mWorkoutId;
+                                routineViewModel.updateRoutine(routine);
+                                Toast.makeText(getContext(),
+                                        "Routine updated",
+                                        Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                        dismiss();
+                    } catch (RuntimeException e) {
+                        Toast.makeText(getContext(), "Set exercise name first!", Toast.LENGTH_SHORT).show();
                     }
-                    dismiss();
                 }
             });
         });
         return dialog;
     }
 
-    private Routine getRoutineFromViewModel(String name) {
+    private boolean isRoutineInDatabase(String name) {
+        boolean is = true;
+        try {
+            if (routineViewModel.getRoutineByName(name) == null) {
+                is = false;
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            Log.e("NewRoutineDialog", e.getLocalizedMessage());
+        }
+        return is;
+    }
+
+    private Routine getRoutineFromViewModel(String name) throws RuntimeException {
         List<String> exercises = new ArrayList<>();
         List<Integer> sets = new ArrayList<>();
-        // TODO: EXCEPTIONS
         List<RoutineExerciseItem> items = mNewRoutineViewModel.getAllExerciseItems().getValue();
         if (items != null) {
             for (RoutineExerciseItem i : items) {
+                if (i.name.isEmpty()) {
+                    throw new RuntimeException("Name empty!");
+                }
                 exercises.add(i.name);
                 sets.add(i.sets);
             }

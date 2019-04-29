@@ -4,10 +4,9 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.Observer;
 
 import com.corrot.room.db.entity.Routine;
+import com.corrot.room.interfaces.RoutineCallback;
 import com.corrot.room.repository.RoutinesRepository;
 
 import java.util.List;

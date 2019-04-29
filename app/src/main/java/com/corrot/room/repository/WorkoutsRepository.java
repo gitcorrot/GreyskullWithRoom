@@ -5,8 +5,8 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
-import com.corrot.room.WorkoutCallback;
-import com.corrot.room.WorkoutsCallback;
+import com.corrot.room.interfaces.WorkoutCallback;
+import com.corrot.room.interfaces.WorkoutsCallback;
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.dao.WorkoutDAO;
 import com.corrot.room.db.entity.Workout;

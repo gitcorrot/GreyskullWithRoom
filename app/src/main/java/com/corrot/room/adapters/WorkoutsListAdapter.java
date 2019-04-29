@@ -35,14 +35,14 @@ import java.util.List;
 public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapter.WorkoutViewHolder> {
 
     class WorkoutViewHolder extends RecyclerView.ViewHolder {
-        private final TextView workoutIdTextView;
+        private final TextView workoutLabelTextView;
         private final TextView workoutDateTextView;
         private TextView setsTextView;
         private ImageButton moreButton;
 
         private WorkoutViewHolder(View view) {
             super(view);
-            workoutIdTextView = view.findViewById(R.id.recyclerview_workout_item_label);
+            workoutLabelTextView = view.findViewById(R.id.recyclerview_workout_item_label);
             workoutDateTextView = view.findViewById(R.id.recyclerview_workout_item_date);
             setsTextView = view.findViewById(R.id.recyclerview_workout_sets);
             moreButton = view.findViewById(R.id.recyclerview_workout_options_button);
@@ -69,6 +69,10 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
         View view = mInflater.inflate(R.layout.recyclerview_workout_item, viewGroup, false);
         final WorkoutViewHolder vh = new WorkoutViewHolder(view);
 
+        vh.setsTextView.setOnClickListener(v -> editWorkout(vh));
+        vh.workoutDateTextView.setOnClickListener(v -> editWorkout(vh));
+        vh.workoutLabelTextView.setOnClickListener(v -> editWorkout(vh));
+
         vh.moreButton.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(mActivity, vh.moreButton);
             popupMenu.getMenuInflater().inflate(R.menu.workout_menu, popupMenu.getMenu());
@@ -77,10 +81,7 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
             popupMenu.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
                     case R.id.workout_menu_edit: {
-                        Intent updateWorkoutIntent = new Intent(mActivity, NewWorkoutActivity.class);
-                        updateWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_UPDATE_WORKOUT);
-                        updateWorkoutIntent.putExtra("workoutId", mWorkouts.get(vh.getAdapterPosition()).id);
-                        mActivity.startActivity(updateWorkoutIntent);
+                        editWorkout(vh);
                         return true;
                     }
                     case R.id.workout_menu_delete: {
@@ -106,7 +107,7 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
     public void onBindViewHolder(@NonNull final WorkoutsListAdapter.WorkoutViewHolder workoutViewHolder, int i) {
         if (mWorkouts != null) {
             Workout w = mWorkouts.get(i);
-            workoutViewHolder.workoutIdTextView.setText(w.label);
+            workoutViewHolder.workoutLabelTextView.setText(w.label);
             String date = MyTimeUtils.parseDate(w.workoutDate, MyTimeUtils.MAIN_FORMAT);
             workoutViewHolder.workoutDateTextView.setText(date);
 
@@ -141,7 +142,7 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
             });
 
         } else {
-            workoutViewHolder.workoutIdTextView.setText("Workout label");
+            workoutViewHolder.workoutLabelTextView.setText("Workout label");
             workoutViewHolder.workoutDateTextView.setText("Date");
         }
     }
@@ -170,5 +171,12 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
         if (mWorkouts != null)
             return mWorkouts.size();
         else return 0;
+    }
+
+    private void editWorkout(WorkoutViewHolder vh) {
+        Intent updateWorkoutIntent = new Intent(mActivity, NewWorkoutActivity.class);
+        updateWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_UPDATE_WORKOUT);
+        updateWorkoutIntent.putExtra("workoutId", mWorkouts.get(vh.getAdapterPosition()).id);
+        mActivity.startActivity(updateWorkoutIntent);
     }
 }

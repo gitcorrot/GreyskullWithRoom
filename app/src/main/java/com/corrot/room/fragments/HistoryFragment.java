@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.corrot.room.CalendarCallback;
+import com.corrot.room.interfaces.CalendarCallback;
 import com.corrot.room.R;
 import com.corrot.room.adapters.WorkoutsListAdapter;
 import com.corrot.room.db.entity.Workout;
@@ -29,8 +29,11 @@ import org.threeten.bp.LocalDate;
 import org.threeten.bp.ZoneId;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import javax.security.auth.callback.Callback;
 
 public class HistoryFragment extends Fragment implements OnDateSelectedListener {
 
@@ -52,6 +55,7 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
         mCalendarView = view.findViewById(R.id.fragment_history_calendar_view);
         mCalendarView.setOnDateChangedListener(this);
         mCalendarView.setDateSelected(CalendarDay.today(), true);
+        mSelectedDate = Calendar.getInstance().getTime();
 
         mWorkoutListAdapter = new WorkoutsListAdapter(this.getContext(), this.getActivity());
 

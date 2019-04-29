@@ -26,9 +26,7 @@ public class BodyWeightItem implements Comparable<BodyWeightItem> {
     }
 
     public String itemToString() {
-        return String.valueOf(this.weight)
-                + "_"
-                + MyTimeUtils.parseDate(this.date, MyTimeUtils.MAIN_FORMAT);
+        return this.weight + "_" + MyTimeUtils.parseDate(this.date, MyTimeUtils.MAIN_FORMAT);
     }
 
     private BodyWeightItem fromString(String itemString) {

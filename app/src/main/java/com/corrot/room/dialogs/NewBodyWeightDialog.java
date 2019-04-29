@@ -46,18 +46,8 @@ public class NewBodyWeightDialog extends AppCompatDialogFragment {
         date = Calendar.getInstance().getTime();
         dateTextView.setText(MyTimeUtils.parseDate(date, MyTimeUtils.MAIN_FORMAT));
 
-        changeDateButton.setOnClickListener(v -> {
-            if (Build.VERSION.SDK_INT > 23) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(
-                        v.getContext(),
-                        dateListener,
-                        Calendar.getInstance().get(Calendar.YEAR),
-                        Calendar.getInstance().get(Calendar.MONTH),
-                        Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-                );
-                datePickerDialog.show();
-            } // TODO: else?
-        });
+        changeDateButton.setOnClickListener(this::pickDate);
+        dateTextView.setOnClickListener(this::pickDate);
 
         dateListener = (datePicker, year, month, dayOfMonth) -> {
             Calendar calendar = new GregorianCalendar(
@@ -82,7 +72,7 @@ public class NewBodyWeightDialog extends AppCompatDialogFragment {
             Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             b.setOnClickListener(v -> {
                 String bodyWeightString = bodyWeightEditText.getText().toString();
-                if (bodyWeightString.isEmpty()) {
+                if (bodyWeightString.isEmpty() || bodyWeightString.equals(".")) {
                     bodyWeightEditText.requestFocus();
                     bodyWeightEditText.setError("Please put body weight first!");
                 } else {
@@ -97,5 +87,18 @@ public class NewBodyWeightDialog extends AppCompatDialogFragment {
         });
 
         return dialog;
+    }
+
+    private void pickDate(View v) {
+        if (Build.VERSION.SDK_INT > 23) {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    v.getContext(),
+                    dateListener,
+                    Calendar.getInstance().get(Calendar.YEAR),
+                    Calendar.getInstance().get(Calendar.MONTH),
+                    Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+            );
+            datePickerDialog.show();
+        } // TODO: else?
     }
 }

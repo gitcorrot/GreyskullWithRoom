@@ -1,4 +1,4 @@
-package com.corrot.room;
+package com.corrot.room.interfaces;
 
 import com.corrot.room.db.entity.Workout;
 

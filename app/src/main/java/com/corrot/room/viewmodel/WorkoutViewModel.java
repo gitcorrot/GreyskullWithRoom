@@ -4,10 +4,9 @@ import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
-import com.corrot.room.WorkoutCallback;
-import com.corrot.room.WorkoutsCallback;
+import com.corrot.room.interfaces.WorkoutCallback;
+import com.corrot.room.interfaces.WorkoutsCallback;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.repository.WorkoutsRepository;
 

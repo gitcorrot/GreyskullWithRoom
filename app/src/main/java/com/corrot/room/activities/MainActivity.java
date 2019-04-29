@@ -224,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
                             .hide(statsFragment)
                             .hide(bodyFragment)
                             .commit();
-                    toolbar.setTitle("Routines");
                 case R.id.navigation_bar_history:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
@@ -233,7 +232,6 @@ public class MainActivity extends AppCompatActivity {
                             .hide(statsFragment)
                             .hide(bodyFragment)
                             .commit();
-                    toolbar.setTitle("History");
                 case R.id.navigation_bar_stats:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
@@ -242,7 +240,6 @@ public class MainActivity extends AppCompatActivity {
                             .show(statsFragment)
                             .hide(bodyFragment)
                             .commit();
-                    toolbar.setTitle("Stats");
                 case R.id.navigation_bar_body:
                     getSupportFragmentManager().beginTransaction()
                             .hide(homeFragment)
@@ -251,7 +248,6 @@ public class MainActivity extends AppCompatActivity {
                             .hide(statsFragment)
                             .show(bodyFragment)
                             .commit();
-                    toolbar.setTitle("Body");
             }
         }
         super.onRestoreInstanceState(savedInstanceState);
