@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,10 +21,8 @@ import com.corrot.room.R;
 import com.corrot.room.activities.NewWorkoutActivity;
 import com.corrot.room.adapters.WorkoutsListAdapter;
 import com.corrot.room.db.entity.Routine;
-import com.corrot.room.utils.MyTimeUtils;
-import com.corrot.room.viewmodel.FragmentHomeViewModel;
-import com.corrot.room.viewmodel.RoutineViewModel;
-import com.corrot.room.viewmodel.WorkoutViewModel;
+import com.corrot.room.db.entity.Workout;
+import com.corrot.room.viewmodel.HomeFragmentViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -31,11 +30,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements
+        WorkoutsListAdapter.WorkoutsListAdapterInterface {
 
+    private HomeFragmentViewModel mHomeViewModel;
     private List<Routine> routinesList;
-    private Date loadFrom;
-    private Date loadTo;
 
     @Nullable
     @Override
@@ -46,18 +45,13 @@ public class HomeFragment extends Fragment {
         routinesList = new ArrayList<>();
 
         Calendar calendar = Calendar.getInstance();
-        loadTo = calendar.getTime();
+        Date loadTo = calendar.getTime();
         calendar.add(Calendar.MONTH, -1);
-        loadFrom = calendar.getTime();
+        Date loadFrom = calendar.getTime();
 
-        RoutineViewModel mRoutineViewModel =
-                ViewModelProviders.of(this).get(RoutineViewModel.class);
+        // TODO: add button "Show more..." and onClick set loadFrom to month before.
 
-        WorkoutViewModel mWorkoutViewModel =
-                ViewModelProviders.of(this).get(WorkoutViewModel.class);
-
-        FragmentHomeViewModel mHomeViewModel =
-                ViewModelProviders.of(this).get(FragmentHomeViewModel.class);
+        mHomeViewModel = ViewModelProviders.of(this).get(HomeFragmentViewModel.class);
 
         mHomeViewModel.setDateFrom(loadFrom);
         mHomeViewModel.setDateTo(loadTo);
@@ -69,36 +63,19 @@ public class HomeFragment extends Fragment {
         TextView workoutsCountTextVIew = view.findViewById(R.id.fragment_home_workouts_count_text_view);
         RecyclerView recyclerView = view.findViewById(R.id.fragment_home_recycler_view);
 
-        WorkoutsListAdapter mWorkoutListAdapter = new WorkoutsListAdapter(getContext(), getActivity());
+        WorkoutsListAdapter mWorkoutListAdapter = new WorkoutsListAdapter(getContext(), getActivity(), this);
         recyclerView.setAdapter(mWorkoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerView.setItemAnimator(null);
 
-        mRoutineViewModel.getAllRoutines().observe(this, routines -> routinesList = routines);
-        mWorkoutViewModel.getLastWorkout().observe(this, lastWorkout -> {
-            if (lastWorkout != null) {
-                String date = MyTimeUtils.parseDate(lastWorkout.workoutDate, MyTimeUtils.MAIN_FORMAT);
-                String sb = "Your last workout: " + date;
-                lastWorkoutTextView.setText(sb);
-            } else {
-                String sb = "Add your first workout!";
-                lastWorkoutTextView.setText(sb);
-            }
-        });
-        mWorkoutViewModel.getTotalCount().observe(this, count -> {
-            String sb;
-            if (count != null) sb = "Total number of workouts: " + count;
-            else sb = "Total number of workouts: 0";
-            workoutsCountTextVIew.setText(sb);
-        });
-        mHomeViewModel.getWorkoutsFromTo().observe(this,
-                mWorkoutListAdapter::setWorkouts);
+        mHomeViewModel.getAllRoutines().observe(this, routines -> routinesList = routines);
+        mHomeViewModel.getLastWorkout().observe(this, lastWorkoutTextView::setText);
+        mHomeViewModel.getTotalCount().observe(this, workoutsCountTextVIew::setText);
+        mHomeViewModel.getWorkoutsFromTo().observe(this, mWorkoutListAdapter::setWorkouts);
 
         // Start NewWorkoutActivity on floatingButton click
         floatingButton.setOnClickListener(v -> {
-            if (!getActivity().isFinishing()) {
-                showExercisesDialog(getContext()).show();
-            }
+            if (!getActivity().isFinishing()) showExercisesDialog(getContext()).show();
         });
 
         return view;
@@ -107,6 +84,9 @@ public class HomeFragment extends Fragment {
     private AlertDialog showExercisesDialog(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Choose workout");
+
+        // TODO: (maybe) DON'T KEEP ALL ROUTINES IN LIST. JUST MAKE
+        // TODO: A SYNCHRONOUS CALL WHEN YOU NEED IT
 
         List<String> routines = new ArrayList<>();
         routines.add("Normal workout");
@@ -134,5 +114,25 @@ public class HomeFragment extends Fragment {
             }
         });
         return builder.create();
+    }
+
+    // Workouts list adapter's interface method
+    @Override
+    public void onEditClick(Workout workout) {
+        Intent updateWorkoutIntent = new Intent(getActivity(), NewWorkoutActivity.class);
+        updateWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_UPDATE_WORKOUT);
+        updateWorkoutIntent.putExtra("workoutId", workout.id);
+        startActivity(updateWorkoutIntent);
+    }
+
+    @Override
+    public void onDeleteClick(Workout workout) {
+        mHomeViewModel.deleteWorkout(workout);
+        Toast.makeText(getContext(), "Workout deleted!", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onShareClick(Workout workout) {
+        // TODO: Share workout.
     }
 }

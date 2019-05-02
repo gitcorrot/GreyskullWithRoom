@@ -9,16 +9,16 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.corrot.room.ExerciseSetItem;
 import com.corrot.room.R;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.ExerciseSetViewHolder> {
 
@@ -55,8 +55,8 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
     SetsListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
 
-        mNewWorkoutViewModel = ViewModelProviders.of((AppCompatActivity) context) // ???
-                .get(NewWorkoutViewModel.class);
+        mNewWorkoutViewModel =
+                ViewModelProviders.of((AppCompatActivity) context).get(NewWorkoutViewModel.class);
         mNewWorkoutViewModel.init();
     }
 
@@ -108,8 +108,6 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if (!hasFocus) {
-                Log.d("SetsListAdapter", "Loosing focus on " + position + "!");
-
                 ExerciseSetItem item = mSets.get(position);
                 EditText editText = (EditText) v;
 
@@ -124,14 +122,10 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
                             Log.e("SetsAdapter", e.getLocalizedMessage());
                         }
                     }
-                    Log.d("SetsListAdapter",
-                            "item.reps = " + item.reps + ", reps = " + reps);
 
                     if (item.reps != reps) {
                         item.reps = reps;
                         mNewWorkoutViewModel.updateSet(item, position);
-                        Log.d("SetsListAdapter", "Updating exercisePosition: "
-                                + item.exercisePosition + " on position: " + position + "!");
                     }
                 } else if (type == SetsListAdapter.WEIGHT_EDIT_TEXT) {
                     String weightString = editText.getText().toString();
@@ -144,14 +138,9 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
                             Log.e("SetsAdapter", e.getLocalizedMessage());
                         }
                     }
-                    Log.d("SetsListAdapter",
-                            "item.weight = " + item.weight + ", weight = " + weight);
-
                     if (item.weight != weight) {
                         item.weight = weight;
                         mNewWorkoutViewModel.updateSet(item, position);
-                        Log.d("SetsListAdapter", "Updating exercisePosition: "
-                                + item.exercisePosition + " on position: " + position + "!");
                     }
                 }
             }

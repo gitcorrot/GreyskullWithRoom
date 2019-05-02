@@ -17,7 +17,7 @@ import java.util.UUID;
 public class Workout {
 
     @NonNull
-    @PrimaryKey//(autoGenerate = true)
+    @PrimaryKey
     public String id;
 
     @ColumnInfo(name = "Label")
@@ -38,13 +38,13 @@ public class Workout {
     }
 
     @Ignore
-    public Workout(String id, Date workoutDate) {
+    public Workout(@NonNull String id, @NonNull Date workoutDate) {
         this.id = id;
         this.label = "Normal workout";
         this.workoutDate = workoutDate;
     }
 
-    public Workout(String id, Date workoutDate, String label) {
+    public Workout(@NonNull String id, @NonNull Date workoutDate, String label) {
         this.id = id;
         this.label = label;
         this.workoutDate = workoutDate;

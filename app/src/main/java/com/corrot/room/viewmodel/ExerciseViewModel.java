@@ -17,28 +17,16 @@ public class ExerciseViewModel extends AndroidViewModel {
 
     private ExercisesRepository mExercisesRepository;
     private LiveData<List<Exercise>> mAllExercises;
-    private LiveData<List<Exercise>> mAllFilteredExercises;
-    private MutableLiveData<String> exerciseNameFilter = new MutableLiveData<>();
 
     public ExerciseViewModel(Application application) {
         super(application);
         mExercisesRepository = new ExercisesRepository(application);
         mAllExercises = mExercisesRepository.getAllExercises();
-        mAllFilteredExercises = Transformations.switchMap(exerciseNameFilter, name ->
-                mExercisesRepository.getAllExercisesWithName(name)
-        );
-    }
 
-    public void setName(String name) {
-        exerciseNameFilter.setValue(name);
     }
 
     public LiveData<List<Exercise>> getAllExercises() {
         return mAllExercises;
-    }
-
-    public LiveData<List<Exercise>> getAllExercisesWithName() {
-        return mAllFilteredExercises;
     }
 
     public void insertSingleExercise(Exercise exercise) {

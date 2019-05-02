@@ -22,11 +22,9 @@ import com.corrot.room.ChartItem;
 import com.corrot.room.R;
 import com.corrot.room.adapters.ChartWeightsAdapter;
 import com.corrot.room.db.entity.Exercise;
-import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.ChartUtils;
 import com.corrot.room.utils.PreferencesManager;
-import com.corrot.room.viewmodel.ExerciseViewModel;
-import com.corrot.room.viewmodel.WorkoutViewModel;
+import com.corrot.room.viewmodel.StatsFragmentViewModel;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
@@ -50,9 +48,8 @@ public class StatsFragment extends Fragment
     private ChartWeightsAdapter chartWeightsAdapter;
     private String mName;
     private String[] mExercisesNames;
-    private List<Workout> mAllWorkouts;
 
-    private ExerciseViewModel mExerciseViewModel;
+    private StatsFragmentViewModel mStatsViewModel;
     private PreferencesManager pm;
 
     @Nullable
@@ -62,18 +59,11 @@ public class StatsFragment extends Fragment
                              @Nullable Bundle savedInstanceState) {
         pm = PreferencesManager.getInstance();
         mExercisesNames = pm.getExercises();
-        mAllWorkouts = new ArrayList<>();
 
-        mExerciseViewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
-        WorkoutViewModel mWorkoutViewModel =
-                ViewModelProviders.of(this).get(WorkoutViewModel.class);
-
-        // Observe all workouts for having access to dates
-        mWorkoutViewModel.getAllWorkouts().observe(this, workouts ->
-                mAllWorkouts = workouts);
+        mStatsViewModel = ViewModelProviders.of(this).get(StatsFragmentViewModel.class);
 
         // Observed exercises change when mName changes.
-        mExerciseViewModel.getAllExercisesWithName().observe(this, this::updateData);
+        mStatsViewModel.getAllExercisesWithName().observe(this, this::updateData);
 
         return inflater.inflate(R.layout.fragment_stats, container, false);
     }
@@ -98,7 +88,7 @@ public class StatsFragment extends Fragment
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (mExercisesNames != null) {
                     mName = mExercisesNames[position];
-                    mExerciseViewModel.setName(mName);
+                    mStatsViewModel.setName(mName);
                 }
             }
 
@@ -106,7 +96,7 @@ public class StatsFragment extends Fragment
             public void onNothingSelected(AdapterView<?> parent) {
                 if (mExercisesNames != null) {
                     mName = mExercisesNames[0];
-                    mExerciseViewModel.setName(mName);
+                    mStatsViewModel.setName(mName);
                 }
             }
         });
@@ -117,14 +107,10 @@ public class StatsFragment extends Fragment
         List<ChartItem> chartListItems = new ArrayList<>();
 
         for (Exercise e : exercises) {
-            for (Workout w : mAllWorkouts) {
-                if (w.id.equals(e.workoutId)) {
-                    Date date = w.workoutDate;
-                    float max = Collections.max(e.weights);
-                    entries.add(new Entry(date.getTime(), max));
-                    chartListItems.add(new ChartItem(max, date, w.label));
-                }
-            }
+            Date date = e.workoutDate;
+            float max = Collections.max(e.weights);
+            entries.add(new Entry(date.getTime(), max));
+            chartListItems.add(new ChartItem(max, date, e.workoutLabel));
         }
         updateChart(entries);
         updateAdapter(chartListItems);

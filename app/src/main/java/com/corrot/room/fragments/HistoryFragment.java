@@ -1,10 +1,12 @@
 package com.corrot.room.fragments;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.corrot.room.R;
+import com.corrot.room.activities.NewWorkoutActivity;
 import com.corrot.room.adapters.WorkoutsListAdapter;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.interfaces.CalendarCallback;
@@ -33,7 +36,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class HistoryFragment extends Fragment implements OnDateSelectedListener {
+public class HistoryFragment extends Fragment
+        implements OnDateSelectedListener, WorkoutsListAdapter.WorkoutsListAdapterInterface {
 
     private WorkoutViewModel mWorkoutViewModel;
     private MaterialCalendarView mCalendarView;
@@ -55,7 +59,7 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
         mCalendarView.setDateSelected(CalendarDay.today(), true);
         mSelectedDate = Calendar.getInstance().getTime();
 
-        mWorkoutListAdapter = new WorkoutsListAdapter(this.getContext(), this.getActivity());
+        mWorkoutListAdapter = new WorkoutsListAdapter(this.getContext(), this.getActivity(), this);
 
         recyclerView.setAdapter(mWorkoutListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
@@ -108,8 +112,7 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
             List<CalendarDay> days = new ArrayList<>();
             for (Workout w : workouts) {
                 LocalDate date = Instant.ofEpochMilli(w.workoutDate.getTime())
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate();
+                        .atZone(ZoneId.systemDefault()).toLocalDate();
                 days.add(CalendarDay.from(date));
             }
             return days;
@@ -119,5 +122,25 @@ public class HistoryFragment extends Fragment implements OnDateSelectedListener 
         protected void onPostExecute(List<CalendarDay> calendarDays) {
             callback.onSuccess(calendarDays);
         }
+    }
+
+    // Workouts list adapter's interface method
+    @Override
+    public void onEditClick(Workout workout) {
+        Intent updateWorkoutIntent = new Intent(getActivity(), NewWorkoutActivity.class);
+        updateWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_UPDATE_WORKOUT);
+        updateWorkoutIntent.putExtra("workoutId", workout.id);
+        startActivity(updateWorkoutIntent);
+    }
+
+    @Override
+    public void onDeleteClick(Workout workout) {
+        mWorkoutViewModel.deleteWorkout(workout);
+        Toast.makeText(getContext(), "Workout deleted!", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onShareClick(Workout workout) {
+        // TODO: Share workout.
     }
 }

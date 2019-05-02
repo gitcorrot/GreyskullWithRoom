@@ -1,7 +1,6 @@
 package com.corrot.room.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
@@ -21,13 +19,11 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.corrot.room.R;
-import com.corrot.room.activities.NewWorkoutActivity;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.utils.WorkoutsDiffUtilCallback;
 import com.corrot.room.viewmodel.ExerciseViewModel;
-import com.corrot.room.viewmodel.WorkoutViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,15 +48,21 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
     private final LayoutInflater mInflater;
     private List<Workout> mWorkouts;
     private ExerciseViewModel mExerciseViewModel;
-    private WorkoutViewModel mWorkoutViewModel;
-    private FragmentActivity mActivity;
+    private WorkoutsListAdapterInterface listener;
 
-    public WorkoutsListAdapter(Context context, FragmentActivity activity) {
-        mInflater = LayoutInflater.from(context);
-        mActivity = activity;
+    public interface WorkoutsListAdapterInterface {
+        void onEditClick(Workout workout);
 
-        mExerciseViewModel = ViewModelProviders.of(activity).get(ExerciseViewModel.class);
-        mWorkoutViewModel = ViewModelProviders.of(activity).get(WorkoutViewModel.class);
+        void onDeleteClick(Workout workout);
+
+        void onShareClick(Workout workout);
+    }
+
+    public WorkoutsListAdapter(Context context, FragmentActivity activity,
+                               WorkoutsListAdapterInterface listener) {
+        this.mInflater = LayoutInflater.from(context);
+        this.listener = listener;
+        this.mExerciseViewModel = ViewModelProviders.of(activity).get(ExerciseViewModel.class);
     }
 
     @NonNull
@@ -69,47 +71,46 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
         View view = mInflater.inflate(R.layout.recyclerview_workout_item, viewGroup, false);
         final WorkoutViewHolder vh = new WorkoutViewHolder(view);
 
-        vh.setsTextView.setOnClickListener(v -> editWorkout(vh));
-        vh.workoutDateTextView.setOnClickListener(v -> editWorkout(vh));
-        vh.workoutLabelTextView.setOnClickListener(v -> editWorkout(vh));
+        View.OnClickListener editListener = v ->
+                listener.onEditClick((mWorkouts.get(vh.getAdapterPosition())));
+        vh.setsTextView.setOnClickListener(editListener);
+        vh.workoutDateTextView.setOnClickListener(editListener);
+        vh.workoutLabelTextView.setOnClickListener(editListener);
 
         vh.moreButton.setOnClickListener(v -> {
-            PopupMenu popupMenu = new PopupMenu(mActivity, vh.moreButton);
+            PopupMenu popupMenu = new PopupMenu(v.getContext(), vh.moreButton);
             popupMenu.getMenuInflater().inflate(R.menu.workout_menu, popupMenu.getMenu());
             popupMenu.show();
 
             popupMenu.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
                     case R.id.workout_menu_edit: {
-                        editWorkout(vh);
+                        listener.onEditClick(mWorkouts.get(vh.getAdapterPosition()));
                         return true;
                     }
                     case R.id.workout_menu_delete: {
-                        Workout w = getWorkoutAt(vh.getAdapterPosition());
-                        mWorkoutViewModel.deleteWorkout(w);
-                        Toast.makeText(view.getContext(),
-                                "Workout deleted!", Toast.LENGTH_SHORT).show();
+                        listener.onDeleteClick(mWorkouts.get(vh.getAdapterPosition()));
                         return true;
                     }
                     case R.id.workout_menu_share: {
-                        // TODO: Share workout.
+                        listener.onShareClick(mWorkouts.get(vh.getAdapterPosition()));
                         return true;
                     }
                 }
                 return false;
             });
         });
-
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final WorkoutsListAdapter.WorkoutViewHolder workoutViewHolder, int i) {
+    public void onBindViewHolder(@NonNull final WorkoutsListAdapter.WorkoutViewHolder viewHolder, int i) {
         if (mWorkouts != null) {
             Workout w = mWorkouts.get(i);
-            workoutViewHolder.workoutLabelTextView.setText(w.label);
+
             String date = MyTimeUtils.parseDate(w.workoutDate, MyTimeUtils.MAIN_FORMAT);
-            workoutViewHolder.workoutDateTextView.setText(date);
+            viewHolder.workoutLabelTextView.setText(w.label);
+            viewHolder.workoutDateTextView.setText(date);
 
             // exercises and sets
             mExerciseViewModel.getExercisesByWorkoutId(w.id, exercises -> {
@@ -137,13 +138,12 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
                     }
                     spannableStringBuilder.append(rxwBuilder.toString());
                 }
-                workoutViewHolder.setsTextView
+                viewHolder.setsTextView
                         .setText(spannableStringBuilder, TextView.BufferType.SPANNABLE);
             });
-
         } else {
-            workoutViewHolder.workoutLabelTextView.setText("Workout label");
-            workoutViewHolder.workoutDateTextView.setText("Date");
+            viewHolder.workoutLabelTextView.setText("Workout label");
+            viewHolder.workoutDateTextView.setText("Date");
         }
     }
 
@@ -162,21 +162,10 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
         }
     }
 
-    public Workout getWorkoutAt(int position) {
-        return mWorkouts.get(position);
-    }
-
     @Override
     public int getItemCount() {
         if (mWorkouts != null)
             return mWorkouts.size();
         else return 0;
-    }
-
-    private void editWorkout(WorkoutViewHolder vh) {
-        Intent updateWorkoutIntent = new Intent(mActivity, NewWorkoutActivity.class);
-        updateWorkoutIntent.putExtra("flags", NewWorkoutActivity.FLAG_UPDATE_WORKOUT);
-        updateWorkoutIntent.putExtra("workoutId", mWorkouts.get(vh.getAdapterPosition()).id);
-        mActivity.startActivity(updateWorkoutIntent);
     }
 }

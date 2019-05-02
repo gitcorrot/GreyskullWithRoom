@@ -9,19 +9,19 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.corrot.room.ExerciseItem;
-import com.corrot.room.ExerciseSetItem;
-import com.corrot.room.R;
-import com.corrot.room.viewmodel.NewWorkoutViewModel;
-
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.corrot.room.ExerciseItem;
+import com.corrot.room.ExerciseSetItem;
+import com.corrot.room.R;
+import com.corrot.room.viewmodel.NewWorkoutViewModel;
+
+import java.util.List;
 
 public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdapter.exerciseViewHolder> {
 
@@ -48,8 +48,8 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
 
     public ExercisesListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
-        mNewWorkoutViewModel = ViewModelProviders.of((AppCompatActivity) context). // ???
-                get(NewWorkoutViewModel.class);
+        mNewWorkoutViewModel =
+                ViewModelProviders.of((AppCompatActivity) context).get(NewWorkoutViewModel.class);
         mNewWorkoutViewModel.init();
     }
 
@@ -57,8 +57,8 @@ public class ExercisesListAdapter extends RecyclerView.Adapter<ExercisesListAdap
     @Override
     public exerciseViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View itemView =
-                mInflater.inflate(R.layout.recyclerview_exercise_item, viewGroup,false);
-       final exerciseViewHolder vh = new exerciseViewHolder(itemView);
+                mInflater.inflate(R.layout.recyclerview_exercise_item, viewGroup, false);
+        final exerciseViewHolder vh = new exerciseViewHolder(itemView);
 
         // TODO: Refactor it.
 

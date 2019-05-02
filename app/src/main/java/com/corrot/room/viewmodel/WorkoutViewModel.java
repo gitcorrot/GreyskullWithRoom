@@ -19,27 +19,15 @@ public class WorkoutViewModel extends AndroidViewModel {
 
     private WorkoutsRepository mWorkoutsRepository;
     private LiveData<List<Workout>> mAllWorkouts;
-    private LiveData<Workout> mLastWorkout;
-    private LiveData<Integer> mTotalCount;
 
     public WorkoutViewModel(Application application) {
         super(application);
         mWorkoutsRepository = new WorkoutsRepository(application);
         mAllWorkouts = mWorkoutsRepository.getAllWorkouts();
-        mLastWorkout = mWorkoutsRepository.getLastWorkout();
-        mTotalCount = mWorkoutsRepository.getTotalCount();
     }
 
     public LiveData<List<Workout>> getAllWorkouts() {
         return mAllWorkouts;
-    }
-
-    public LiveData<Workout> getLastWorkout() {
-        return mLastWorkout;
-    }
-
-    public LiveData<Integer> getTotalCount() {
-        return mTotalCount;
     }
 
     public void getWorkoutById(String id, WorkoutCallback callback) {

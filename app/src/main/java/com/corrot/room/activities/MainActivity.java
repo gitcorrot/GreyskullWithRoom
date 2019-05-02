@@ -13,7 +13,6 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.corrot.room.R;
 import com.corrot.room.db.WorkoutsDatabase;
@@ -24,9 +23,9 @@ import com.corrot.room.fragments.HistoryFragment;
 import com.corrot.room.fragments.HomeFragment;
 import com.corrot.room.fragments.RoutinesFragment;
 import com.corrot.room.fragments.StatsFragment;
+import com.corrot.room.repository.RoutinesRepository;
+import com.corrot.room.repository.WorkoutsRepository;
 import com.corrot.room.utils.PreferencesManager;
-import com.corrot.room.viewmodel.RoutineViewModel;
-import com.corrot.room.viewmodel.WorkoutViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -43,17 +42,12 @@ public class MainActivity extends AppCompatActivity {
     private final Fragment bodyFragment = new BodyFragment();
     private Fragment currentFragment = homeFragment;
 
-    private WorkoutViewModel mWorkoutViewModel;
-    private RoutineViewModel mRoutineViewModel;
     private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mWorkoutViewModel = ViewModelProviders.of(this).get(WorkoutViewModel.class);
-        mRoutineViewModel = ViewModelProviders.of(this).get(RoutineViewModel.class);
 
         PreferencesManager.init(getApplicationContext());
         PreferencesManager pm = PreferencesManager.getInstance();
@@ -142,8 +136,9 @@ public class MainActivity extends AppCompatActivity {
         sets.add(5);
         sets.add(1);
         Routine r2 = new Routine("Stronglifts 5x5, B", exercises, sets);
-        mRoutineViewModel.insertSingleRoutine(r1);
-        mRoutineViewModel.insertSingleRoutine(r2);
+        RoutinesRepository repo = new RoutinesRepository(getApplication());
+        repo.insertSingleRoutine(r1);
+        repo.insertSingleRoutine(r2);
     }
 
     @Override
@@ -151,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
 
         // Below code is to show icons
-        MenuBuilder menuBuilder = (MenuBuilder)menu;
+        MenuBuilder menuBuilder = (MenuBuilder) menu;
         menuBuilder.setOptionalIconsVisible(true);
 
         menuInflater.inflate(R.menu.toolbar_menu, menu);
@@ -171,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case R.id.toolbar_settings_delete_all: {
-                mWorkoutViewModel.deleteAll();
+                new WorkoutsRepository(getApplication()).deleteAll();
                 Toast.makeText(this,
                         "All workouts deleted!", Toast.LENGTH_SHORT).show();
                 break;

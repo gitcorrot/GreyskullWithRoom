@@ -280,7 +280,8 @@ public class NewWorkoutActivity extends AppCompatActivity {
                     }
                 }
 
-                Exercise newExercise = new Exercise(mWorkout.id, e.name, weights, reps);
+                Exercise newExercise = new Exercise(mWorkout.id,
+                        mWorkout.workoutDate, mWorkout.label, e.name, weights, reps);
 
                 switch (currentFlag) {
                     case FLAG_ADD_WORKOUT:
