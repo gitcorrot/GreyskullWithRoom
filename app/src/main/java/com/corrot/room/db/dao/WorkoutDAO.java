@@ -35,9 +35,14 @@ public interface WorkoutDAO {
     LiveData<Workout> getLastWorkout();
 
     @TypeConverters(DateConverter.class)
-    @Query("SELECT * FROM Workout WHERE strftime('%Y-%m-%d', Date / 1000, 'unixepoch', 'localtime') " +
+    @Query("SELECT * FROM Workout WHERE " +
+            "strftime('%Y-%m-%d', Date / 1000, 'unixepoch', 'localtime') " +
             "= strftime('%Y-%m-%d', :date / 1000, 'unixepoch', 'localtime')")
     List<Workout> getWorkoutsByDate(Date date);
+
+    @TypeConverters(DateConverter.class)
+    @Query("SELECT * FROM Workout WHERE Date>:from AND Date<:to") // NOT SURE
+    List<Workout> getWorkoutsFromTo(Date from, Date to);
 
     @Update
     void updateWorkout(Workout workout);

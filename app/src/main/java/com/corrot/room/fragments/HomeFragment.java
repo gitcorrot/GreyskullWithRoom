@@ -13,21 +13,29 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.corrot.room.R;
 import com.corrot.room.activities.NewWorkoutActivity;
+import com.corrot.room.adapters.WorkoutsListAdapter;
 import com.corrot.room.db.entity.Routine;
 import com.corrot.room.utils.MyTimeUtils;
+import com.corrot.room.viewmodel.FragmentHomeViewModel;
 import com.corrot.room.viewmodel.RoutineViewModel;
 import com.corrot.room.viewmodel.WorkoutViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
 
     private List<Routine> routinesList;
+    private Date loadFrom;
+    private Date loadTo;
 
     @Nullable
     @Override
@@ -36,17 +44,35 @@ public class HomeFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         routinesList = new ArrayList<>();
+
+        Calendar calendar = Calendar.getInstance();
+        loadTo = calendar.getTime();
+        calendar.add(Calendar.MONTH, -1);
+        loadFrom = calendar.getTime();
+
         RoutineViewModel mRoutineViewModel =
                 ViewModelProviders.of(this).get(RoutineViewModel.class);
 
         WorkoutViewModel mWorkoutViewModel =
                 ViewModelProviders.of(this).get(WorkoutViewModel.class);
 
+        FragmentHomeViewModel mHomeViewModel =
+                ViewModelProviders.of(this).get(FragmentHomeViewModel.class);
+
+        mHomeViewModel.setDateFrom(loadFrom);
+        mHomeViewModel.setDateTo(loadTo);
+
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         FloatingActionButton floatingButton = view.findViewById(R.id.floating_button);
         TextView lastWorkoutTextView = view.findViewById(R.id.fragment_home_last_workout_text_view);
         TextView workoutsCountTextVIew = view.findViewById(R.id.fragment_home_workouts_count_text_view);
+        RecyclerView recyclerView = view.findViewById(R.id.fragment_home_recycler_view);
+
+        WorkoutsListAdapter mWorkoutListAdapter = new WorkoutsListAdapter(getContext(), getActivity());
+        recyclerView.setAdapter(mWorkoutListAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        recyclerView.setItemAnimator(null);
 
         mRoutineViewModel.getAllRoutines().observe(this, routines -> routinesList = routines);
         mWorkoutViewModel.getLastWorkout().observe(this, lastWorkout -> {
@@ -65,7 +91,8 @@ public class HomeFragment extends Fragment {
             else sb = "Total number of workouts: 0";
             workoutsCountTextVIew.setText(sb);
         });
-
+        mHomeViewModel.getWorkoutsFromTo().observe(this,
+                mWorkoutListAdapter::setWorkouts);
 
         // Start NewWorkoutActivity on floatingButton click
         floatingButton.setOnClickListener(v -> {

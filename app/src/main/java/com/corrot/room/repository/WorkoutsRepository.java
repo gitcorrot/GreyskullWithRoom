@@ -4,12 +4,14 @@ import android.app.Application;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
-import com.corrot.room.interfaces.WorkoutCallback;
-import com.corrot.room.interfaces.WorkoutsCallback;
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.dao.WorkoutDAO;
 import com.corrot.room.db.entity.Workout;
+import com.corrot.room.interfaces.WorkoutCallback;
+import com.corrot.room.interfaces.WorkoutsCallback;
 
 import java.util.Date;
 import java.util.List;
@@ -39,6 +41,10 @@ public class WorkoutsRepository {
 
     public LiveData<Integer> getTotalCount() {
         return mTotalCount;
+    }
+
+    public void getWorkoutsFromTo(Date from, Date to, WorkoutsCallback callback) {
+        new getWorkoutsFromToAsync(mWorkoutDAO, callback).execute(from, to);
     }
 
     public void getWorkoutById(String id, WorkoutCallback callback) {
@@ -118,6 +124,27 @@ public class WorkoutsRepository {
         @Override
         protected List<Workout> doInBackground(Date... params) {
             return workoutDAO.getWorkoutsByDate(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Workout> workouts) {
+            callback.onSuccess(workouts);
+        }
+    }
+
+    private static class getWorkoutsFromToAsync extends AsyncTask<Date, Void, List<Workout>> {
+
+        private final WorkoutDAO workoutDAO;
+        private final WorkoutsCallback callback;
+
+        getWorkoutsFromToAsync(WorkoutDAO dao, WorkoutsCallback callback) {
+            this.workoutDAO = dao;
+            this.callback = callback;
+        }
+
+        @Override
+        protected List<Workout> doInBackground(Date... params) {
+            return workoutDAO.getWorkoutsFromTo(params[0], params[1]);
         }
 
         @Override
