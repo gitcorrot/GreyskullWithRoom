@@ -3,6 +3,7 @@ package com.corrot.room.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,8 +38,6 @@ public class HomeFragment extends Fragment implements
 
     private HomeFragmentViewModel mHomeViewModel;
     private List<Routine> routinesList;
-    private Date loadTo;
-    private Date loadFrom;
 
     @Nullable
     @Override
@@ -47,13 +46,6 @@ public class HomeFragment extends Fragment implements
                              @Nullable Bundle savedInstanceState) {
 
         routinesList = new ArrayList<>();
-
-        Calendar calendar = Calendar.getInstance();
-        loadTo = calendar.getTime();
-        calendar.add(Calendar.MONTH, -1);
-        loadFrom = calendar.getTime();
-
-        // TODO: add button "Show more..." and onClick set loadFrom to month before.
 
         mHomeViewModel = ViewModelProviders.of(this).get(HomeFragmentViewModel.class);
 
@@ -64,7 +56,6 @@ public class HomeFragment extends Fragment implements
         TextView workoutsCountTextView = view.findViewById(R.id.fragment_home_workouts_count_text_view);
         TextView recentWorkoutsTextView = view.findViewById(R.id.fragment_home_recent_workouts_text_view);
         Button moreButton = view.findViewById(R.id.fragment_home_load_more_button);
-        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.fragment_home_swipe_layout);
         RecyclerView recyclerView = view.findViewById(R.id.fragment_home_recycler_view);
 
         WorkoutsListAdapter mWorkoutListAdapter = new WorkoutsListAdapter(getContext(), getActivity(), this);
@@ -80,30 +71,19 @@ public class HomeFragment extends Fragment implements
                 workoutsCountTextView.setText(count);
             } else workoutsCountTextView.setVisibility(View.INVISIBLE);
         });
-        mHomeViewModel.getWorkoutsFromTo().observe(this, workouts -> {
+        mHomeViewModel.getRecentWorkouts().observe(this, workouts -> {
             if (workouts.isEmpty()) {
                 recentWorkoutsTextView.setVisibility(View.INVISIBLE);
+                moreButton.setVisibility(View.INVISIBLE);
+                mWorkoutListAdapter.setWorkouts(null);
             } else {
                 recentWorkoutsTextView.setVisibility(View.VISIBLE);
+                moreButton.setVisibility(View.VISIBLE);
                 mWorkoutListAdapter.setWorkouts(workouts);
             }
         });
 
-        mHomeViewModel.setDateFrom(loadFrom);
-        mHomeViewModel.setDateTo(loadTo);
-
-        moreButton.setOnClickListener(v -> {
-            calendar.setTime(loadFrom);
-            calendar.add(Calendar.MONTH, -1);
-            loadFrom = calendar.getTime();
-            mHomeViewModel.setDateFrom(loadFrom);
-        });
-
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            loadTo = Calendar.getInstance().getTime();
-            mHomeViewModel.setDateTo(loadTo);
-            swipeRefreshLayout.setRefreshing(false);
-        });
+        moreButton.setOnClickListener(v -> mHomeViewModel.increaseLoadCount());
 
         // Start NewWorkoutActivity on floatingButton click
         floatingButton.setOnClickListener(v -> {

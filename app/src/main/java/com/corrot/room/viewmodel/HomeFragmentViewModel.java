@@ -20,30 +20,28 @@ import java.util.List;
 
 public class HomeFragmentViewModel extends AndroidViewModel {
 
+    private final static int loadIncrease = 5;
     private WorkoutsRepository mWorkoutsRepository;
 
-    private MediatorLiveData<List<Workout>> mWorkoutsFromTo = new MediatorLiveData<>();
-    private MutableLiveData<Date> dateFrom = new MutableLiveData<>();
-    private MutableLiveData<Date> dateTo = new MutableLiveData<>();
+    private MutableLiveData<Integer> loadCount = new MutableLiveData<>();
+    private MediatorLiveData<List<Workout>> mRecentWorkouts = new MediatorLiveData<>();
+    private LiveData<List<Routine>> mAllRoutines;
     private LiveData<String> mLastWorkout;
     private LiveData<String> mTotalCount;
-
-    private LiveData<List<Routine>> mAllRoutines;
 
     public HomeFragmentViewModel(@NonNull Application application) {
         super(application);
         mWorkoutsRepository = new WorkoutsRepository(application);
         RoutinesRepository mRoutinesRepository = new RoutinesRepository(application);
-
+        loadCount.setValue(loadIncrease);
         mAllRoutines = mRoutinesRepository.getAllRoutines();
 
         mTotalCount = Transformations.map(mWorkoutsRepository.getTotalCount(), count -> {
             String sb;
             if (count != null) {
-                if(count > 0) sb = "Total number of workouts: " + count;
+                if (count > 0) sb = "Total number of workouts: " + count;
                 else sb = null;
-            }
-            else sb = null;
+            } else sb = null;
             return sb;
         });
 
@@ -54,44 +52,29 @@ public class HomeFragmentViewModel extends AndroidViewModel {
             } else return "Add your first workout!";
         });
 
-        mWorkoutsFromTo.addSource(dateFrom, from -> {
-            Date to = dateTo.getValue();
-            if (to != null) {
-                mWorkoutsRepository.getWorkoutsFromTo(from, to, workouts ->
-                        mWorkoutsFromTo.setValue(workouts));
-            }
-        });
+        mRecentWorkouts.addSource(loadCount, count ->
+                mWorkoutsRepository.getRecentWorkouts(count, workouts ->
+                mRecentWorkouts.setValue(workouts)));
 
-        mWorkoutsFromTo.addSource(dateTo, to -> {
-            Date from = dateFrom.getValue();
-            if (from != null) {
-                mWorkoutsRepository.getWorkoutsFromTo(from, to, workouts ->
-                        mWorkoutsFromTo.setValue(workouts));
-            }
-        });
-
-        mWorkoutsFromTo.addSource(mWorkoutsRepository.getAllWorkouts(), allWorkouts -> {
-            Date from = dateFrom.getValue();
-            Date to = dateTo.getValue();
-            if (from != null && to != null) {
-                mWorkoutsRepository.getWorkoutsFromTo(from, to, workouts ->
-                        mWorkoutsFromTo.setValue(workouts));
+        mRecentWorkouts.addSource(mWorkoutsRepository.getAllWorkouts(), allWorkouts -> {
+            if (loadCount.getValue() != null) {
+                mWorkoutsRepository.getRecentWorkouts(loadCount.getValue(), workouts ->
+                        mRecentWorkouts.setValue(workouts));
             }
         });
     }
 
     // Workouts
 
-    public LiveData<List<Workout>> getWorkoutsFromTo() {
-        return mWorkoutsFromTo;
+    public LiveData<List<Workout>> getRecentWorkouts() {
+        return mRecentWorkouts;
     }
 
-    public void setDateFrom(Date d) {
-        dateFrom.setValue(d);
-    }
-
-    public void setDateTo(Date d) {
-        dateTo.setValue(d);
+    public void increaseLoadCount() {
+        if (loadCount.getValue() != null) {
+            int c = loadCount.getValue();
+            loadCount.postValue(c + loadIncrease);
+        }
     }
 
     public LiveData<String> getLastWorkout() {

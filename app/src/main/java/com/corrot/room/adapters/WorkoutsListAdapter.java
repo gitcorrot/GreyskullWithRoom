@@ -148,18 +148,20 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
     }
 
     public void setWorkouts(List<Workout> newWorkouts) {
-        if (this.mWorkouts == null) {
+        if (this.mWorkouts == null)
             this.mWorkouts = new ArrayList<>();
-        }
-        if (newWorkouts != null) {
-            WorkoutsDiffUtilCallback callback =
-                    new WorkoutsDiffUtilCallback(this.mWorkouts, newWorkouts);
-            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback);
 
-            this.mWorkouts.clear();
-            this.mWorkouts.addAll(newWorkouts);
-            diffResult.dispatchUpdatesTo(this);
-        }
+        if (newWorkouts == null)
+            newWorkouts = new ArrayList<>();
+
+        WorkoutsDiffUtilCallback callback =
+                new WorkoutsDiffUtilCallback(this.mWorkouts, newWorkouts);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(callback);
+
+        this.mWorkouts.clear();
+        this.mWorkouts.addAll(newWorkouts);
+        diffResult.dispatchUpdatesTo(this);
+
     }
 
     @Override

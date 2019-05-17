@@ -4,8 +4,6 @@ import android.app.Application;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.dao.WorkoutDAO;
@@ -43,8 +41,12 @@ public class WorkoutsRepository {
         return mTotalCount;
     }
 
-    public void getWorkoutsFromTo(Date from, Date to, WorkoutsCallback callback) {
+    /*public void getWorkoutsFromTo(Date from, Date to, WorkoutsCallback callback) {
         new getWorkoutsFromToAsync(mWorkoutDAO, callback).execute(from, to);
+    }*/
+
+    public void getRecentWorkouts(int count, WorkoutsCallback callback) {
+        new getRecentWorkoutsAsync(mWorkoutDAO, callback).execute(count);
     }
 
     public void getWorkoutById(String id, WorkoutCallback callback) {
@@ -132,7 +134,7 @@ public class WorkoutsRepository {
         }
     }
 
-    private static class getWorkoutsFromToAsync extends AsyncTask<Date, Void, List<Workout>> {
+    /*private static class getWorkoutsFromToAsync extends AsyncTask<Date, Void, List<Workout>> {
 
         private final WorkoutDAO workoutDAO;
         private final WorkoutsCallback callback;
@@ -145,6 +147,28 @@ public class WorkoutsRepository {
         @Override
         protected List<Workout> doInBackground(Date... params) {
             return workoutDAO.getWorkoutsFromTo(params[0], params[1]);
+        }
+
+        @Override
+        protected void onPostExecute(List<Workout> workouts) {
+            callback.onSuccess(workouts);
+        }
+    }*/
+
+
+    private static class getRecentWorkoutsAsync extends AsyncTask<Integer, Void, List<Workout>> {
+
+        private final WorkoutDAO workoutDAO;
+        private final WorkoutsCallback callback;
+
+        getRecentWorkoutsAsync(WorkoutDAO dao, WorkoutsCallback callback) {
+            this.workoutDAO = dao;
+            this.callback = callback;
+        }
+
+        @Override
+        protected List<Workout> doInBackground(Integer... params) {
+            return workoutDAO.getRecentWorkouts(params[0]);
         }
 
         @Override
