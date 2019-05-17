@@ -2,8 +2,10 @@ package com.corrot.room.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 
 import com.corrot.room.BodyWeightItem;
+import com.corrot.room.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,26 +51,26 @@ public class PreferencesManager {
 
     //---------------------------------------- UTILS -------------------------------------------//
 
-    public boolean isFirstStart() {
+    public boolean isFirstStart(Context context) {
         boolean isFirst = mPreferences.getBoolean(PREFS_FIRST_START_KEY, true);
         if (isFirst) {
-            initFirstStart();
+            initFirstStart(context);
             return true;
         } else
             return false;
     }
 
-    private void initFirstStart() {
+    private void initFirstStart(Context context) {
         mPreferences.edit()
                 .putBoolean(PREFS_FIRST_START_KEY, false)
                 .apply();
         Set<String> exercises = new HashSet<>();
-        exercises.add("Squats");
-        exercises.add("Deadlift");
-        exercises.add("Bench Press");
-        exercises.add("Barbell Row");
-        exercises.add("Pull-ups");
-        exercises.add("Overhead Press");
+        exercises.add(context.getString(R.string.squats));
+        exercises.add(context.getString(R.string.deadlift));
+        exercises.add(context.getString(R.string.bench_press));
+        exercises.add(context.getString(R.string.barbell_row));
+        exercises.add(context.getString(R.string.pull_ups));
+        exercises.add(context.getString(R.string.overhead_press));
         saveExercises(exercises);
     }
 

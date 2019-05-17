@@ -108,9 +108,11 @@ public class StatsFragment extends Fragment
 
         for (Exercise e : exercises) {
             Date date = e.workoutDate;
-            float max = Collections.max(e.weights);
-            entries.add(new Entry(date.getTime(), max));
-            chartListItems.add(new ChartItem(max, date, e.workoutLabel));
+            if (!e.weights.isEmpty()) {
+                float max = Collections.max(e.weights);
+                entries.add(new Entry(date.getTime(), max));
+                chartListItems.add(new ChartItem(max, date, e.workoutLabel));
+            }
         }
         updateChart(entries);
         updateAdapter(chartListItems);

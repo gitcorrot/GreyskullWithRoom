@@ -31,7 +31,7 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
 
     private EditText workoutNameEditText;
     private NewRoutineViewModel mNewRoutineViewModel;
-    RoutineViewModel routineViewModel;
+    private RoutineViewModel mRoutineViewModel;
 
     private String mTag;
     private int mWorkoutId;
@@ -65,7 +65,7 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
             }
         }
 
-        routineViewModel = ViewModelProviders.of(this).get(RoutineViewModel.class);
+        mRoutineViewModel = ViewModelProviders.of(this).get(RoutineViewModel.class);
         mNewRoutineViewModel = ViewModelProviders.of(this).get(NewRoutineViewModel.class);
         mNewRoutineViewModel.init();
 
@@ -116,7 +116,7 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
                         switch (mTag) {
                             case "Add":
                                 if (!isRoutineInDatabase(routine.label)) {
-                                    routineViewModel.insertSingleRoutine(routine);
+                                    mRoutineViewModel.insertSingleRoutine(routine);
                                     Toast.makeText(getContext(),
                                             "Routine added",
                                             Toast.LENGTH_SHORT).show();
@@ -128,7 +128,7 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
                                 }
                             case "Edit":
                                 routine.id = mWorkoutId;
-                                routineViewModel.updateRoutine(routine);
+                                mRoutineViewModel.updateRoutine(routine);
                                 Toast.makeText(getContext(),
                                         "Routine updated",
                                         Toast.LENGTH_SHORT).show();
@@ -147,7 +147,7 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
     private boolean isRoutineInDatabase(String name) {
         boolean is = true;
         try {
-            if (routineViewModel.getRoutineByName(name) == null) {
+            if (mRoutineViewModel.getRoutineByName(name) == null) {
                 is = false;
             }
         } catch (ExecutionException | InterruptedException e) {

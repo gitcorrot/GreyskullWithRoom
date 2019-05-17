@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">room</string>
+    <string name="app_name">SIMPLE TRAINING LOG</string>
+    <string name="squats">Squats</string>
+    <string name="deadlift">Deadlift</string>
+    <string name="bench_press">Bench Press</string>
+    <string name="barbell_row">Barbell Row</string>
+    <string name="pull_ups">Pull-ups</string>
+    <string name="overhead_press">Overhead Press</string>
+    <string name="stronglifts_5x5_a">Stronglifts 5x5, A</string>
+    <string name="stronglifts_5x5_b">Stronglifts 5x5, B</string>
 </resources>

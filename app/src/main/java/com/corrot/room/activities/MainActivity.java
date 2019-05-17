@@ -53,10 +53,10 @@ public class MainActivity extends AppCompatActivity {
         PreferencesManager pm = PreferencesManager.getInstance();
 
         toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("SIMPLE TRAINING LOG");
+        toolbar.setTitle(getString(R.string.app_name));
         setSupportActionBar(toolbar);
 
-        if (pm.isFirstStart()) {
+        if (pm.isFirstStart(getApplicationContext())) {
             firstStartInit();
         }
 
@@ -119,23 +119,23 @@ public class MainActivity extends AppCompatActivity {
 
     private void firstStartInit() {
         List<String> exercises = new ArrayList<>();
-        exercises.add("Squat");
-        exercises.add("Bench Press");
-        exercises.add("Barbell Row");
+        exercises.add(getString(R.string.squats));
+        exercises.add(getString(R.string.bench_press));
+        exercises.add(getString(R.string.barbell_row));
         List<Integer> sets = new ArrayList<>();
         sets.add(5);
         sets.add(5);
         sets.add(5);
-        Routine r1 = new Routine("Stronglifts 5x5, A", exercises, sets);
+        Routine r1 = new Routine(getString(R.string.stronglifts_5x5_a), exercises, sets);
         exercises.clear();
-        exercises.add("Squat");
-        exercises.add("Overhead Press");
-        exercises.add("Deadlift");
+        exercises.add(getString(R.string.squats));
+        exercises.add(getString(R.string.overhead_press));
+        exercises.add(getString(R.string.deadlift));
         sets.clear();
         sets.add(5);
         sets.add(5);
         sets.add(1);
-        Routine r2 = new Routine("Stronglifts 5x5, B", exercises, sets);
+        Routine r2 = new Routine(getString(R.string.stronglifts_5x5_b), exercises, sets);
         RoutinesRepository repo = new RoutinesRepository(getApplication());
         repo.insertSingleRoutine(r1);
         repo.insertSingleRoutine(r2);

@@ -17,6 +17,7 @@ import com.corrot.room.utils.MyTimeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class BodyWeightsAdapter extends RecyclerView.Adapter<BodyWeightsAdapter.BodyWeightViewHolder> {
 
@@ -59,10 +60,11 @@ public class BodyWeightsAdapter extends RecyclerView.Adapter<BodyWeightsAdapter.
                 float currentWeight = mBodyWeights.get(i + 1).weight;
                 float diffWeight = lastWeight - currentWeight;
                 if (diffWeight <= 0)
-                    diff = (lastWeight - currentWeight) + "kg";
+                    diff = String.format(Locale.getDefault(),
+                            "%.1fkg", lastWeight - currentWeight);
                 else
-                    diff = "+" + (lastWeight - currentWeight) + "kg";
-
+                    diff = String.format(Locale.getDefault(),
+                            "+%.1fkg", lastWeight - currentWeight);
             } else {
                 diff = "---";
             }

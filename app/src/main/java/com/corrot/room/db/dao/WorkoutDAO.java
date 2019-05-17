@@ -41,7 +41,7 @@ public interface WorkoutDAO {
     List<Workout> getWorkoutsByDate(Date date);
 
     @TypeConverters(DateConverter.class)
-    @Query("SELECT * FROM Workout WHERE Date>:from AND Date<:to") // NOT SURE
+    @Query("SELECT * FROM Workout WHERE Date>:from AND Date<:to ORDER BY date DESC")
     List<Workout> getWorkoutsFromTo(Date from, Date to);
 
     @Update

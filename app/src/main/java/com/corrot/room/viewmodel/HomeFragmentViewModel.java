@@ -39,8 +39,11 @@ public class HomeFragmentViewModel extends AndroidViewModel {
 
         mTotalCount = Transformations.map(mWorkoutsRepository.getTotalCount(), count -> {
             String sb;
-            if (count != null) sb = "Total number of workouts: " + count;
-            else sb = "Total number of workouts: 0";
+            if (count != null) {
+                if(count > 0) sb = "Total number of workouts: " + count;
+                else sb = null;
+            }
+            else sb = null;
             return sb;
         });
 

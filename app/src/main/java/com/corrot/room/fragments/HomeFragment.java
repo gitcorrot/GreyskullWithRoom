@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.corrot.room.R;
 import com.corrot.room.activities.NewWorkoutActivity;
@@ -35,6 +37,8 @@ public class HomeFragment extends Fragment implements
 
     private HomeFragmentViewModel mHomeViewModel;
     private List<Routine> routinesList;
+    private Date loadTo;
+    private Date loadFrom;
 
     @Nullable
     @Override
@@ -45,22 +49,22 @@ public class HomeFragment extends Fragment implements
         routinesList = new ArrayList<>();
 
         Calendar calendar = Calendar.getInstance();
-        Date loadTo = calendar.getTime();
+        loadTo = calendar.getTime();
         calendar.add(Calendar.MONTH, -1);
-        Date loadFrom = calendar.getTime();
+        loadFrom = calendar.getTime();
 
         // TODO: add button "Show more..." and onClick set loadFrom to month before.
 
         mHomeViewModel = ViewModelProviders.of(this).get(HomeFragmentViewModel.class);
 
-        mHomeViewModel.setDateFrom(loadFrom);
-        mHomeViewModel.setDateTo(loadTo);
-
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         FloatingActionButton floatingButton = view.findViewById(R.id.floating_button);
         TextView lastWorkoutTextView = view.findViewById(R.id.fragment_home_last_workout_text_view);
-        TextView workoutsCountTextVIew = view.findViewById(R.id.fragment_home_workouts_count_text_view);
+        TextView workoutsCountTextView = view.findViewById(R.id.fragment_home_workouts_count_text_view);
+        TextView recentWorkoutsTextView = view.findViewById(R.id.fragment_home_recent_workouts_text_view);
+        Button moreButton = view.findViewById(R.id.fragment_home_load_more_button);
+        SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.fragment_home_swipe_layout);
         RecyclerView recyclerView = view.findViewById(R.id.fragment_home_recycler_view);
 
         WorkoutsListAdapter mWorkoutListAdapter = new WorkoutsListAdapter(getContext(), getActivity(), this);
@@ -70,8 +74,36 @@ public class HomeFragment extends Fragment implements
 
         mHomeViewModel.getAllRoutines().observe(this, routines -> routinesList = routines);
         mHomeViewModel.getLastWorkout().observe(this, lastWorkoutTextView::setText);
-        mHomeViewModel.getTotalCount().observe(this, workoutsCountTextVIew::setText);
-        mHomeViewModel.getWorkoutsFromTo().observe(this, mWorkoutListAdapter::setWorkouts);
+        mHomeViewModel.getTotalCount().observe(this, count -> {
+            if (count != null) {
+                workoutsCountTextView.setVisibility(View.VISIBLE);
+                workoutsCountTextView.setText(count);
+            } else workoutsCountTextView.setVisibility(View.INVISIBLE);
+        });
+        mHomeViewModel.getWorkoutsFromTo().observe(this, workouts -> {
+            if (workouts.isEmpty()) {
+                recentWorkoutsTextView.setVisibility(View.INVISIBLE);
+            } else {
+                recentWorkoutsTextView.setVisibility(View.VISIBLE);
+                mWorkoutListAdapter.setWorkouts(workouts);
+            }
+        });
+
+        mHomeViewModel.setDateFrom(loadFrom);
+        mHomeViewModel.setDateTo(loadTo);
+
+        moreButton.setOnClickListener(v -> {
+            calendar.setTime(loadFrom);
+            calendar.add(Calendar.MONTH, -1);
+            loadFrom = calendar.getTime();
+            mHomeViewModel.setDateFrom(loadFrom);
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            loadTo = Calendar.getInstance().getTime();
+            mHomeViewModel.setDateTo(loadTo);
+            swipeRefreshLayout.setRefreshing(false);
+        });
 
         // Start NewWorkoutActivity on floatingButton click
         floatingButton.setOnClickListener(v -> {
