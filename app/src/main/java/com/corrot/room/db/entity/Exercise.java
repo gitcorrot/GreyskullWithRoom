@@ -43,32 +43,38 @@ public class Exercise {
     public String name;
 
     @TypeConverters(WeightsConverter.class)
-    @ColumnInfo(name = "Weights")
-    public List<Float> weights;
+    @ColumnInfo(name = "Weights - kg")
+    public List<Float> weights_kg;
+
+    @TypeConverters(WeightsConverter.class)
+    @ColumnInfo(name = "Weights - lbs")
+    public List<Float> weights_lbs;
 
     @TypeConverters(RepsConverter.class)
     @ColumnInfo(name = "Reps")
     public List<Integer> reps;
 
     public Exercise(@NonNull String workoutId, @NonNull Date workoutDate, String workoutLabel,
-                    @NonNull String name, List<Float> weights, List<Integer> reps) {
+                    @NonNull String name, List<Float> weights_kg, List<Float> weights_lbs, List<Integer> reps) {
         this.workoutId = workoutId;
         this.workoutDate = workoutDate;
         this.workoutLabel = workoutLabel;
         this.name = name;
-        this.weights = weights;
+        this.weights_kg = weights_kg;
+        this.weights_lbs = weights_lbs;
         this.reps = reps;
     }
 
     @Ignore
     public Exercise(int id, @NonNull String workoutId, @NonNull Date workoutDate, String workoutLabel,
-                    @NonNull String name, List<Float> weights, List<Integer> reps) {
+                    @NonNull String name, List<Float> weights_kg, List<Float> weights_lbs, List<Integer> reps) {
         this.id = id;
         this.workoutId = workoutId;
         this.workoutDate = workoutDate;
         this.workoutLabel = workoutLabel;
         this.name = name;
-        this.weights = weights;
+        this.weights_kg = weights_kg;
+        this.weights_lbs = weights_lbs;
         this.reps = reps;
     }
 }

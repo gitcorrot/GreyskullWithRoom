@@ -22,6 +22,7 @@ import com.corrot.room.R;
 import com.corrot.room.db.entity.Exercise;
 import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.MyTimeUtils;
+import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.utils.WorkoutsDiffUtilCallback;
 import com.corrot.room.viewmodel.ExerciseViewModel;
 
@@ -49,6 +50,7 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
     private List<Workout> mWorkouts;
     private ExerciseViewModel mExerciseViewModel;
     private WorkoutsListAdapterInterface listener;
+    private String weight_unit;
 
     public interface WorkoutsListAdapterInterface {
         void onEditClick(Workout workout);
@@ -70,6 +72,9 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
     public WorkoutsListAdapter.WorkoutViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = mInflater.inflate(R.layout.recyclerview_workout_item, viewGroup, false);
         final WorkoutViewHolder vh = new WorkoutViewHolder(view);
+
+        PreferencesManager pm = PreferencesManager.getInstance();
+        weight_unit = pm.getUnitSystem();
 
         View.OnClickListener editListener = v ->
                 listener.onEditClick((mWorkouts.get(vh.getAdapterPosition())));
@@ -125,15 +130,38 @@ public class WorkoutsListAdapter extends RecyclerView.Adapter<WorkoutsListAdapte
                                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                             .append("\n");
 
-                    if (e.weights.size() == e.reps.size()) {
-                        rxwBuilder.setLength(0);
-                        for (int j = 0; j < e.weights.size(); j++) {
-                            rxwBuilder
-                                    .append(e.reps.get(j))
-                                    .append("x")
-                                    .append(e.weights.get(j));
-                            if (j < e.weights.size() - 1) rxwBuilder.append("kg, ");
-                            else rxwBuilder.append("kg");
+                    switch (weight_unit) {
+                        case "kg": {
+                            if (e.weights_kg.size() == e.reps.size()) {
+                                rxwBuilder.setLength(0);
+                                for (int j = 0; j < e.weights_kg.size(); j++) {
+                                    rxwBuilder
+                                            .append(e.reps.get(j))
+                                            .append("x")
+                                            .append(e.weights_kg.get(j));
+                                    if (j < e.weights_kg.size() - 1) {
+                                        rxwBuilder.append(weight_unit)
+                                                .append(", ");
+                                    } else rxwBuilder.append(weight_unit);
+                                }
+                            }
+                            break;
+                        }
+                        case "lbs": {
+                            if (e.weights_lbs.size() == e.reps.size()) {
+                                rxwBuilder.setLength(0);
+                                for (int j = 0; j < e.weights_lbs.size(); j++) {
+                                    rxwBuilder
+                                            .append(e.reps.get(j))
+                                            .append("x")
+                                            .append(e.weights_lbs.get(j));
+                                    if (j < e.weights_lbs.size() - 1) {
+                                        rxwBuilder.append(weight_unit)
+                                                .append(", ");
+                                    } else rxwBuilder.append(weight_unit);
+                                }
+                            }
+                            break;
                         }
                     }
                     spannableStringBuilder.append(rxwBuilder.toString());

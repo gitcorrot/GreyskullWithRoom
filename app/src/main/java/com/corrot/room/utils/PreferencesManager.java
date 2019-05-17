@@ -2,7 +2,6 @@ package com.corrot.room.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 
 import com.corrot.room.BodyWeightItem;
 import com.corrot.room.R;
@@ -20,6 +19,7 @@ public class PreferencesManager {
     public final static String PREFS_EXERCISES_KEY = "exercises key";
     public final static String PREFS_BODY_WEIGHTS_KEY = "body weights key";
     private final static String PREFS_FIRST_START_KEY = "first start key";
+    private final static String PREFS_UNITS_KEY = "kg lbs key";
 
     private static PreferencesManager instance;
     private final SharedPreferences mPreferences;
@@ -72,6 +72,18 @@ public class PreferencesManager {
         exercises.add(context.getString(R.string.pull_ups));
         exercises.add(context.getString(R.string.overhead_press));
         saveExercises(exercises);
+
+        setUnitSystem("kg");
+    }
+
+    public String getUnitSystem() {
+        return mPreferences.getString(PREFS_UNITS_KEY, "error");
+    }
+
+    public void setUnitSystem(String units) {
+        mPreferences.edit()
+                .putString(PREFS_UNITS_KEY, units)
+                .apply();
     }
 
     //--------------------------------EXERCISES' NAMES -------------------------------------------//
@@ -132,7 +144,18 @@ public class PreferencesManager {
         if (!bodyWeights.isEmpty()) {
             List<BodyWeightItem> list = new ArrayList<>();
             for (String s : bodyWeights) {
-                list.add(new BodyWeightItem(s));
+                switch (getUnitSystem()) {
+                    case "kg": {
+                        list.add(new BodyWeightItem(s));
+                        break;
+                    }
+                    case "lbs": {
+                        BodyWeightItem bwi = new BodyWeightItem(s);
+                        bwi.weight = WeightUnitsUtils.kgToLbs(bwi.weight);
+                        list.add(bwi);
+                        break;
+                    }
+                }
             }
             return list; // It is already sorted.
         } else {
@@ -166,8 +189,8 @@ public class PreferencesManager {
         List<BodyWeightItem> list = getBodyWeightsList();
         Set<String> set = new LinkedHashSet<>();
         for (BodyWeightItem item : list) {
-            if(item.date.getTime() == itemToRemove.date.getTime()) {
-                if(item.weight != itemToRemove.weight) {
+            if (item.date.getTime() == itemToRemove.date.getTime()) {
+                if (item.weight != itemToRemove.weight) {
                     set.add(item.itemToString());
                 }
             } else {

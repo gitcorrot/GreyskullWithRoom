@@ -30,6 +30,7 @@ import com.corrot.room.db.entity.Workout;
 import com.corrot.room.utils.EntityUtils;
 import com.corrot.room.utils.MyTimeUtils;
 import com.corrot.room.utils.PreferencesManager;
+import com.corrot.room.utils.WeightUnitsUtils;
 import com.corrot.room.viewmodel.ExerciseViewModel;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
 import com.corrot.room.viewmodel.WorkoutViewModel;
@@ -133,7 +134,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
                         if (!workoutId.equals("no workout")) {
                             mExerciseViewModel.getExercisesByWorkoutId(workoutId, exercises -> {
                                 mNewWorkoutViewModel.setExercises(EntityUtils.getExerciseItems(exercises));
-                                mNewWorkoutViewModel.setSets(EntityUtils.getExerciseSetItems(exercises));
+                                mNewWorkoutViewModel.setSets(EntityUtils.getExerciseSetItems(exercises, pm.getUnitSystem()));
                             });
                         }
                     });
@@ -271,17 +272,29 @@ public class NewWorkoutActivity extends AppCompatActivity {
                 List<ExerciseSetItem> sets =
                         mNewWorkoutViewModel.getSetsByExercisePosition(e.position);
                 List<Integer> reps = new ArrayList<>();
-                List<Float> weights = new ArrayList<>();
+                List<Float> weights_kg = new ArrayList<>();
+                List<Float> weights_lbs = new ArrayList<>();
 
                 if (sets != null) {
                     for (ExerciseSetItem esi : sets) {
                         reps.add(esi.reps);
-                        weights.add(esi.weight);
+                        switch (pm.getUnitSystem()) {
+                            case "kg": {
+                                weights_kg.add(esi.weight);
+                                weights_lbs.add(WeightUnitsUtils.kgToLbs(esi.weight));
+                                break;
+                            }
+                            case "lbs": {
+                                weights_kg.add(WeightUnitsUtils.lbsToKg(esi.weight));
+                                weights_lbs.add(esi.weight);
+                                break;
+                            }
+                        }
                     }
                 }
 
                 Exercise newExercise = new Exercise(mWorkout.id,
-                        mWorkout.workoutDate, mWorkout.label, e.name, weights, reps);
+                        mWorkout.workoutDate, mWorkout.label, e.name, weights_kg, weights_lbs, reps);
 
                 switch (currentFlag) {
                     case FLAG_ADD_WORKOUT:

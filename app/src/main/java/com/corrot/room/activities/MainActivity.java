@@ -1,7 +1,9 @@
 package com.corrot.room.activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment currentFragment = homeFragment;
 
     private Toolbar toolbar;
+    PreferencesManager pm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         PreferencesManager.init(getApplicationContext());
-        PreferencesManager pm = PreferencesManager.getInstance();
+        pm = PreferencesManager.getInstance();
 
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(getString(R.string.app_name));
@@ -163,6 +166,30 @@ public class MainActivity extends AppCompatActivity {
                 } else
                     Toast.makeText(this, "Can't find FragmentManager!",
                             Toast.LENGTH_SHORT).show();
+                break;
+            }
+            case R.id.toolbar_settings_change_units: {
+                switch (pm.getUnitSystem()) {
+                    case "kg": {
+                        pm.setUnitSystem("lbs");
+                        break;
+                    }
+                    case "lbs": {
+                        pm.setUnitSystem("kg");
+                        break;
+                    }
+                    default: {
+                        Log.e("MainActivity", "Wrong unit system!");
+                        break;
+                    }
+                }
+                // Restart app
+                Intent i = getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                if (i != null) {
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(i);
+                }
                 break;
             }
             case R.id.toolbar_settings_delete_all: {

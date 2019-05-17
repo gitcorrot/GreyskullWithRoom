@@ -14,6 +14,7 @@ import com.corrot.room.ChartItem;
 import com.corrot.room.R;
 import com.corrot.room.utils.ChartWeightsDiffUtilCallback;
 import com.corrot.room.utils.MyTimeUtils;
+import com.corrot.room.utils.PreferencesManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +36,11 @@ public class ChartWeightsAdapter extends RecyclerView.Adapter<ChartWeightsAdapte
 
     private final LayoutInflater mInflater;
     private List<ChartItem> mChartItems;
+    private String weightUnit;
 
     public ChartWeightsAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
+        weightUnit = PreferencesManager.getInstance().getUnitSystem();
     }
 
     @NonNull
@@ -51,7 +54,7 @@ public class ChartWeightsAdapter extends RecyclerView.Adapter<ChartWeightsAdapte
     @Override
     public void onBindViewHolder(@NonNull final ChartWeightViewHolder viewHolder, int i) {
         if (mChartItems != null) {
-            String weight = mChartItems.get(i).weight + "kg";
+            String weight = mChartItems.get(i).weight + weightUnit;
             String date = MyTimeUtils.parseDate(mChartItems.get(i).date, MyTimeUtils.MAIN_FORMAT);
             String label = mChartItems.get(i).label;
 

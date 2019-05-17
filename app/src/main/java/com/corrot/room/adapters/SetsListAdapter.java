@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.corrot.room.ExerciseSetItem;
 import com.corrot.room.R;
+import com.corrot.room.utils.PreferencesManager;
 import com.corrot.room.viewmodel.NewWorkoutViewModel;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
         private final TextView setTextView;
         private final EditText repsEditText;
         private final EditText weightEditText;
+        private final TextView unitTextView;
 
         private MyEditTextOnFocusChangeListener repsFocusListener;
         private MyEditTextOnFocusChangeListener weightsFocusListener;
@@ -39,12 +41,15 @@ public class SetsListAdapter extends RecyclerView.Adapter<SetsListAdapter.Exerci
             setTextView = itemView.findViewById(R.id.new_set_text_view);
             repsEditText = itemView.findViewById(R.id.new_set_reps_edit_text);
             weightEditText = itemView.findViewById(R.id.new_set_weight_edit_text);
+            unitTextView = itemView.findViewById(R.id.new_set_unit);
 
             repsFocusListener = new MyEditTextOnFocusChangeListener(REPS_EDIT_TEXT);
             weightsFocusListener = new MyEditTextOnFocusChangeListener(WEIGHT_EDIT_TEXT);
 
             repsEditText.setOnFocusChangeListener(repsFocusListener);
             weightEditText.setOnFocusChangeListener(weightsFocusListener);
+
+            unitTextView.setText(PreferencesManager.getInstance().getUnitSystem());
         }
     }
 

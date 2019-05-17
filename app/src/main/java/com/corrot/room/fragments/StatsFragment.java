@@ -108,8 +108,8 @@ public class StatsFragment extends Fragment
 
         for (Exercise e : exercises) {
             Date date = e.workoutDate;
-            if (!e.weights.isEmpty()) {
-                float max = Collections.max(e.weights);
+            if (!e.weights_kg.isEmpty()) {
+                float max = Collections.max(e.weights_kg);
                 entries.add(new Entry(date.getTime(), max));
                 chartListItems.add(new ChartItem(max, date, e.workoutLabel));
             }
