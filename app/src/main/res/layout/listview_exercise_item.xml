@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    android:background="@color/transparent">
+
+    <TextView
+        android:id="@+id/listview_exercise_item_name"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="6"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:textSize="19sp"
+        android:gravity="center_vertical"
+        android:textAlignment="gravity"/>
+
+    <ImageButton
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:id="@+id/listview_exercise_item_delete_button"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_marginEnd="8dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:layout_weight="1"
+        android:src="@drawable/ic_delete_black_24dp"/>
+
+</LinearLayout>

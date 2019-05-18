@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/toolbar_settings_add_new"
+        android:id="@+id/toolbar_settings_exercises"
         android:icon="@drawable/ic_add_black_24dp"
-        android:title="Add new exercise" />
+        android:title="Exercises management" />
 
     <item
         android:id="@+id/toolbar_settings_change_units"
         android:icon="@drawable/ic_weight"
-        android:title="kg to lbs" />
+        android:title="Kg / Lbs" />
 
     <item
         android:id="@+id/toolbar_settings_delete_all"

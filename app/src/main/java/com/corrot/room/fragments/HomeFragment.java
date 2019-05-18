@@ -3,7 +3,6 @@ package com.corrot.room.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.corrot.room.R;
 import com.corrot.room.activities.NewWorkoutActivity;
@@ -29,8 +27,6 @@ import com.corrot.room.viewmodel.HomeFragmentViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class HomeFragment extends Fragment implements
@@ -79,6 +75,8 @@ public class HomeFragment extends Fragment implements
             } else {
                 recentWorkoutsTextView.setVisibility(View.VISIBLE);
                 moreButton.setVisibility(View.VISIBLE);
+                if (workouts.size() < 5) moreButton.setVisibility(View.INVISIBLE);
+                else moreButton.setVisibility(View.VISIBLE);
                 mWorkoutListAdapter.setWorkouts(workouts);
             }
         });
@@ -125,6 +123,7 @@ public class HomeFragment extends Fragment implements
                 dialog.dismiss();
             }
         });
+
         return builder.create();
     }
 

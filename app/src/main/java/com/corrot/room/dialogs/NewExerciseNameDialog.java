@@ -4,19 +4,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
-
-import com.corrot.room.R;
-import com.corrot.room.utils.PreferencesManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
+import com.corrot.room.R;
+import com.corrot.room.adapters.ExercisesListViewAdapter;
+import com.corrot.room.utils.PreferencesManager;
+
 public class NewExerciseNameDialog extends AppCompatDialogFragment {
 
     private EditText exerciseEditText;
-    private PreferencesManager pm;
 
     @NonNull
     @Override
@@ -24,33 +25,45 @@ public class NewExerciseNameDialog extends AppCompatDialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View view = View.inflate(getContext(), R.layout.dialog_new_exercise_name, null);
+
+        PreferencesManager pm = PreferencesManager.getInstance();
+
         exerciseEditText = view.findViewById(R.id.dialog_new_exercise_edit_text);
-        pm = PreferencesManager.getInstance();
+        ListView exercisesListView = view.findViewById(R.id.dialog_new_exercise_list_view);
+        Button addExerciseButton = view.findViewById(R.id.dialog_new_exercise_add_button);
+
+        ExercisesListViewAdapter listViewAdapter = new ExercisesListViewAdapter(pm.getExercisesList(), getContext());
+        exercisesListView.setAdapter(listViewAdapter);
+
+        addExerciseButton.setOnClickListener(v -> {
+            String exercise = exerciseEditText.getText().toString();
+            if (exercise.isEmpty()) {
+                exerciseEditText.requestFocus();
+                exerciseEditText.setError("Please put exercise name first!");
+
+            } else {
+                listViewAdapter.addExercise(exercise);
+                Toast.makeText(getContext(),
+                        "Exercise added",
+                        Toast.LENGTH_SHORT).show();
+                exerciseEditText.setText(null);
+            }
+        });
 
         builder.setView(view)
-                .setTitle("Add new exercise")
-                .setPositiveButton("Add", null)
-                .setNegativeButton("Cancel", null)
+                .setTitle("Exercises management")
+                .setPositiveButton("Apply", null)
                 .setNegativeButton("Dismiss", (dialog, which) -> dialog.dismiss());
 
         final AlertDialog dialog = builder.create();
 
         // This code is needed to override positive button listener to don't close dialog.
-        dialog.setOnShowListener(d-> {
+        dialog.setOnShowListener(d -> {
             Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             b.setOnClickListener(v -> {
-                String exercise = exerciseEditText.getText().toString();
-                if (exercise.isEmpty()) {
-                    exerciseEditText.requestFocus();
-                    exerciseEditText.setError("Please put exercise name first!");
-
-                } else {
-                    pm.addExercise(exercise);
-                    Toast.makeText(getContext(),
-                            "Exercise added",
-                            Toast.LENGTH_SHORT).show();
-                    dismiss();
-                }
+                // apply new exercises list to pm
+                pm.saveExercises(listViewAdapter.getList());
+                dismiss();
             });
         });
         return dialog;

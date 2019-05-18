@@ -107,6 +107,14 @@ public class PreferencesManager {
         }
     }
 
+    public void saveExercises(List<String> exercises) {
+        if (exercises != null) {
+            mPreferences.edit()
+                    .putStringSet(PREFS_EXERCISES_KEY, new HashSet<>(exercises))
+                    .apply();
+        }
+    }
+
     public String[] getExercises() {
         Set<String> exercises = mPreferences.getStringSet(PREFS_EXERCISES_KEY, null);
         if (exercises == null) {
@@ -115,11 +123,32 @@ public class PreferencesManager {
         return new ArrayList<>(exercises).toArray(new String[exercises.size()]);
     }
 
-    public void addExercise(String exercise) {
+    public List<String> getExercisesList() {
         Set<String> exercises = mPreferences.getStringSet(PREFS_EXERCISES_KEY, null);
-        Set<String> exercisesCopy = new HashSet<>(exercises); // MOST IMPORTANT THING - MAKE COPY OF SET
-        exercisesCopy.add(exercise);
-        saveExercises(exercisesCopy);
+        if (exercises == null) {
+            return null;
+        }
+        return new ArrayList<>(exercises);
+    }
+
+    public void deleteExercise(String exercise) {
+        if (exercise != null && !exercise.isEmpty()) {
+            Set<String> exercises = mPreferences.getStringSet(PREFS_EXERCISES_KEY, null);
+            if (exercises != null && !exercises.isEmpty()) {
+                exercises.remove(exercise);
+                Set<String> exercisesCopy = new HashSet<>(exercises); // MOST IMPORTANT THING - MAKE COPY OF SET
+                saveExercises(exercisesCopy);
+            }
+        }
+    }
+
+    public void addExercise(String exercise) {
+        if (exercise != null && !exercise.isEmpty()) {
+            Set<String> exercises = mPreferences.getStringSet(PREFS_EXERCISES_KEY, null);
+            Set<String> exercisesCopy = new HashSet<>(exercises); // MOST IMPORTANT THING - MAKE COPY OF SET
+            exercisesCopy.add(exercise);
+            saveExercises(exercisesCopy);
+        }
     }
 
     //------------------------------------- BODY WEIGHT -----------------------------------------//

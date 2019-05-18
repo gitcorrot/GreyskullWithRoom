@@ -1,6 +1,8 @@
 package com.corrot.room.activities;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,7 @@ import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.corrot.room.R;
 import com.corrot.room.db.WorkoutsDatabase;
@@ -80,41 +83,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navItemListener = item -> {
+        FragmentManager fm = getSupportFragmentManager();
         switch (item.getItemId()) {
             case R.id.navigation_bar_home:
-                getSupportFragmentManager().beginTransaction()
-                        .hide(currentFragment)
-                        .show(homeFragment)
-                        .commit();
-                currentFragment = homeFragment;
+                if (!homeFragment.isVisible()) {
+                    fm.beginTransaction()
+                            .hide(currentFragment)
+                            .show(homeFragment)
+                            .commit();
+                    currentFragment = homeFragment;
+                }
                 return true;
             case R.id.navigation_bar_routines:
-                getSupportFragmentManager().beginTransaction()
-                        .hide(currentFragment)
-                        .show(routinesFragment)
-                        .commit();
-                currentFragment = routinesFragment;
+                if (!routinesFragment.isVisible()) {
+                    fm.beginTransaction()
+                            .hide(currentFragment)
+                            .show(routinesFragment)
+                            .commit();
+                    currentFragment = routinesFragment;
+                }
                 return true;
             case R.id.navigation_bar_history:
-                getSupportFragmentManager().beginTransaction()
-                        .hide(currentFragment)
-                        .show(historyFragment)
-                        .commit();
-                currentFragment = historyFragment;
+                if (!historyFragment.isVisible()) {
+                    fm.beginTransaction()
+                            .hide(currentFragment)
+                            .show(historyFragment)
+                            .commit();
+                    currentFragment = historyFragment;
+                }
                 return true;
             case R.id.navigation_bar_stats:
-                getSupportFragmentManager().beginTransaction()
-                        .hide(currentFragment)
-                        .show(statsFragment)
-                        .commit();
-                currentFragment = statsFragment;
+                if (!statsFragment.isVisible()) {
+                    fm.beginTransaction()
+                            .hide(currentFragment)
+                            .show(statsFragment)
+                            .commit();
+                    currentFragment = statsFragment;
+                }
                 return true;
             case R.id.navigation_bar_body:
-                getSupportFragmentManager().beginTransaction()
-                        .hide(currentFragment)
-                        .show(bodyFragment)
-                        .commit();
-                currentFragment = bodyFragment;
+                if (!bodyFragment.isVisible()) {
+                    fm.beginTransaction()
+                            .hide(currentFragment)
+                            .show(bodyFragment)
+                            .commit();
+                    currentFragment = bodyFragment;
+                }
                 return true;
         }
         return false;
@@ -159,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.toolbar_settings_add_new: {
+            case R.id.toolbar_settings_exercises: {
                 if (getFragmentManager() != null) {
                     NewExerciseNameDialog dialog = new NewExerciseNameDialog();
                     dialog.show(getSupportFragmentManager(), "new exercise dialog");
@@ -193,9 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case R.id.toolbar_settings_delete_all: {
-                new WorkoutsRepository(getApplication()).deleteAll();
-                Toast.makeText(this,
-                        "All workouts deleted!", Toast.LENGTH_SHORT).show();
+                showYesNoDialog(this);
                 break;
             }
             case R.id.toolbar_settings_backup: {
@@ -215,6 +227,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showYesNoDialog(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,
+                R.style.ThemeOverlay_MaterialComponents_Dialog_Alert);
+
+        builder.setMessage("Are you sure you want to delete all workouts?")
+                .setNegativeButton("No", null)
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    new WorkoutsRepository(getApplication()).deleteAll();
+                    Toast.makeText(context, "All workouts deleted!", Toast.LENGTH_SHORT).show();
+                }).show().create();
+        builder.show();
     }
 
     @Override
