@@ -14,12 +14,12 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".activities.NewWorkoutActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleInstance">
         </activity>
         <activity android:name=".activities.MainActivity"
-            android:launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation">
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW"/>

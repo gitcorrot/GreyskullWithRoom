@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +19,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.corrot.room.R;
 import com.corrot.room.db.WorkoutsDatabase;
@@ -47,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private final Fragment bodyFragment = new BodyFragment();
     private Fragment currentFragment = homeFragment;
 
-    private Toolbar toolbar;
     PreferencesManager pm;
 
     @Override
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         PreferencesManager.init(getApplicationContext());
         pm = PreferencesManager.getInstance();
 
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(getString(R.string.app_name));
         setSupportActionBar(toolbar);
 
@@ -69,16 +70,25 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         bottomNavigationView.setOnNavigationItemSelectedListener(navItemListener);
 
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.main_activity_fragment_container, homeFragment)   // don't hide
-                .add(R.id.main_activity_fragment_container, routinesFragment)
-                .add(R.id.main_activity_fragment_container, historyFragment)
-                .add(R.id.main_activity_fragment_container, statsFragment)
-                .add(R.id.main_activity_fragment_container, bodyFragment)
+        FragmentManager fm = getSupportFragmentManager();
+
+        if (fm.findFragmentByTag("home") == null)
+            fm.beginTransaction().add(R.id.main_activity_fragment_container, homeFragment, "home").commit();
+        if (fm.findFragmentByTag("routines") == null)
+            fm.beginTransaction().add(R.id.main_activity_fragment_container, routinesFragment, "routines").commit();
+        if (fm.findFragmentByTag("history") == null)
+            fm.beginTransaction().add(R.id.main_activity_fragment_container, historyFragment, "history").commit();
+        if (fm.findFragmentByTag("stats") == null)
+            fm.beginTransaction().add(R.id.main_activity_fragment_container, statsFragment, "stats").commit();
+        if (fm.findFragmentByTag("body") == null)
+            fm.beginTransaction().add(R.id.main_activity_fragment_container, bodyFragment, "body").commit();
+
+        fm.beginTransaction()
                 .hide(routinesFragment)
                 .hide(historyFragment)
                 .hide(statsFragment)
                 .hide(bodyFragment)
+                .show(currentFragment)
                 .commit();
     }
 
@@ -244,57 +254,90 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        int fragment = currentFragment.getId();
+        int fragment = 0;
+        if (currentFragment.equals(homeFragment)) {
+            fragment = R.layout.fragment_home;
+        } else if (currentFragment.equals(routinesFragment)) {
+            fragment = R.layout.fragment_routines;
+        } else if (currentFragment.equals(historyFragment)) {
+            fragment = R.layout.fragment_history;
+        } else if (currentFragment.equals(statsFragment)) {
+            fragment = R.layout.fragment_stats;
+        } else if (currentFragment.equals(bodyFragment)) {
+            fragment = R.layout.fragment_body;
+        }
+
+        //TODO: DO IT ONLY WHEN SCREEN ROTATION CHANGE! https://stackoverflow.com/questions/15496362/handle-fragment-duplication-on-screen-rotate-with-sample-code
+        removeAllFragmentsFromContainer();
         outState.putInt(CURRENT_FRAGMENT_KEY, fragment);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    private void removeAllFragmentsFromContainer() {
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        List<Fragment> fragments = fm.getFragments();
+        for(Fragment f : fragments)
+            ft.remove(f);
+
+        ft.commitAllowingStateLoss();
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             int fragment = savedInstanceState.getInt(CURRENT_FRAGMENT_KEY);
-            switch (fragment) {
-                case R.id.navigation_bar_home:
-                    getSupportFragmentManager().beginTransaction()
-                            .show(homeFragment)
-                            .hide(routinesFragment)
-                            .hide(historyFragment)
-                            .hide(statsFragment)
-                            .hide(bodyFragment)
-                            .commit();
-                    toolbar.setTitle("Home");
-                case R.id.navigation_bar_routines:
-                    getSupportFragmentManager().beginTransaction()
-                            .hide(homeFragment)
-                            .show(routinesFragment)
-                            .hide(historyFragment)
-                            .hide(statsFragment)
-                            .hide(bodyFragment)
-                            .commit();
-                case R.id.navigation_bar_history:
-                    getSupportFragmentManager().beginTransaction()
-                            .hide(homeFragment)
-                            .hide(routinesFragment)
-                            .show(historyFragment)
-                            .hide(statsFragment)
-                            .hide(bodyFragment)
-                            .commit();
-                case R.id.navigation_bar_stats:
-                    getSupportFragmentManager().beginTransaction()
-                            .hide(homeFragment)
-                            .hide(routinesFragment)
-                            .hide(historyFragment)
-                            .show(statsFragment)
-                            .hide(bodyFragment)
-                            .commit();
-                case R.id.navigation_bar_body:
-                    getSupportFragmentManager().beginTransaction()
-                            .hide(homeFragment)
-                            .hide(routinesFragment)
-                            .hide(historyFragment)
-                            .hide(statsFragment)
-                            .show(bodyFragment)
-                            .commit();
+            if (fragment == R.layout.fragment_home && !homeFragment.isVisible()) {
+                getSupportFragmentManager().beginTransaction()
+                        .show(homeFragment)
+                        .hide(routinesFragment)
+                        .hide(historyFragment)
+                        .hide(statsFragment)
+                        .hide(bodyFragment)
+                        .commit();
+                currentFragment = homeFragment;
+            } else if (fragment == R.layout.fragment_routines && !routinesFragment.isVisible()) {
+                getSupportFragmentManager().beginTransaction()
+                        .hide(homeFragment)
+                        .show(routinesFragment)
+                        .hide(historyFragment)
+                        .hide(statsFragment)
+                        .hide(bodyFragment)
+                        .commit();
+                currentFragment = routinesFragment;
+            } else if (fragment == R.layout.fragment_history && !historyFragment.isVisible()) {
+                getSupportFragmentManager().beginTransaction()
+                        .hide(homeFragment)
+                        .hide(routinesFragment)
+                        .show(historyFragment)
+                        .hide(statsFragment)
+                        .hide(bodyFragment)
+                        .commit();
+                currentFragment = historyFragment;
+            } else if (fragment == R.layout.fragment_stats && !statsFragment.isVisible()) {
+                getSupportFragmentManager().beginTransaction()
+                        .hide(homeFragment)
+                        .hide(routinesFragment)
+                        .hide(historyFragment)
+                        .show(statsFragment)
+                        .hide(bodyFragment)
+                        .commit();
+                currentFragment = statsFragment;
+            } else if (fragment == R.layout.fragment_body && !bodyFragment.isVisible()) {
+                getSupportFragmentManager().beginTransaction()
+                        .hide(homeFragment)
+                        .hide(routinesFragment)
+                        .hide(historyFragment)
+                        .hide(statsFragment)
+                        .show(bodyFragment)
+                        .commit();
+                currentFragment = bodyFragment;
             }
         }
         super.onRestoreInstanceState(savedInstanceState);
