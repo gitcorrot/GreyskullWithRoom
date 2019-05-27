@@ -2,19 +2,18 @@ package com.corrot.room.dialogs;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.corrot.room.R;
 import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.adapters.RoutineExercisesAdapter;
@@ -27,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class NewRoutineDialog extends AppCompatDialogFragment {
+public class NewRoutineDialog extends DialogFragment {
 
     private EditText workoutNameEditText;
     private NewRoutineViewModel mNewRoutineViewModel;
@@ -36,18 +35,20 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
     private String mTag;
     private int mWorkoutId;
 
-    @NonNull
+    @Nullable
     @Override
-    public AlertDialog onCreateDialog(Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         mTag = getTag();
         String mWorkoutLabel;
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(),
-                R.style.ThemeOverlay_MaterialComponents_Dialog_Alert);
-        View view = View.inflate(getContext(), R.layout.dialog_add_routine, null);
-        workoutNameEditText = view.findViewById(R.id.dialog_add_routine_workout_name);
-        MaterialButton addExerciseButton = view.findViewById(R.id.dialog_add_routine_add_exercise);
-        RecyclerView recyclerView = view.findViewById(R.id.dialog_add_routine_recycler_view);
+        View view = View.inflate(getContext(), R.layout.dialog_fragment_add_routine, null);
+        workoutNameEditText = view.findViewById(R.id.dialog_fragment_add_routine_workout_name);
+        MaterialButton addExerciseButton = view.findViewById(R.id.dialog_fragment_add_routine_add_exercise);
+        MaterialButton addButton = view.findViewById(R.id.dialog_fragment_add_button);
+        MaterialButton cancelButton = view.findViewById(R.id.dialog_fragment_cancel_button);
+        RecyclerView recyclerView = view.findViewById(R.id.dialog_fragment_add_routine_recycler_view);
 
         if (mTag != null && mTag.equals("Edit")) {
             Bundle args = getArguments();
@@ -95,53 +96,46 @@ public class NewRoutineDialog extends AppCompatDialogFragment {
         addExerciseButton.setOnClickListener(v ->
                 mNewRoutineViewModel.addExercise(new RoutineExerciseItem()));
 
-        builder.setView(view)
-                .setPositiveButton("Add", null)
-                .setNegativeButton("Dismiss", (dialog, which) -> dialog.dismiss());
+        addButton.setOnClickListener(v -> {
+            String name = workoutNameEditText.getText().toString();
+            if (name.isEmpty()) {
+                workoutNameEditText.requestFocus();
+                workoutNameEditText.setError("Please add routine name!");
+            } else {
+                try {
+                    Routine routine = getRoutineFromViewModel(name);
 
-        final AlertDialog dialog = builder.create();
-
-        // This code is needed to override positive button listener to don't close dialog.
-        dialog.setOnShowListener(d -> {
-            Button b = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            b.setOnClickListener(v -> {
-                String name = workoutNameEditText.getText().toString();
-                if (name.isEmpty()) {
-                    workoutNameEditText.requestFocus();
-                    workoutNameEditText.setError("Please add routine name!");
-                } else {
-                    try {
-                        Routine routine = getRoutineFromViewModel(name);
-
-                        switch (mTag) {
-                            case "Add":
-                                if (!isRoutineInDatabase(routine.label)) {
-                                    mRoutineViewModel.insertSingleRoutine(routine);
-                                    Toast.makeText(getContext(),
-                                            "Routine added",
-                                            Toast.LENGTH_SHORT).show();
-                                    break;
-                                } else {
-                                    workoutNameEditText.requestFocus();
-                                    workoutNameEditText.setError("Routine with this name exists!");
-                                    return;
-                                }
-                            case "Edit":
-                                routine.id = mWorkoutId;
-                                mRoutineViewModel.updateRoutine(routine);
+                    switch (mTag) {
+                        case "Add":
+                            if (!isRoutineInDatabase(routine.label)) {
+                                mRoutineViewModel.insertSingleRoutine(routine);
                                 Toast.makeText(getContext(),
-                                        "Routine updated",
+                                        "Routine added",
                                         Toast.LENGTH_SHORT).show();
                                 break;
-                        }
-                        dismiss();
-                    } catch (RuntimeException e) {
-                        Toast.makeText(getContext(), "Set exercise name first!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                workoutNameEditText.requestFocus();
+                                workoutNameEditText.setError("Routine with this name exists!");
+                                return;
+                            }
+                        case "Edit":
+                            routine.id = mWorkoutId;
+                            mRoutineViewModel.updateRoutine(routine);
+                            Toast.makeText(getContext(),
+                                    "Routine updated",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
                     }
+                    dismiss();
+                } catch (RuntimeException e) {
+                    Toast.makeText(getContext(), "Set exercise name first!", Toast.LENGTH_SHORT).show();
                 }
-            });
+            }
         });
-        return dialog;
+
+        cancelButton.setOnClickListener(v -> dismiss());
+
+        return view;
     }
 
     private boolean isRoutineInDatabase(String name) {
