@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
@@ -20,16 +19,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import com.corrot.room.R;
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.entity.Routine;
-import com.corrot.room.dialogs.NewExerciseNameDialog;
-import com.corrot.room.fragments.BodyFragment;
-import com.corrot.room.fragments.HistoryFragment;
-import com.corrot.room.fragments.HomeFragment;
-import com.corrot.room.fragments.RoutinesFragment;
-import com.corrot.room.fragments.StatsFragment;
+import com.corrot.room.dialogs.ExercisesManagementDialog;
+import com.corrot.room.fragments.*;
 import com.corrot.room.repository.RoutinesRepository;
 import com.corrot.room.repository.WorkoutsRepository;
 import com.corrot.room.utils.PreferencesManager;
@@ -185,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.toolbar_settings_exercises: {
                 if (getFragmentManager() != null) {
-                    NewExerciseNameDialog dialog = new NewExerciseNameDialog();
+                    ExercisesManagementDialog dialog = new ExercisesManagementDialog();
                     dialog.show(getSupportFragmentManager(), "new exercise dialog");
                 } else
                     Toast.makeText(this, "Can't find FragmentManager!",
@@ -283,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         List<Fragment> fragments = fm.getFragments();
-        for(Fragment f : fragments)
+        for (Fragment f : fragments)
             ft.remove(f);
 
         ft.commitAllowingStateLoss();
