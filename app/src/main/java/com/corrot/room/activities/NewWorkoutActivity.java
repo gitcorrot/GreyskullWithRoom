@@ -313,7 +313,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         }
 
         String action = currentFlag == FLAG_ADD_WORKOUT ? "added" : "updated";
-        Toast.makeText(this, "Exercise " + action + " successfully!",
+        Toast.makeText(this, "Workout " + action + " successfully!",
                 Toast.LENGTH_SHORT).show();
     }
 }

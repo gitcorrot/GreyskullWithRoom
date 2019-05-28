@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,7 +17,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import com.corrot.room.R;
 import com.corrot.room.db.WorkoutsDatabase;
 import com.corrot.room.db.entity.Routine;
@@ -36,12 +34,12 @@ public class MainActivity extends AppCompatActivity {
 
     private final static String CURRENT_FRAGMENT_KEY = "current fragment";
 
-    private final Fragment homeFragment = new HomeFragment();
-    private final Fragment routinesFragment = new RoutinesFragment();
-    private final Fragment historyFragment = new HistoryFragment();
-    private final Fragment statsFragment = new StatsFragment();
-    private final Fragment bodyFragment = new BodyFragment();
-    private Fragment currentFragment = homeFragment;
+    private Fragment homeFragment;
+    private Fragment routinesFragment;
+    private Fragment historyFragment;
+    private Fragment statsFragment;
+    private Fragment bodyFragment;
+    private Fragment currentFragment = new Fragment();
 
     PreferencesManager pm;
 
@@ -66,18 +64,35 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
 
-        if (fm.findFragmentByTag("home") == null)
+        if (fm.findFragmentByTag("home") == null) {
+            homeFragment = new HomeFragment();
             fm.beginTransaction().add(R.id.main_activity_fragment_container, homeFragment, "home").commit();
-        if (fm.findFragmentByTag("routines") == null)
+        } else homeFragment = fm.findFragmentByTag("home");
+
+        if (fm.findFragmentByTag("routines") == null) {
+            routinesFragment = new RoutinesFragment();
             fm.beginTransaction().add(R.id.main_activity_fragment_container, routinesFragment, "routines").commit();
-        if (fm.findFragmentByTag("history") == null)
+        } else routinesFragment = fm.findFragmentByTag("routines");
+
+        if (fm.findFragmentByTag("history") == null) {
+            historyFragment = new HistoryFragment();
             fm.beginTransaction().add(R.id.main_activity_fragment_container, historyFragment, "history").commit();
-        if (fm.findFragmentByTag("stats") == null)
+        } else historyFragment = fm.findFragmentByTag("history");
+
+        if (fm.findFragmentByTag("stats") == null) {
+            statsFragment = new StatsFragment();
             fm.beginTransaction().add(R.id.main_activity_fragment_container, statsFragment, "stats").commit();
-        if (fm.findFragmentByTag("body") == null)
+        } else statsFragment = fm.findFragmentByTag("stats");
+
+        if (fm.findFragmentByTag("body") == null) {
+            bodyFragment = new BodyFragment();
             fm.beginTransaction().add(R.id.main_activity_fragment_container, bodyFragment, "body").commit();
+        } else bodyFragment = fm.findFragmentByTag("body");
+
+        if (savedInstanceState == null) currentFragment = homeFragment;
 
         fm.beginTransaction()
+                .hide(homeFragment)
                 .hide(routinesFragment)
                 .hide(historyFragment)
                 .hide(statsFragment)
@@ -180,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.toolbar_settings_exercises: {
                 if (getFragmentManager() != null) {
                     ExercisesManagementDialog dialog = new ExercisesManagementDialog();
-                    dialog.show(getSupportFragmentManager(), "new exercise dialog");
+                    dialog.show(getSupportFragmentManager(), null);
                 } else
                     Toast.makeText(this, "Can't find FragmentManager!",
                             Toast.LENGTH_SHORT).show();
@@ -215,17 +230,16 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case R.id.toolbar_settings_backup: {
-
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.READ_EXTERNAL_STORAGE},
-                        2);
-                WorkoutsDatabase.backup(this, "mojbackup");
+                                Manifest.permission.READ_EXTERNAL_STORAGE}, 2);
+                WorkoutsDatabase.backup(getApplicationContext(), "mojbackup");
                 //Toast.makeText(this, "Backup done!", Toast.LENGTH_SHORT).show();
+                // TODO: Ask for directory and name
                 break;
             }
             case R.id.toolbar_settings_restore: {
-
+                // TODO: restore data from chosen directory
                 Toast.makeText(this, "Workouts restored!", Toast.LENGTH_SHORT).show();
                 break;
             }
@@ -260,78 +274,82 @@ public class MainActivity extends AppCompatActivity {
         } else if (currentFragment.equals(bodyFragment)) {
             fragment = R.layout.fragment_body;
         }
-
-        //TODO: DO IT ONLY WHEN SCREEN ROTATION CHANGE! https://stackoverflow.com/questions/15496362/handle-fragment-duplication-on-screen-rotate-with-sample-code
-        removeAllFragmentsFromContainer();
         outState.putInt(CURRENT_FRAGMENT_KEY, fragment);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
-    private void removeAllFragmentsFromContainer() {
-
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        List<Fragment> fragments = fm.getFragments();
-        for (Fragment f : fragments)
-            ft.remove(f);
-
-        ft.commitAllowingStateLoss();
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             int fragment = savedInstanceState.getInt(CURRENT_FRAGMENT_KEY);
-            if (fragment == R.layout.fragment_home && !homeFragment.isVisible()) {
-                getSupportFragmentManager().beginTransaction()
-                        .show(homeFragment)
-                        .hide(routinesFragment)
-                        .hide(historyFragment)
-                        .hide(statsFragment)
-                        .hide(bodyFragment)
-                        .commit();
-                currentFragment = homeFragment;
-            } else if (fragment == R.layout.fragment_routines && !routinesFragment.isVisible()) {
-                getSupportFragmentManager().beginTransaction()
-                        .hide(homeFragment)
-                        .show(routinesFragment)
-                        .hide(historyFragment)
-                        .hide(statsFragment)
-                        .hide(bodyFragment)
-                        .commit();
-                currentFragment = routinesFragment;
-            } else if (fragment == R.layout.fragment_history && !historyFragment.isVisible()) {
-                getSupportFragmentManager().beginTransaction()
-                        .hide(homeFragment)
-                        .hide(routinesFragment)
-                        .show(historyFragment)
-                        .hide(statsFragment)
-                        .hide(bodyFragment)
-                        .commit();
-                currentFragment = historyFragment;
-            } else if (fragment == R.layout.fragment_stats && !statsFragment.isVisible()) {
-                getSupportFragmentManager().beginTransaction()
-                        .hide(homeFragment)
-                        .hide(routinesFragment)
-                        .hide(historyFragment)
-                        .show(statsFragment)
-                        .hide(bodyFragment)
-                        .commit();
-                currentFragment = statsFragment;
-            } else if (fragment == R.layout.fragment_body && !bodyFragment.isVisible()) {
-                getSupportFragmentManager().beginTransaction()
-                        .hide(homeFragment)
-                        .hide(routinesFragment)
-                        .hide(historyFragment)
-                        .hide(statsFragment)
-                        .show(bodyFragment)
-                        .commit();
-                currentFragment = bodyFragment;
+            switch (fragment) {
+                case R.layout.fragment_home: {
+                    if (!homeFragment.isVisible()) {
+                        getSupportFragmentManager().beginTransaction()
+                                .show(homeFragment)
+                                .hide(routinesFragment)
+                                .hide(historyFragment)
+                                .hide(statsFragment)
+                                .hide(bodyFragment)
+                                .commit();
+                        currentFragment = homeFragment;
+                    }
+                    break;
+                }
+                case R.layout.fragment_routines: {
+                    if (!routinesFragment.isVisible()) {
+                        getSupportFragmentManager().beginTransaction()
+                                .hide(homeFragment)
+                                .show(routinesFragment)
+                                .hide(historyFragment)
+                                .hide(statsFragment)
+                                .hide(bodyFragment)
+                                .commit();
+                        currentFragment = routinesFragment;
+                    }
+                    break;
+                }
+                case R.layout.fragment_history: {
+                    if (!historyFragment.isVisible()) {
+                        getSupportFragmentManager().beginTransaction()
+                                .hide(homeFragment)
+                                .hide(routinesFragment)
+                                .show(historyFragment)
+                                .hide(statsFragment)
+                                .hide(bodyFragment)
+                                .commit();
+                        currentFragment = historyFragment;
+                    }
+                    break;
+                }
+                case R.layout.fragment_stats: {
+                    if (!statsFragment.isVisible()) {
+                        getSupportFragmentManager().beginTransaction()
+                                .hide(homeFragment)
+                                .hide(routinesFragment)
+                                .hide(historyFragment)
+                                .show(statsFragment)
+                                .hide(bodyFragment)
+                                .commit();
+                        currentFragment = statsFragment;
+                    }
+                    break;
+                }
+                case R.layout.fragment_body: {
+                    if (!bodyFragment.isVisible()) {
+                        getSupportFragmentManager().beginTransaction()
+                                .hide(homeFragment)
+                                .hide(routinesFragment)
+                                .hide(historyFragment)
+                                .hide(statsFragment)
+                                .show(bodyFragment)
+                                .commit();
+                        currentFragment = bodyFragment;
+                    }
+                    break;
+                }
+                default:
+                    Log.e("MainActivity", "Wront fragment ID when restoring state!");
             }
         }
         super.onRestoreInstanceState(savedInstanceState);

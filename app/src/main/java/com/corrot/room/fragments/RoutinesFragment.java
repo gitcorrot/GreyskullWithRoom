@@ -5,14 +5,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.corrot.room.R;
 import com.corrot.room.RoutineExerciseItem;
 import com.corrot.room.adapters.RoutinesAdapter;
@@ -28,6 +26,7 @@ import java.util.List;
 public class RoutinesFragment extends Fragment implements RoutinesAdapter.RoutinesAdapterInterface {
 
     private RoutineViewModel mRoutineViewModel;
+    private RoutinesAdapter routinesListAdapter;
 
     @Nullable
     @Override
@@ -37,18 +36,18 @@ public class RoutinesFragment extends Fragment implements RoutinesAdapter.Routin
 
         View view = inflater.inflate(R.layout.fragment_routines, container, false);
 
-        MaterialButton addWorkoutButton = view.findViewById(R.id.fragment_routines_add_new_button);
+        MaterialButton addRoutineButton = view.findViewById(R.id.fragment_routines_add_new_button);
         mRoutineViewModel = ViewModelProviders.of(this).get(RoutineViewModel.class);
-
-        addWorkoutButton.setOnClickListener(v ->
-                new NewRoutineDialog().show(requireFragmentManager(), "Add"));
-
         final RecyclerView recyclerView = view.findViewById(R.id.fragment_routines_recycler_view);
-        final RoutinesAdapter workoutListAdapter = new RoutinesAdapter(getContext(), this);
-        recyclerView.setAdapter(workoutListAdapter);
+        routinesListAdapter = new RoutinesAdapter(getContext(), this);
+
+        recyclerView.setAdapter(routinesListAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mRoutineViewModel.getAllRoutines().observe(this, workoutListAdapter::setRoutines);
+        addRoutineButton.setOnClickListener(v ->
+                new NewRoutineDialog().show(requireFragmentManager(), "Add"));
+
+        mRoutineViewModel.getAllRoutines().observe(this, routinesListAdapter::setRoutines);
         return view;
     }
 

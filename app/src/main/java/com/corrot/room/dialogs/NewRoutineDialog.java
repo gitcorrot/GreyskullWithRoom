@@ -1,5 +1,6 @@
 package com.corrot.room.dialogs;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ public class NewRoutineDialog extends DialogFragment {
     private EditText workoutNameEditText;
     private NewRoutineViewModel mNewRoutineViewModel;
     private RoutineViewModel mRoutineViewModel;
+    private RoutineExercisesAdapter routineExercisesAdapter;
 
     private String mTag;
     private int mWorkoutId;
@@ -70,8 +72,8 @@ public class NewRoutineDialog extends DialogFragment {
         mNewRoutineViewModel = ViewModelProviders.of(this).get(NewRoutineViewModel.class);
         mNewRoutineViewModel.init();
 
-        final RoutineExercisesAdapter workoutListAdapter = new RoutineExercisesAdapter(getActivity());
-        recyclerView.setAdapter(workoutListAdapter);
+        routineExercisesAdapter = new RoutineExercisesAdapter(getActivity());
+        recyclerView.setAdapter(routineExercisesAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -85,13 +87,13 @@ public class NewRoutineDialog extends DialogFragment {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
                 RoutineExerciseItem e =
-                        workoutListAdapter.getExerciseAt(viewHolder.getAdapterPosition());
+                        routineExercisesAdapter.getExerciseAt(viewHolder.getAdapterPosition());
                 mNewRoutineViewModel.deleteExercise(e);
             }
         }).attachToRecyclerView(recyclerView);
 
         // TODO: Pass it when fragment opens this dialog.
-        mNewRoutineViewModel.getAllExerciseItems().observe(this, workoutListAdapter::setExercises);
+        mNewRoutineViewModel.getAllExerciseItems().observe(this, routineExercisesAdapter::setExercises);
 
         addExerciseButton.setOnClickListener(v ->
                 mNewRoutineViewModel.addExercise(new RoutineExerciseItem()));
